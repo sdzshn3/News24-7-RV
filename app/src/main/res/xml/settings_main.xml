@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="News 24/7 Settings">
+
+    <EditTextPreference
+        android:defaultValue="@string/default_no_of_news_articles"
+        android:inputType="number"
+        android:key="@string/number_of_articles_key"
+        android:selectAllOnFocus="true"
+        android:title="@string/number_of_articles_label"/>
+
+    <SwitchPreference
+        android:title="@string/show_author_name_label"
+        android:key="@string/author_name_key"
+        android:defaultValue="@string/default_show_author_name"
+        android:summary="@string/show_author_name_summary"/>
+
+</PreferenceScreen>

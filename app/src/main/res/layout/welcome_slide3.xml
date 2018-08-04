@@ -1,0 +1,20 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_screen3">
+
+    <ImageView
+        style="@style/slideImageAttributes"
+        android:contentDescription="@string/it_has_new_icon"
+        android:src="@drawable/new_icon" />
+
+    <TextView
+        android:id="@+id/tutorial_title"
+        style="@style/slideTitleAttributes"
+        android:text="@string/slide_3_title" />
+
+    <TextView
+        style="@style/slideDescAttributes"
+        android:text="@string/slide_3_desc"/>
+
+</RelativeLayout>

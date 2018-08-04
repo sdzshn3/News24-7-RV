@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">News 24/7</string>
+    <string name="separator">•</string>
+    <string name="published_at_example">Published at 2018–07–19 14:01</string>
+    <string name="section_example">Indian Express</string>
+    <string name="title_example">NDA set to sail through no-trust motion; Shiv Sena, AIADMK to back Modi government</string>
+    <string name="no_internet_connection">Internet connection is not available</string>
+    <string name="no_data_found">No data found from NEWS API</string>
+
+    <string name="slide_1_title">Welcome to News 24/7</string>
+    <string name="slide_1_desc">The easiest way to read news article anytime!</string>
+
+    <string name="slide_2_title">Filter or Search news</string>
+    <string name="slide_2_desc">Filter news or search according to topic, country and more!</string>
+
+    <string name="slide_3_title">New articles in real time</string>
+    <string name="slide_3_desc">New articles available almost instantly!</string>
+
+    <string name="slide_4_title">News articles from The Guardian</string>
+    <string name="slide_4_desc">Get news articles from The Guardian website!</string>
+
+    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
+    <string name="play_again">Play Again</string>
+
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+    <string name="made_with_love_for_udacity">Made with love for Udacity</string>
+    <string name="it_has_news_paper_icon_init">It has news paper icon init</string>
+    <string name="it_has_new_icon">It has \'New\' icon</string>
+    <string name="it_has_filter_icon">It has filter icon</string>
+    <string name="it_has_news_icon">It has news icon</string>
+    <string name="first">First</string>
+    <string name="last">Last</string>
+    <string name="article_thumbnail">article thumbnail</string>
+
+    <string name="default_no_of_news_articles">10</string>
+    <string name="number_of_articles_key">number_of_articles</string>
+    <string name="number_of_articles_label">Number of articles to load</string>
+
+    <string name="settings_menu_label">Settings</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="author_name_key">author_name</string>
+    <string name="default_show_author_name">true</string>
+    <string name="show_author_name_label">Show author name</string>
+    <string name="show_author_name_summary">Shows author name or contributor name of news article</string>
+    <string name="about_app_label">About app</string>
+
+
+</resources>
