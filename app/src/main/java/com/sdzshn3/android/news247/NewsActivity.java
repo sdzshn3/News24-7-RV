@@ -37,8 +37,6 @@ public class NewsActivity extends AppCompatActivity implements android.app.Loade
     private NewsAdapter mAdapter;
     private SwipeRefreshLayout mySwipeRefreshLayout;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,7 +121,9 @@ public class NewsActivity extends AppCompatActivity implements android.app.Loade
     @Override
     public void onLoadFinished(Loader<List<News>> loader, List<News> newsList) {
         //mAdapter = null;
-        clear();
+        //clear();
+        //newsArray.clear();
+        //mAdapter.notifyDataSetChanged();
 
         ProgressBar progressBar = findViewById(R.id.loading_circle);
         progressBar.setVisibility(View.GONE);
@@ -137,6 +137,8 @@ public class NewsActivity extends AppCompatActivity implements android.app.Loade
 
         if (newsList != null && !newsList.isEmpty()) {
             //this.mAdapter.addAll(newsList);
+            Log.e("Dataset not empty: ", String.valueOf(newsList.size()));
+            newsArray.addAll(newsList);
             mAdapter.notifyDataSetChanged();
         }
     }
@@ -154,7 +156,9 @@ public class NewsActivity extends AppCompatActivity implements android.app.Loade
     @Override
     public void onLoaderReset(Loader<List<News>> loader) {
         //mAdapter = null;
-        clear();
+        //clear();
+        newsArray.clear();
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
