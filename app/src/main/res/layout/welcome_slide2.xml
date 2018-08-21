@@ -11,10 +11,10 @@
     <TextView
         android:id="@+id/tutorial_title"
         style="@style/slideTitleAttributes"
-        android:text="@string/slide_2_title"/>
+        android:text="@string/slide_2_title" />
 
     <TextView
         style="@style/slideDescAttributes"
-        android:text="@string/slide_2_desc"/>
+        android:text="@string/slide_2_desc" />
 
 </RelativeLayout>

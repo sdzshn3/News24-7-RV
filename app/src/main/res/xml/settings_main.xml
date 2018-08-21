@@ -15,4 +15,10 @@
         android:defaultValue="@string/default_show_author_name"
         android:summary="@string/show_author_name_summary"/>
 
+    <SwitchPreference
+        android:title="@string/show_article_images_label"
+        android:key="@string/show_article_images_key"
+        android:defaultValue="@string/default_show_article_images"
+        android:summary="@string/show_article_images_summary"/>
+
 </PreferenceScreen>

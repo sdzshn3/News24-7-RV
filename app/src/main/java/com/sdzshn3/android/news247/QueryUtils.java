@@ -1,11 +1,12 @@
 package com.sdzshn3.android.news247;
 
-
 import android.text.TextUtils;
 import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,10 +16,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.List;
 
 public final class QueryUtils {
 
+    public static final int readTimeout = 10000;
+    public static final int connectTimeout = 15000;
 
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
@@ -36,12 +38,10 @@ public final class QueryUtils {
             Log.e(LOG_TAG, "Problem making the HTTP request.", e);
         }
 
-        ArrayList<News> news = extractFeatureFromJson(jsonResponse);
-
-        return news;
+        return extractFeatureFromJson(jsonResponse);
     }
 
-    public static ArrayList<News> extractFeatureFromJson(String newsJSON) {
+    private static ArrayList<News> extractFeatureFromJson(String newsJSON) {
         if (TextUtils.isEmpty(newsJSON)) {
             return null;
         }
@@ -62,8 +62,15 @@ public final class QueryUtils {
                     String title = currentNewsArticle.optString("webTitle");
                     String articleUrl = currentNewsArticle.optString("webUrl");
                     String publishedAt = currentNewsArticle.optString("webPublicationDate");
-                    JSONObject fields = currentNewsArticle.optJSONObject("fields");
-                    String thumbnail = fields.optString("thumbnail");
+                    String thumbnail;
+                    try {
+                        JSONObject fields = currentNewsArticle.optJSONObject("fields");
+                        thumbnail = fields.optString("thumbnail");
+                    } catch (NullPointerException e) {
+                        Log.e(LOG_TAG, "Images not found from JSON or field not requested in website");
+                        thumbnail = "moImage";
+                    }
+
                     String firstName = "";
                     String lastName = "";
                     try {
@@ -71,8 +78,8 @@ public final class QueryUtils {
                         JSONObject currentTags = tags.getJSONObject(0);
                         firstName = currentTags.optString("firstName");
                         lastName = currentTags.optString("lastName");
-                    }catch (JSONException e) {
-                        Log.e("QueryUtils", "No info found about author");
+                    } catch (JSONException e) {
+                        Log.e(LOG_TAG, "No info found about author");
                     }
 
                     News newsResult = new News(sectionName, title, articleUrl, publishedAt, firstName, lastName, thumbnail);
@@ -80,7 +87,7 @@ public final class QueryUtils {
                 }
             }
         } catch (JSONException e) {
-            Log.e("QueryUtils", "Problem parsing the news JSON results", e);
+            Log.e(LOG_TAG, "Problem parsing the news JSON results", e);
         }
         return news;
     }
@@ -106,12 +113,12 @@ public final class QueryUtils {
         InputStream inputStream = null;
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setReadTimeout(10000/*Milliseconds*/);
-            urlConnection.setConnectTimeout(15000/*Milliseconds*/);
+            urlConnection.setReadTimeout(readTimeout/*Milliseconds*/);
+            urlConnection.setConnectTimeout(connectTimeout/*Milliseconds*/);
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
-            if (urlConnection.getResponseCode() == 200) {
+            if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
             } else {

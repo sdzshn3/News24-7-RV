@@ -35,9 +35,15 @@ public class News {
         return mPublishedAt;
     }
 
-    public String getFirstName() { return mFirstName; }
+    public String getFirstName() {
+        return mFirstName;
+    }
 
-    public String getLastName() { return mLastName; }
+    public String getLastName() {
+        return mLastName;
+    }
 
-    public String getThumbnail() { return mThumbnail; }
+    public String getThumbnail() {
+        return mThumbnail;
+    }
 }

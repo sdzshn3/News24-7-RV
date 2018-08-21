@@ -31,8 +31,8 @@
     <string name="it_has_new_icon">It has \'New\' icon</string>
     <string name="it_has_filter_icon">It has filter icon</string>
     <string name="it_has_news_icon">It has news icon</string>
-    <string name="first">First</string>
-    <string name="last">Last</string>
+    <string name="first_name_example">Syed</string>
+    <string name="last_name_example">Zeeshan</string>
     <string name="article_thumbnail">article thumbnail</string>
 
     <string name="default_no_of_news_articles">10</string>
@@ -46,6 +46,10 @@
     <string name="show_author_name_label">Show author name</string>
     <string name="show_author_name_summary">Shows author name or contributor name of news article</string>
     <string name="about_app_label">About app</string>
+    <string name="show_article_images_label">Show article images</string>
+    <string name="show_article_images_key">show_article_images</string>
+    <string name="default_show_article_images">true</string>
+    <string name="show_article_images_summary">Shows images of articles</string>
 
 
 </resources>

@@ -15,6 +15,6 @@
 
     <TextView
         style="@style/slideDescAttributes"
-        android:text="@string/slide_3_desc"/>
+        android:text="@string/slide_3_desc" />
 
 </RelativeLayout>

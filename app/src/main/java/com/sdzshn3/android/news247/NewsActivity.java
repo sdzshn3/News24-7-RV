@@ -1,5 +1,6 @@
 package com.sdzshn3.android.news247;
 
+import android.annotation.TargetApi;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
@@ -8,14 +9,13 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,35 +24,46 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class NewsActivity extends AppCompatActivity implements android.app.LoaderManager.LoaderCallbacks<List<News>> {
 
     private static final String NEWSAPI_REQUEST_URL = "http://content.guardianapis.com/world/india";
     private static final int NEWS_LOADER_ID = 1;
+    private static final String apiKey = "api-key";
+    private static final String showTags = "show-tags";
+    private static final String contributorTag = "contributor";
+    private static final String showFields = "show-fields";
+    private static final String thumbnailField = "thumbnail";
+    private static final String pageSize = "page-size";
     boolean isConnected;
-    ArrayList<News> newsArray;
-    private TextView mEmptyStateTextView;
-    private RecyclerView newsRecyclerView;
+    private ArrayList<News> newsArray;
+    @BindView(R.id.no_data_found)
+    TextView mEmptyStateTextView;
+    @BindView(R.id.list)
+    RecyclerView newsRecyclerView;
     private NewsAdapter mAdapter;
-    private SwipeRefreshLayout mySwipeRefreshLayout;
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
 
-        mEmptyStateTextView = findViewById(R.id.no_data_found);
-        newsRecyclerView = findViewById(R.id.list);
-        mySwipeRefreshLayout = findViewById(R.id.refresh_page);
+        ButterKnife.bind(this);
 
         ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        NetworkInfo activeNetwork = Objects.requireNonNull(connectivityManager).getActiveNetworkInfo();
         isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
         newsArray = new ArrayList<>();
-        mAdapter = new NewsAdapter(this, new ArrayList<News>());
-        newsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new NewsAdapter(this, newsArray);
+        newsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        newsRecyclerView.setHasFixedSize(true);
         newsRecyclerView.setAdapter(mAdapter);
 
         ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
@@ -70,29 +81,13 @@ public class NewsActivity extends AppCompatActivity implements android.app.Loade
             }
         });
 
-
         LoaderManager loaderManager = getLoaderManager();
         loaderManager.initLoader(NEWS_LOADER_ID, null, this);
-
-        mySwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mySwipeRefreshLayout.setRefreshing(false);
-                // TODO: 30/07/2018 refresh news articles
-            }
-        });
-
-        if (newsArray.isEmpty()) {
-            newsRecyclerView.setVisibility(View.GONE);
-            mEmptyStateTextView.setVisibility(View.VISIBLE);
-        } else {
-            newsRecyclerView.setVisibility(View.VISIBLE);
-            mEmptyStateTextView.setVisibility(View.GONE);
-        }
     }
 
     @Override
     public Loader<List<News>> onCreateLoader(int i, Bundle bundle) {
+
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -103,27 +98,31 @@ public class NewsActivity extends AppCompatActivity implements android.app.Loade
 
         boolean showAuthorName = sharedPrefs.getBoolean(
                 getString(R.string.author_name_key),
-                Boolean.parseBoolean(getString(R.string.default_show_author_name)));
+                Boolean.parseBoolean(getString(R.string.default_show_author_name))
+        );
+
+        boolean showArticleImages = sharedPrefs.getBoolean(
+                getString(R.string.show_article_images_key),
+                Boolean.parseBoolean(getString(R.string.default_show_article_images))
+        );
 
         Uri baseUri = Uri.parse(NEWSAPI_REQUEST_URL);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
+        final Uri.Builder uriBuilder = baseUri.buildUpon();
 
-        uriBuilder.appendQueryParameter("api-key", BuildConfig.GUARDIAN_API_KEY);
+        uriBuilder.appendQueryParameter(apiKey, BuildConfig.GUARDIAN_API_KEY);
         if (showAuthorName) {
-            uriBuilder.appendQueryParameter("show-tags", "contributor");
+            uriBuilder.appendQueryParameter(showTags, contributorTag);
         }
-        uriBuilder.appendQueryParameter("show-fields", "thumbnail");
-        uriBuilder.appendQueryParameter("page-size", numberOfArticles);
+        if (showArticleImages) {
+            uriBuilder.appendQueryParameter(showFields, thumbnailField);
+        }
+        uriBuilder.appendQueryParameter(pageSize, numberOfArticles);
 
         return new NewsLoader(this, uriBuilder.toString());
     }
 
     @Override
     public void onLoadFinished(Loader<List<News>> loader, List<News> newsList) {
-        //mAdapter = null;
-        //clear();
-        //newsArray.clear();
-        //mAdapter.notifyDataSetChanged();
 
         ProgressBar progressBar = findViewById(R.id.loading_circle);
         progressBar.setVisibility(View.GONE);
@@ -136,27 +135,18 @@ public class NewsActivity extends AppCompatActivity implements android.app.Loade
         }
 
         if (newsList != null && !newsList.isEmpty()) {
-            //this.mAdapter.addAll(newsList);
-            Log.e("Dataset not empty: ", String.valueOf(newsList.size()));
             newsArray.addAll(newsList);
             mAdapter.notifyDataSetChanged();
-        }
-    }
-
-    public void clear(){
-        final int size = newsArray.size();
-        if(size > 0){
-            for(int i = 0; i <size; i++){
-                newsArray.remove(0);
-            }
-            mAdapter.notifyItemRangeRemoved(0, size);
+            newsRecyclerView.setVisibility(View.VISIBLE);
+            mEmptyStateTextView.setVisibility(View.GONE);
+        } else {
+            newsRecyclerView.setVisibility(View.GONE);
+            mEmptyStateTextView.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onLoaderReset(Loader<List<News>> loader) {
-        //mAdapter = null;
-        //clear();
         newsArray.clear();
         mAdapter.notifyDataSetChanged();
     }
@@ -176,5 +166,12 @@ public class NewsActivity extends AppCompatActivity implements android.app.Loade
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        newsArray.clear();
+        mAdapter.notifyDataSetChanged();
     }
 }

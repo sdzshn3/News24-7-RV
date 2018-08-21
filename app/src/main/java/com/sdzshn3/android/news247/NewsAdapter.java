@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +14,20 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     private ArrayList<News> mNewsList;
     private Context mContext;
 
     public NewsAdapter(Context context, ArrayList<News> newsList) {
-        mContext =context;
+        mContext = context;
         mNewsList = newsList;
     }
 
-    public News getItem(int position){
+    public News getItem(int position) {
         return mNewsList.get(position);
     }
 
@@ -33,7 +35,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-
         return new ViewHolder(view);
     }
 
@@ -42,7 +43,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         News currentNews = getItem(position);
 
         String thumbnailUrl = currentNews.getThumbnail();
-        Picasso.get().load(thumbnailUrl).into(holder.thumbnailView);
+        if (!thumbnailUrl.equals("noImage")) {
+            Picasso.get().load(thumbnailUrl).into(holder.thumbnailView);
+        }
 
         Typeface semiBoldText = Typeface.createFromAsset(mContext.getAssets(), "Montserrat-SemiBold.ttf");
         Typeface regularText = Typeface.createFromAsset(mContext.getAssets(), "Montserrat-Regular.ttf");
@@ -53,26 +56,24 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         holder.titleView.setTypeface(semiBoldText);
         holder.titleView.setText(currentNews.getTitle());
 
-
-
         String firstName;
         String lastName;
         try {
             firstName = currentNews.getFirstName();
             lastName = currentNews.getLastName();
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             firstName = "";
             lastName = "";
         }
-        if(firstName.equals("") && lastName.equals("")){
+        if (firstName.equals("") && lastName.equals("")) {
             holder.firstNameView.setVisibility(View.GONE);
             holder.lastNameView.setVisibility(View.GONE);
             holder.separator.setVisibility(View.GONE);
         } else {
-            if(!firstName.equals("")){
+            if (!firstName.equals("")) {
                 holder.firstNameView.setText(firstName);
             }
-            if(!lastName.equals("")){
+            if (!lastName.equals("")) {
                 holder.lastNameView.setText(lastName);
             }
             holder.separator.setVisibility(View.VISIBLE);
@@ -86,27 +87,27 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         return mNewsList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.thumbnailImageView)
         ImageView thumbnailView;
+        @BindView(R.id.sectionTextView)
         TextView sectionView;
+        @BindView(R.id.titleTextView)
         TextView titleView;
+        @BindView(R.id.firstNameTextView)
         TextView firstNameView;
+        @BindView(R.id.lastNameTextView)
         TextView lastNameView;
+        @BindView(R.id.separator)
         TextView separator;
+        @BindView(R.id.publishedAtTextView)
         TextView publishedAtView;
 
-        public ViewHolder(View listItemView) {
+        ViewHolder(View listItemView) {
             super(listItemView);
-            thumbnailView = listItemView.findViewById(R.id.thumbnailImageView);
-            sectionView = listItemView.findViewById(R.id.sectionTextView);
-            titleView = listItemView.findViewById(R.id.titleTextView);
-            firstNameView = listItemView.findViewById(R.id.firstNameTextView);
-            lastNameView = listItemView.findViewById(R.id.lastNameTextView);
-            separator = listItemView.findViewById(R.id.separator);
-            publishedAtView = listItemView.findViewById(R.id.publishedAtTextView);
+            ButterKnife.bind(this, listItemView);
         }
     }
-
 
 
 }

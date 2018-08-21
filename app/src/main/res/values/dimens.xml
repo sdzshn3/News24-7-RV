@@ -18,4 +18,13 @@
     <dimen name="article_publishedTime_text_size">12sp</dimen>
     <dimen name="slide_icon_marginBottom">20dp</dimen>
     <dimen name="slide_desc_marginTop">20dp</dimen>
+    <dimen name="last_name_text_view_margin_start">4dp</dimen>
+    <dimen name="separator_gap_both_sides">3dp</dimen>
+    <dimen name="LI_main_card_view_margin_bottom">4dp</dimen>
+    <dimen name="LI_main_card_view_margin_end">4dp</dimen>
+    <dimen name="LI_main_card_view_margin_start">4dp</dimen>
+    <dimen name="LI_main_card_view_margin_top">4dp</dimen>
+    <dimen name="card_corner_radius_for_all">8dp</dimen>
+    <dimen name="main_card_elevation">2dp</dimen>
+    <dimen name="article_image_card_elevation">8dp</dimen>
 </resources>
