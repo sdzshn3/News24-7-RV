@@ -50,6 +50,13 @@
     <string name="show_article_images_key">show_article_images</string>
     <string name="default_show_article_images">true</string>
     <string name="show_article_images_summary">Shows images of articles</string>
+    <string name="weather_city_title">City</string>
+    <string name="weather_city_key">weather_city</string>
+    <string name="weather_city_default">delhi</string>
+    <string name="tab_1_title">News feed</string>
+    <string name="tab_2_title">Favorites</string>
 
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 </resources>

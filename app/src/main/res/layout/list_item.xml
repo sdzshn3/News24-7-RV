@@ -1,17 +1,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/LI_main_card_view_margin_bottom"
-        android:layout_marginEnd="@dimen/LI_main_card_view_margin_end"
-        android:layout_marginLeft="@dimen/LI_main_card_view_margin_start"
-        android:layout_marginRight="@dimen/LI_main_card_view_margin_end"
         android:layout_marginStart="@dimen/LI_main_card_view_margin_start"
+        android:layout_marginLeft="@dimen/LI_main_card_view_margin_start"
         android:layout_marginTop="@dimen/LI_main_card_view_margin_top"
+        android:layout_marginEnd="@dimen/LI_main_card_view_margin_end"
+        android:layout_marginRight="@dimen/LI_main_card_view_margin_end"
+        android:layout_marginBottom="@dimen/LI_main_card_view_margin_bottom"
         app:cardCornerRadius="@dimen/card_corner_radius_for_all"
         app:cardElevation="@dimen/main_card_elevation"
         tools:targetApi="lollipop">
@@ -21,13 +21,46 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/sectionTextView"
-                style="@style/articleAttributes"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                tools:text="@string/section_example" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/sectionTextView"
+                    style="@style/articleAttributes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="90dp"
+                    android:layout_marginRight="90dp"
+                    android:text="@string/section_example"
+                    android:textColor="@android:color/black" />
+
+                <ToggleButton
+                    android:id="@+id/favorite_button"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="50dp"
+                    android:layout_marginRight="50dp"
+                    android:numStars="1"
+                    android:textOff=""
+                    android:textOn="" />
+
+                <Button
+                    android:id="@+id/share_button"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/ic_share" />
+
+            </RelativeLayout>
 
             <android.support.v7.widget.CardView
                 style="@style/articleAttributes"
@@ -50,7 +83,7 @@
                 style="@style/articleAttributes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="@string/title_example"
+                android:text="@string/title_example"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/article_title_text_size"
                 android:textStyle="bold" />
@@ -68,34 +101,33 @@
                     android:id="@+id/firstNameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="@string/first_name_example"
+                    android:text="@string/first_name_example"
                     android:textSize="@dimen/article_publishedTime_text_size" />
 
                 <TextView
                     android:id="@+id/lastNameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/last_name_text_view_margin_start"
                     android:layout_marginStart="@dimen/last_name_text_view_margin_start"
-                    tools:text="@string/last_name_example"
+                    android:layout_marginLeft="@dimen/last_name_text_view_margin_start"
                     android:textSize="@dimen/article_publishedTime_text_size" />
 
                 <TextView
                     android:id="@+id/separator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/separator_gap_both_sides"
                     android:layout_marginStart="@dimen/separator_gap_both_sides"
-                    tools:text="@string/separator"
-                    android:textColor="@android:color/black" />
+                    android:layout_marginEnd="@dimen/separator_gap_both_sides"
+                    android:textColor="@android:color/black"
+                    tools:text="@string/separator" />
 
                 <TextView
                     android:id="@+id/publishedAtTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/article_marginBottom"
-                    tools:text="@string/published_at_example"
-                    android:textSize="@dimen/article_publishedTime_text_size" />
+                    android:textSize="@dimen/article_publishedTime_text_size"
+                    tools:text="@string/published_at_example" />
 
             </LinearLayout>
 

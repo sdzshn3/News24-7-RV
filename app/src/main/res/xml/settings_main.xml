@@ -2,6 +2,19 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="News 24/7 Settings">
 
+    <PreferenceCategory
+        android:title="Weather settings"/>
+
+    <EditTextPreference
+        android:defaultValue="@string/weather_city_default"
+        android:inputType="text"
+        android:key="@string/weather_city_key"
+        android:selectAllOnFocus="true"
+        android:title="@string/weather_city_title"/>
+
+    <PreferenceCategory
+        android:title="Article settings"/>
+
     <EditTextPreference
         android:defaultValue="@string/default_no_of_news_articles"
         android:inputType="number"

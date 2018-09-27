@@ -27,7 +27,32 @@ public final class QueryUtils {
     private QueryUtils() {
     }
 
-    public static ArrayList<News> fetchNewsData(String requestUrl) {
+    private static ArrayList<News> extractWeatherFromJson(String weatherJson) {
+        if(TextUtils.isEmpty(weatherJson)) {
+            return null;
+        }
+        ArrayList<News> weathers = new ArrayList<>();
+
+        try {
+            JSONObject object = new JSONObject(weatherJson);
+            JSONArray weather = object.getJSONArray("weather");
+            JSONObject currentWeather = weather.getJSONObject(0);
+            String weatherId = currentWeather.optString("id");
+            String weatherDesc = currentWeather.optString("description");
+            String iconId = currentWeather.optString("icon");
+            JSONObject main = object.getJSONObject("main");
+            String temp = main.optString("temp");
+
+            News weatherResult = new News(weatherId, weatherDesc, iconId, temp);
+            weathers.add(weatherResult);
+
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        return weathers;
+    }
+
+    public static ArrayList<News> fetchNewsData(int id, String requestUrl) {
 
         URL url = createUrl(requestUrl);
 
@@ -36,6 +61,13 @@ public final class QueryUtils {
             jsonResponse = makeHttpRequest(url);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Problem making the HTTP request.", e);
+        }
+
+        switch (id){
+            case 1:
+                return extractFeatureFromJson(jsonResponse);
+            case 2:
+                return extractWeatherFromJson(jsonResponse);
         }
 
         return extractFeatureFromJson(jsonResponse);
@@ -61,6 +93,8 @@ public final class QueryUtils {
                     String sectionName = currentNewsArticle.optString("sectionName");
                     String title = currentNewsArticle.optString("webTitle");
                     String articleUrl = currentNewsArticle.optString("webUrl");
+                    String apiUrl = currentNewsArticle.optString("apiUrl");
+                    apiUrl = apiUrl + "?api-key=" + BuildConfig.GUARDIAN_API_KEY;
                     String publishedAt = currentNewsArticle.optString("webPublicationDate");
                     String thumbnail;
                     try {
@@ -82,7 +116,7 @@ public final class QueryUtils {
                         Log.e(LOG_TAG, "No info found about author");
                     }
 
-                    News newsResult = new News(sectionName, title, articleUrl, publishedAt, firstName, lastName, thumbnail);
+                    News newsResult = new News(sectionName, title, articleUrl, apiUrl, publishedAt, firstName, lastName, thumbnail);
                     news.add(newsResult);
                 }
             }

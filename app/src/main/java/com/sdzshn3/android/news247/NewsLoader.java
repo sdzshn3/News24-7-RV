@@ -6,10 +6,12 @@ import java.util.List;
 public class NewsLoader extends android.support.v4.content.AsyncTaskLoader<List<News>> {
 
     private String mUrl;
+    private int mId;
 
-    NewsLoader(Context context, String url) {
+    public NewsLoader(Context context, int id, String url) {
         super(context);
         mUrl = url;
+        mId = id;
     }
 
     @Override
@@ -22,6 +24,6 @@ public class NewsLoader extends android.support.v4.content.AsyncTaskLoader<List<
         if (mUrl == null) {
             return null;
         }
-        return QueryUtils.fetchNewsData(mUrl);
+        return QueryUtils.fetchNewsData(mId, mUrl);
     }
 }

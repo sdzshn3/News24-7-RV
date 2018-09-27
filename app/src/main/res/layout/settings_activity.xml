@@ -1,8 +1,8 @@
 <fragment
-    android:name="com.sdzshn3.android.news247.SettingsActivity$NewsPreferenceFragment"
+    android:name="com.sdzshn3.android.news247.Activities.SettingsActivity$NewsPreferenceFragment"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sdzshn3.android.news247.SettingsActivity">
+    tools:context="com.sdzshn3.android.news247.Activities.SettingsActivity">
 </fragment>
