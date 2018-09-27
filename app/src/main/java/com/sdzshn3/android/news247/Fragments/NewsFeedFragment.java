@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sdzshn3.android.news247.Activities.MainActivity;
 import com.sdzshn3.android.news247.Activities.SettingsActivity;
@@ -76,11 +77,11 @@ public class NewsFeedFragment extends Fragment implements LoaderManager.LoaderCa
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.recycler_view_layout, container, false);
-
+        View rootView = inflater.inflate(R.layout.news_feed, container, false);
         mContext = getContext();
-
         setHasOptionsMenu(true);
+
+
 
         mAdapter = new NewsFeedAdapter(getActivity(), newsArray);
 
@@ -229,18 +230,31 @@ public class NewsFeedFragment extends Fragment implements LoaderManager.LoaderCa
                 weatherTemp.setText(temp + " ℃");
 
                 String iconId = news.getIconId();
+                Toast.makeText(mContext, iconId, Toast.LENGTH_SHORT).show();
                 switch (iconId){
                     case "11d":
                         weatherIcon.setImageResource(R.drawable.thunder_day);
                         break;
+                    case "11n":
+                        weatherIcon.setImageResource(R.drawable.thunder_night);
+                        break;
                     case "09d":
                         weatherIcon.setImageResource(R.drawable.rainy_weather);
+                        break;
+                    case "09n":
+                        weatherIcon.setImageResource(R.drawable.rainy_night);
                         break;
                     case "10d":
                         weatherIcon.setImageResource(R.drawable.rainy_day);
                         break;
+                    case "10n":
+                        weatherIcon.setImageResource(R.drawable.rainy_night);
+                        break;
                     case "13d":
                         weatherIcon.setImageResource(R.drawable.rain_snow);
+                        break;
+                    case "13n":
+                        weatherIcon.setImageResource(R.drawable.rain_snow_night);
                         break;
                     case "50d":
                         weatherIcon.setImageResource(R.drawable.haze_day);

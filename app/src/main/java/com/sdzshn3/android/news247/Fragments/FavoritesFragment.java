@@ -30,7 +30,7 @@ public class FavoritesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.recycler_view_layout, container, false);
+        View rootView = inflater.inflate(R.layout.news_feed, container, false);
         setHasOptionsMenu(true);
         mContext = getContext();
 
