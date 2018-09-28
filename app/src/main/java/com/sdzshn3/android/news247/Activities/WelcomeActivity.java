@@ -65,6 +65,7 @@ public class WelcomeActivity extends AppCompatActivity {
         if (!prefManager.isFirstTimeLaunch()) {
             launchHomeScreen();
             finish();
+            return;
         }
 
         if (Build.VERSION.SDK_INT >= 21) {
@@ -73,7 +74,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_welcome);
 
-        viewPager = findViewById(R.id.view_pager);
+        viewPager = findViewById(R.id.view_pager_welcome);
         dotsLayout = findViewById(R.id.layoutDots);
         btnSkip = findViewById(R.id.btn_skip);
         btnNext = findViewById(R.id.btn_next);

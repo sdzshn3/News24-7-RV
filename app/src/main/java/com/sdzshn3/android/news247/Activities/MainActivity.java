@@ -1,6 +1,7 @@
 package com.sdzshn3.android.news247.Activities;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -18,10 +19,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.sdzshn3.android.news247.Adapters.CategoryAdapter;
 import com.sdzshn3.android.news247.Adapters.NewsFeedAdapter;
 import com.sdzshn3.android.news247.Fragments.FavoritesFragment;
-import com.sdzshn3.android.news247.Fragments.NewsFeedFragment;
+import com.sdzshn3.android.news247.Fragments.NewsCategoriesFragment;
 import com.sdzshn3.android.news247.News;
 import com.sdzshn3.android.news247.R;
 
@@ -47,10 +47,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     String mSearchQuery;
     boolean isConnected;
     private ArrayList<News> newsArray;
-    @BindView(R.id.tab_layout)
-    TabLayout mTabLayout;
-    @BindView(R.id.view_pager)
-    ViewPager viewPager;
     @BindView(R.id.toolbar)
     android.support.v7.widget.Toolbar toolbar;
     @BindView(R.id.drawer_layout)
@@ -71,15 +67,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         setSupportActionBar(toolbar);
 
-        CategoryAdapter categoryAdapter = new CategoryAdapter(this, getSupportFragmentManager());
-        viewPager.setAdapter(categoryAdapter);
-        mTabLayout.setupWithViewPager(viewPager);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+        setFragment(new NewsCategoriesFragment());
 
         //loaderManager = getSupportLoaderManager();
         //loaderManager.initLoader(NEWS_LOADER_ID, null, this);
@@ -131,28 +125,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        Fragment fragment = null;
         int id = menuItem.getItemId();
         switch (id){
             case R.id.news_feed_nav_item:
-                CategoryAdapter categoryAdapter = new CategoryAdapter(this, getSupportFragmentManager());
-                viewPager.setAdapter(categoryAdapter);
-                mTabLayout.setupWithViewPager(viewPager);
+                setFragment(new NewsCategoriesFragment());
                 break;
             case R.id.favorites_nav_item:
-                Toast.makeText(this, "Favorites", Toast.LENGTH_SHORT).show();
-                fragment = new FavoritesFragment();
+                setFragment(new FavoritesFragment());
+                break;
+            case R.id.settings_nav_item:
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
         }
         drawer.closeDrawer(GravityCompat.START);
-
-        if(fragment != null){
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.content_main, fragment);
-            fragmentTransaction.commit();
-        }
-
         return true;
+    }
+
+    public void setFragment(Fragment fragment){
+        if(fragment!=null){
+            FragmentTransaction ft= getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.frame_layout,fragment);
+            ft.commit();
+        }
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
     }
 
     /*@Override

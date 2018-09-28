@@ -15,4 +15,15 @@
             android:title="Favorites"/>
     </group>
 
+    <item
+        android:title="Tools">
+
+        <menu>
+
+            <item
+                android:id="@+id/settings_nav_item"
+                android:icon="@drawable/ic_settings"
+                android:title="Settings"/>
+        </menu>
+    </item>
 </menu>

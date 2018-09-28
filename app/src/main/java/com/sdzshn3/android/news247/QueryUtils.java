@@ -68,9 +68,58 @@ public final class QueryUtils {
                 return extractFeatureFromJson(jsonResponse);
             case 2:
                 return extractWeatherFromJson(jsonResponse);
+            case 3:
+                return extractFavoritesFromJson(jsonResponse);
+            case 4:
+                return extractWeatherFromJson(jsonResponse);
         }
 
         return extractFeatureFromJson(jsonResponse);
+    }
+
+    private static ArrayList<News> extractFavoritesFromJson(String newsJson) {
+        if (TextUtils.isEmpty(newsJson)) {
+            return null;
+        }
+
+        ArrayList<News> news = new ArrayList<>();
+        try {
+            JSONObject base = new JSONObject(newsJson);
+            JSONObject response = base.getJSONObject("response");
+            String status = response.getString("status");
+            if (status.equals("ok")){
+                JSONObject content = response.getJSONObject("content");
+                String sectionName = content.optString("sectionName");
+                String title = content.optString("webTitle");
+                String articleUrl = content.optString("webUrl");
+                String apiUrl = content.optString("apiUrl");
+                String publishedAt = content.optString("webPublicationDate");
+                String thumbnail;
+                try {
+                    JSONObject fields = content.optJSONObject("fields");
+                    thumbnail = fields.optString("thumbnail");
+                } catch (NullPointerException e) {
+                    Log.e(LOG_TAG, "Images not found from JSON or field not requested in website");
+                    thumbnail = "moImage";
+                }
+                String firstName = "";
+                String lastName = "";
+                try {
+                    JSONArray tags = content.getJSONArray("tags");
+                    JSONObject currentTags = tags.getJSONObject(0);
+                    firstName = currentTags.optString("firstName");
+                    lastName = currentTags.optString("lastName");
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, "No info found about author");
+                }
+
+                News newsResult = new News(sectionName, title, articleUrl, apiUrl, publishedAt, firstName, lastName, thumbnail);
+                news.add(newsResult);
+            }
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        return news;
     }
 
     private static ArrayList<News> extractFeatureFromJson(String newsJSON) {
@@ -81,8 +130,8 @@ public final class QueryUtils {
         ArrayList<News> news = new ArrayList<>();
 
         try {
-            JSONObject baseJasonResponse = new JSONObject(newsJSON);
-            JSONObject response = baseJasonResponse.getJSONObject("response");
+            JSONObject baseJsonResponse = new JSONObject(newsJSON);
+            JSONObject response = baseJsonResponse.getJSONObject("response");
             String status = response.getString("status");
             if (status.equals("ok")) {
                 int pageSize = response.getInt("pageSize");

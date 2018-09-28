@@ -32,7 +32,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="90dp"
                     android:layout_marginRight="90dp"
-                    android:text="@string/section_example"
+                    tools:text="@string/section_example"
                     android:textColor="@android:color/black" />
 
                 <ToggleButton
@@ -45,7 +45,6 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="50dp"
                     android:layout_marginRight="50dp"
-                    android:numStars="1"
                     android:textOff=""
                     android:textOn="" />
 
@@ -83,7 +82,7 @@
                 style="@style/articleAttributes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/title_example"
+                tools:text="@string/title_example"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/article_title_text_size"
                 android:textStyle="bold" />
@@ -101,7 +100,7 @@
                     android:id="@+id/firstNameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/first_name_example"
+                    tools:text="@string/first_name_example"
                     android:textSize="@dimen/article_publishedTime_text_size" />
 
                 <TextView

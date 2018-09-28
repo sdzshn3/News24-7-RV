@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -17,8 +16,10 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.sdzshn3.android.news247.BuildConfig;
 import com.sdzshn3.android.news247.News;
 import com.sdzshn3.android.news247.R;
 import com.squareup.picasso.Picasso;
@@ -28,20 +29,15 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHolder> {
+public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.ViewHolder> {
 
     private ArrayList<News> mNewsList;
     private Context mContext;
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
     private static final String PREF_NAME = "news247-favorites";
-    private static final String showTags = "show-tags";
-    private static final String contributorTag = "contributor";
-    private static final String showFields = "show-fields";
-    private static final String thumbnailField = "thumbnail";
 
-
-    public NewsFeedAdapter(Context context, ArrayList<News> newsList) {
+    public FavoritesAdapter(Context context, ArrayList<News> newsList) {
         mContext = context;
         mNewsList = newsList;
     }
@@ -52,15 +48,15 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item, viewGroup, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         final News currentNews = getItem(position);
-        final String currentNewsFullUri = currentNews.getApiUrl() + "&show-tags=contributor&show-fields=thumbnail";
+        final String currentNewsFullUri = currentNews.getApiUrl() + "?api-key=" + BuildConfig.GUARDIAN_API_KEY + "&show-tags=contributor&show-fields=thumbnail";
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         boolean showAuthorName = sharedPreferences.getBoolean(
@@ -76,34 +72,22 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
         preferences = mContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = preferences.edit();
 
-        if (preferences.getBoolean(currentNewsFullUri, false)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                holder.favoriteButton.setBackgroundDrawable(mContext.getDrawable(R.drawable.ic_star_full));
-            }
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                holder.favoriteButton.setBackgroundDrawable(mContext.getDrawable(R.drawable.ic_star_border));
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            holder.favoriteButton.setBackgroundDrawable(mContext.getDrawable(R.drawable.ic_star_full));
         }
+        holder.favoriteButton.setChecked(true);
 
         holder.favoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
+                if(!isChecked) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        holder.favoriteButton.setBackgroundDrawable(mContext.getDrawable(R.drawable.ic_star_full));
-                    }
-
-                    editor.putBoolean(currentNewsFullUri, true);
-                    Log.v("2222222222222", currentNewsFullUri);
-                    editor.apply();
-
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        Toast.makeText(mContext, "else", Toast.LENGTH_SHORT).show();
                         holder.favoriteButton.setBackgroundDrawable(mContext.getDrawable(R.drawable.ic_star_border));
                     }
-
                     editor.remove(currentNewsFullUri);
+                    Log.v("111111111111111111", currentNewsFullUri);
+                    removeAt(holder.getPosition());
                     editor.apply();
                 }
             }
@@ -120,9 +104,13 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
             }
         });
 
-        String thumbnailUrl = currentNews.getThumbnail();
-        if (!thumbnailUrl.equals("noImage")) {
-            Picasso.get().load(thumbnailUrl).into(holder.thumbnailView);
+        if(showArticleImages) {
+            String thumbnailUrl = currentNews.getThumbnail();
+            if (thumbnailUrl != null) {
+                if (!thumbnailUrl.equals("noImage")) {
+                    Picasso.get().load(thumbnailUrl).into(holder.thumbnailView);
+                }
+            }
         }
 
         Typeface semiBoldText = Typeface.createFromAsset(mContext.getAssets(), "Montserrat-SemiBold.ttf");
@@ -143,24 +131,36 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
             firstName = "";
             lastName = "";
         }
-        if (firstName.equals("") && lastName.equals("")) {
-            holder.firstNameView.setVisibility(View.GONE);
-            holder.lastNameView.setVisibility(View.GONE);
-            holder.separator.setVisibility(View.GONE);
-        } else {
-            if (!firstName.equals("")) {
-                holder.firstNameView.setText(firstName);
+
+        if(showAuthorName) {
+            if (firstName != null && lastName != null) {
+                if (firstName.equals("") && lastName.equals("")) {
+                    holder.firstNameView.setVisibility(View.GONE);
+                    holder.lastNameView.setVisibility(View.GONE);
+                    holder.separator.setVisibility(View.GONE);
+                } else {
+                    if (!firstName.equals("")) {
+                        holder.firstNameView.setText(firstName);
+                    }
+                    if (!lastName.equals("")) {
+                        holder.lastNameView.setText(lastName);
+                    }
+                    holder.separator.setVisibility(View.VISIBLE);
+                }
             }
-            if (!lastName.equals("")) {
-                holder.lastNameView.setText(lastName);
-            }
-            holder.separator.setVisibility(View.VISIBLE);
         }
 
-        holder.publishedAtView.setText(currentNews.getPublishedAt().replace("T", " at ").replace("Z", " "));
+        if(currentNews.getPublishedAt() != null) {
+            holder.publishedAtView.setText(currentNews.getPublishedAt().replace("T", " at ").replace("Z", " "));
+        }
     }
 
-
+    public void removeAt(int position) {
+        mNewsList.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, mNewsList.size());
+        notifyDataSetChanged();
+    }
 
     @Override
     public int getItemCount() {
@@ -192,6 +192,5 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
             ButterKnife.bind(this, listItemView);
         }
     }
-
 
 }
