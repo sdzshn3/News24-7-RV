@@ -1,5 +1,7 @@
 package com.sdzshn3.android.news247.Adapters;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,8 +19,10 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.sdzshn3.android.news247.Data.FavoriteNewsContract;
 import com.sdzshn3.android.news247.News;
 import com.sdzshn3.android.news247.R;
 import com.squareup.picasso.Picasso;
@@ -27,6 +31,8 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import com.sdzshn3.android.news247.Data.FavoriteNewsContract.FavoriteNewsEntry;
 
 public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHolder> {
 
@@ -78,33 +84,58 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
 
         if (preferences.getBoolean(currentNewsFullUri, false)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                holder.favoriteButton.setChecked(true);
                 holder.favoriteButton.setBackgroundDrawable(mContext.getDrawable(R.drawable.ic_star_full));
             }
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                holder.favoriteButton.setChecked(false);
                 holder.favoriteButton.setBackgroundDrawable(mContext.getDrawable(R.drawable.ic_star_border));
             }
         }
+
+        final ContentValues values = new ContentValues();
 
         holder.favoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        holder.favoriteButton.setBackgroundDrawable(mContext.getDrawable(R.drawable.ic_star_full));
+                    values.put(FavoriteNewsEntry.COLUMN_SECTION_NAME, currentNews.getSectionName());
+                    values.put(FavoriteNewsEntry.COLUMN_TITLE, currentNews.getTitle());
+                    values.put(FavoriteNewsEntry.COLUMN_ARTICLE_URL, currentNews.getArticleUrl());
+                    values.put(FavoriteNewsEntry.COLUMN_API_URI, currentNews.getApiUrl());
+                    values.put(FavoriteNewsEntry.COLUMN_PUBLISHED_AT, currentNews.getPublishedAt());
+                    values.put(FavoriteNewsEntry.COLUMN_FIRST_NAME, currentNews.getFirstName());
+                    values.put(FavoriteNewsEntry.COLUMN_LAST_NAME, currentNews.getLastName());
+                    values.put(FavoriteNewsEntry.COLUMN_THUMBNAIL, currentNews.getThumbnail());
+                    Uri newUri = mContext.getContentResolver().insert(FavoriteNewsEntry.CONTENT_URI, values);
+                    if (newUri == null) {
+                        Toast.makeText(mContext, "Error saving this article as favorite", Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            holder.favoriteButton.setChecked(true);
+                            holder.favoriteButton.setBackgroundDrawable(mContext.getDrawable(R.drawable.ic_star_full));
+                        }
+                        editor.putBoolean(currentNewsFullUri, true);
+                        editor.apply();
                     }
-
-                    editor.putBoolean(currentNewsFullUri, true);
-                    Log.v("2222222222222", currentNewsFullUri);
-                    editor.apply();
 
                 } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        holder.favoriteButton.setBackgroundDrawable(mContext.getDrawable(R.drawable.ic_star_border));
+                    Uri currentArticleUri = ContentUris.withAppendedId(FavoriteNewsEntry.CONTENT_URI, holder.getAdapterPosition());
+                    if (currentArticleUri != null) {
+                        Log.v("hahah", currentArticleUri.toString());
+                        int rowsDeleted = mContext.getContentResolver().delete(currentArticleUri, null, null);
+                        if (rowsDeleted == 0) {
+                            Toast.makeText(mContext, "Error removing this article from favorites", Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                holder.favoriteButton.setChecked(false);
+                                holder.favoriteButton.setBackgroundDrawable(mContext.getDrawable(R.drawable.ic_star_border));
+                            }
+                            editor.remove(currentNewsFullUri);
+                            editor.apply();
+                        }
                     }
-
-                    editor.remove(currentNewsFullUri);
-                    editor.apply();
                 }
             }
         });
@@ -122,7 +153,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.ViewHo
 
         String thumbnailUrl = currentNews.getThumbnail();
         if (!thumbnailUrl.equals("noImage")) {
-            Picasso.get().load(thumbnailUrl).into(holder.thumbnailView);
+            Picasso.get().load(thumbnailUrl).resize(240, 135).into(holder.thumbnailView);
         }
 
         Typeface semiBoldText = Typeface.createFromAsset(mContext.getAssets(), "Montserrat-SemiBold.ttf");

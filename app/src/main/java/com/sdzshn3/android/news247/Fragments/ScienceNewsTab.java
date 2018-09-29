@@ -27,7 +27,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sdzshn3.android.news247.Activities.MainActivity;
 import com.sdzshn3.android.news247.Activities.SettingsActivity;
@@ -42,13 +41,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
-public class NewsFeedFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<News>> {
+public class ScienceNewsTab extends Fragment implements LoaderManager.LoaderCallbacks<List<News>> {
 
 
     private static final int NEWS_LOADER_ID = 1;
     private static final int WEATHER_LOADER_ID = 2;
-    private static final String NEWSAPI_REQUEST_URL = "http://content.guardianapis.com/world/india";
+    private static final String NEWSAPI_REQUEST_URL = "http://content.guardianapis.com/science";
     private static final String SEARCH_REQUEST_URL = "https://content.guardianapis.com/search?q=";
     private static final String WEATHER_REQUEST_URL = "http://api.openweathermap.org/data/2.5/weather?q=";
     private static final String apiKey = "api-key";
@@ -59,8 +57,6 @@ public class NewsFeedFragment extends Fragment implements LoaderManager.LoaderCa
     private static final String pageSize = "page-size";
     LoaderManager loaderManager;
     SwipeRefreshLayout mSwipeRefreshLayout;
-    private ArrayList<News> newsArray = new ArrayList<>();
-    private NewsFeedAdapter mAdapter;
     RecyclerView newsRecyclerView;
     LinearLayoutManager layoutManager;
     Context mContext;
@@ -69,18 +65,21 @@ public class NewsFeedFragment extends Fragment implements LoaderManager.LoaderCa
     boolean isConnected;
     TextView mEmptyStateTextView, noInternetConnectionTextView, weatherTemp;
     ImageView weatherIcon;
+    private ArrayList<News> newsArray = new ArrayList<>();
+    private NewsFeedAdapter mAdapter;
 
-    public NewsFeedFragment() {
+    public ScienceNewsTab() {
         //Required empty public constructor
+
+
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.news_feed, container, false);
+        View rootView = inflater.inflate(R.layout.list, container, false);
         mContext = getContext();
         setHasOptionsMenu(true);
-
 
 
         mAdapter = new NewsFeedAdapter(getActivity(), newsArray);
@@ -91,14 +90,14 @@ public class NewsFeedFragment extends Fragment implements LoaderManager.LoaderCa
         noInternetConnectionTextView = rootView.findViewById(R.id.no_internet_connection);
         weatherTemp = rootView.findViewById(R.id.weather_temp);
         weatherIcon = rootView.findViewById(R.id.weather_icon);
-
         mSwipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh);
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 newsArray.clear();
                 mAdapter.notifyDataSetChanged();
-                loaderManager.restartLoader(NEWS_LOADER_ID, null, NewsFeedFragment.this);
+                loaderManager.restartLoader(NEWS_LOADER_ID, null, ScienceNewsTab.this);
                 mSwipeRefreshLayout.setRefreshing(true);
             }
         });
@@ -121,8 +120,8 @@ public class NewsFeedFragment extends Fragment implements LoaderManager.LoaderCa
         });
 
         loaderManager = getLoaderManager();
-        loaderManager.initLoader(NEWS_LOADER_ID, null, NewsFeedFragment.this);
-        loaderManager.initLoader(WEATHER_LOADER_ID, null, NewsFeedFragment.this);
+        loaderManager.initLoader(NEWS_LOADER_ID, null, ScienceNewsTab.this);
+        loaderManager.initLoader(WEATHER_LOADER_ID, null, ScienceNewsTab.this);
 
         return rootView;
     }
@@ -192,7 +191,6 @@ public class NewsFeedFragment extends Fragment implements LoaderManager.LoaderCa
                 progressBar.setVisibility(View.GONE);
                 mSwipeRefreshLayout.setRefreshing(false);
 
-
                 ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetwork = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
@@ -225,69 +223,73 @@ public class NewsFeedFragment extends Fragment implements LoaderManager.LoaderCa
                 getLoaderManager().destroyLoader(NEWS_LOADER_ID);
                 return;
             case WEATHER_LOADER_ID:
-                final News news = newsList.get(0);
-                String temp = news.getTemp().split("\\.", 2)[0];
-                weatherTemp.setText(temp + " ℃");
+                if (newsList != null && !newsList.isEmpty()) {
+                    final News news = newsList.get(0);
+                    String temp = news.getTemp().split("\\.", 2)[0];
+                    weatherTemp.setText(temp + " ℃");
 
-                String iconId = news.getIconId();
-                Toast.makeText(mContext, iconId, Toast.LENGTH_SHORT).show();
-                switch (iconId){
-                    case "11d":
-                        weatherIcon.setImageResource(R.drawable.thunder_day);
-                        break;
-                    case "11n":
-                        weatherIcon.setImageResource(R.drawable.thunder_night);
-                        break;
-                    case "09d":
-                        weatherIcon.setImageResource(R.drawable.rainy_weather);
-                        break;
-                    case "09n":
-                        weatherIcon.setImageResource(R.drawable.rainy_night);
-                        break;
-                    case "10d":
-                        weatherIcon.setImageResource(R.drawable.rainy_day);
-                        break;
-                    case "10n":
-                        weatherIcon.setImageResource(R.drawable.rainy_night);
-                        break;
-                    case "13d":
-                        weatherIcon.setImageResource(R.drawable.rain_snow);
-                        break;
-                    case "13n":
-                        weatherIcon.setImageResource(R.drawable.rain_snow_night);
-                        break;
-                    case "50d":
-                        weatherIcon.setImageResource(R.drawable.haze_day);
-                        break;
-                    case "01d":
-                        weatherIcon.setImageResource(R.drawable.clear_day);
-                        break;
-                    case "01n":
-                        weatherIcon.setImageResource(R.drawable.clear_night);
-                        break;
-                    case "02d":
-                        weatherIcon.setImageResource(R.drawable.partly_cloudy);
-                        break;
-                    case "02n":
-                        weatherIcon.setImageResource(R.drawable.partly_cloudy_night);
-                        break;
-                    case "03d":
-                        weatherIcon.setImageResource(R.drawable.cloudy_weather);
-                        break;
-                    case "03n":
-                        weatherIcon.setImageResource(R.drawable.cloudy_weather);
-                        break;
-                    case "04d":
-                        weatherIcon.setImageResource(R.drawable.mostly_cloudy);
-                        break;
-                    case "04n":
-                        weatherIcon.setImageResource(R.drawable.mostly_cloudy_night);
-                        break;
-                    default:
-                        weatherIcon.setImageResource(R.drawable.unknown);
+                    String iconId = news.getIconId();
+                    switch (iconId) {
+                        case "11d":
+                            weatherIcon.setImageResource(R.drawable.thunder_day);
+                            break;
+                        case "11n":
+                            weatherIcon.setImageResource(R.drawable.thunder_night);
+                            break;
+                        case "09d":
+                            weatherIcon.setImageResource(R.drawable.rainy_weather);
+                            break;
+                        case "09n":
+                            weatherIcon.setImageResource(R.drawable.rainy_night);
+                            break;
+                        case "10d":
+                            weatherIcon.setImageResource(R.drawable.rainy_day);
+                            break;
+                        case "10n":
+                            weatherIcon.setImageResource(R.drawable.rainy_night);
+                            break;
+                        case "13d":
+                            weatherIcon.setImageResource(R.drawable.rain_snow);
+                            break;
+                        case "13n":
+                            weatherIcon.setImageResource(R.drawable.rain_snow_night);
+                            break;
+                        case "50d":
+                            weatherIcon.setImageResource(R.drawable.haze_day);
+                            break;
+                        case "50n":
+                            weatherIcon.setImageResource(R.drawable.haze_night);
+                            break;
+                        case "01d":
+                            weatherIcon.setImageResource(R.drawable.clear_day);
+                            break;
+                        case "01n":
+                            weatherIcon.setImageResource(R.drawable.clear_night);
+                            break;
+                        case "02d":
+                            weatherIcon.setImageResource(R.drawable.partly_cloudy);
+                            break;
+                        case "02n":
+                            weatherIcon.setImageResource(R.drawable.partly_cloudy_night);
+                            break;
+                        case "03d":
+                            weatherIcon.setImageResource(R.drawable.cloudy_weather);
+                            break;
+                        case "03n":
+                            weatherIcon.setImageResource(R.drawable.cloudy_weather);
+                            break;
+                        case "04d":
+                            weatherIcon.setImageResource(R.drawable.mostly_cloudy);
+                            break;
+                        case "04n":
+                            weatherIcon.setImageResource(R.drawable.mostly_cloudy_night);
+                            break;
+                        default:
+                            weatherIcon.setImageResource(R.drawable.unknown);
 
+                    }
+                    getLoaderManager().destroyLoader(WEATHER_LOADER_ID);
                 }
-                getLoaderManager().destroyLoader(WEATHER_LOADER_ID);
         }
     }
 
@@ -296,7 +298,6 @@ public class NewsFeedFragment extends Fragment implements LoaderManager.LoaderCa
         newsArray.clear();
         mAdapter.notifyDataSetChanged();
     }
-
 
 
     @Override
@@ -317,7 +318,7 @@ public class NewsFeedFragment extends Fragment implements LoaderManager.LoaderCa
                     mSearchQuery = query;
                     newsArray.clear();
                     mAdapter.notifyDataSetChanged();
-                    loaderManager.restartLoader(NEWS_LOADER_ID, null, NewsFeedFragment.this);
+                    loaderManager.restartLoader(NEWS_LOADER_ID, null, ScienceNewsTab.this);
                     return true;
                 }
 
@@ -337,7 +338,7 @@ public class NewsFeedFragment extends Fragment implements LoaderManager.LoaderCa
                     mSearchQuery = null;
                     newsArray.clear();
                     mAdapter.notifyDataSetChanged();
-                    loaderManager.restartLoader(NEWS_LOADER_ID, null, NewsFeedFragment.this);
+                    loaderManager.restartLoader(NEWS_LOADER_ID, null, ScienceNewsTab.this);
                     return true;
                 }
             });
@@ -355,4 +356,6 @@ public class NewsFeedFragment extends Fragment implements LoaderManager.LoaderCa
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }

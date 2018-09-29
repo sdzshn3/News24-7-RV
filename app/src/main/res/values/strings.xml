@@ -54,7 +54,8 @@
     <string name="weather_city_key">weather_city</string>
     <string name="weather_city_default">delhi</string>
     <string name="tab_1_title">News feed</string>
-    <string name="tab_2_title">Favorites</string>
+    <string name="tab_2_title">Science</string>
+    <string name="tab_3_title">Technology</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

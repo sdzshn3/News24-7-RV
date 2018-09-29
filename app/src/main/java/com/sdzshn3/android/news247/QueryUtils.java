@@ -72,6 +72,8 @@ public final class QueryUtils {
                 return extractFavoritesFromJson(jsonResponse);
             case 4:
                 return extractWeatherFromJson(jsonResponse);
+            case 5:
+                return extractFavoritesFromJson(jsonResponse);
         }
 
         return extractFeatureFromJson(jsonResponse);

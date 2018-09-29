@@ -69,6 +69,9 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
         setHasOptionsMenu(true);
         mContext = getContext();
 
+        FavoritesFragment favoritesFragment = new FavoritesFragment();
+        favoritesFragment.setRetainInstance(true);
+
         mAdapter = new FavoritesAdapter(getActivity(), newsArray);
 
         newsRecyclerView = rootView.findViewById(R.id.recycler_view_list);
@@ -113,19 +116,18 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
             if (initializeOrRestart) {
                 loaderManager.restartLoader(FAVORITES_LOADER_ID, null, FavoritesFragment.this);
             } else {
-                newsArray.clear();
                 mAdapter.notifyDataSetChanged();
                 loaderManager.restartLoader(FAVORITES_LOADER_ID, null, FavoritesFragment.this);
             }
         }
 
-        if(initializeOrRestart) {
+        if (initializeOrRestart) {
             loaderManager.restartLoader(WEATHER_LOADER_ID, null, FavoritesFragment.this);
         } else {
             newsArray.clear();
             loaderManager.restartLoader(WEATHER_LOADER_ID, null, FavoritesFragment.this);
         }
-        if(articleUrl == null) {
+        if (articleUrl == null) {
             progressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setRefreshing(false);
             if (isConnected()) {
@@ -198,9 +200,7 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
                 mSwipeRefreshLayout.setRefreshing(false);
 
                 if (newsList != null && !newsList.isEmpty()) {
-                    newsArray.addAll(newsList);
-                    newsRecyclerView.setAdapter(mAdapter);
-                    mAdapter.notifyDataSetChanged();
+                    notifyDataChanged(newsList);
                     newsRecyclerView.setVisibility(View.VISIBLE);
                     mEmptyStateTextView.setVisibility(View.GONE);
                     noInternetConnectionTextView.setVisibility(View.GONE);
@@ -289,9 +289,15 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
 
     }
 
+    private void notifyDataChanged(List<News> newsList) {
+        newsArray.addAll(newsList);
+        newsRecyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
+
+    }
+
     @Override
     public void onLoaderReset(@NonNull Loader<List<News>> loader) {
-        newsArray.clear();
         mAdapter.notifyDataSetChanged();
     }
 }

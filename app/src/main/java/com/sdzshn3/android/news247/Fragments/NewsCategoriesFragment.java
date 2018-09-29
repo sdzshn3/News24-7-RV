@@ -37,6 +37,7 @@ public class NewsCategoriesFragment extends Fragment {
          }
      });
 
+
      return rootView;
     }
 
@@ -48,23 +49,37 @@ public class NewsCategoriesFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
+
             switch (position){
-                default:
+                case 0:
                     return new NewsFeedTab();
+                case 1:
+                    return new ScienceNewsTab();
+                case 2:
+                    return new TechnologyNewsTab();
+                default:
+                    return null;
+
             }
         }
 
         @Override
         public int getCount() {
-            return 1;
+            return 3;
         }
 
         @Nullable
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position){
-                default:
+                case 0:
                     return mContext.getString(R.string.tab_1_title);
+                case 1:
+                    return mContext.getString(R.string.tab_2_title);
+                case 2:
+                    return mContext.getString(R.string.tab_3_title);
+                default:
+                    return "Tab";
             }
         }
     }

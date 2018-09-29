@@ -18,7 +18,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,13 +27,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sdzshn3.android.news247.Activities.MainActivity;
 import com.sdzshn3.android.news247.Activities.SettingsActivity;
 import com.sdzshn3.android.news247.Adapters.NewsFeedAdapter;
 import com.sdzshn3.android.news247.BuildConfig;
-import com.sdzshn3.android.news247.EndLessRecyclerViewScrollListener;
 import com.sdzshn3.android.news247.ItemClickSupport;
 import com.sdzshn3.android.news247.News;
 import com.sdzshn3.android.news247.NewsLoader;
@@ -44,13 +41,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
-public class NewsFeedTab extends Fragment implements LoaderManager.LoaderCallbacks<List<News>> {
-
+public class TechnologyNewsTab extends Fragment implements LoaderManager.LoaderCallbacks<List<News>> {
 
     private static final int NEWS_LOADER_ID = 1;
     private static final int WEATHER_LOADER_ID = 2;
-    private static final String NEWSAPI_REQUEST_URL = "http://content.guardianapis.com/world/india";
+    private static final String NEWSAPI_REQUEST_URL = "http://content.guardianapis.com/uk/technology";
     private static final String SEARCH_REQUEST_URL = "https://content.guardianapis.com/search?q=";
     private static final String WEATHER_REQUEST_URL = "http://api.openweathermap.org/data/2.5/weather?q=";
     private static final String apiKey = "api-key";
@@ -61,8 +56,6 @@ public class NewsFeedTab extends Fragment implements LoaderManager.LoaderCallbac
     private static final String pageSize = "page-size";
     LoaderManager loaderManager;
     SwipeRefreshLayout mSwipeRefreshLayout;
-    private ArrayList<News> newsArray = new ArrayList<>();
-    private NewsFeedAdapter mAdapter;
     RecyclerView newsRecyclerView;
     LinearLayoutManager layoutManager;
     Context mContext;
@@ -71,9 +64,10 @@ public class NewsFeedTab extends Fragment implements LoaderManager.LoaderCallbac
     boolean isConnected;
     TextView mEmptyStateTextView, noInternetConnectionTextView, weatherTemp;
     ImageView weatherIcon;
-    private EndLessRecyclerViewScrollListener scrollListener;
+    private ArrayList<News> newsArray = new ArrayList<>();
+    private NewsFeedAdapter mAdapter;
 
-    public NewsFeedTab() {
+    public TechnologyNewsTab() {
         //Required empty public constructor
 
 
@@ -85,8 +79,6 @@ public class NewsFeedTab extends Fragment implements LoaderManager.LoaderCallbac
         View rootView = inflater.inflate(R.layout.list, container, false);
         mContext = getContext();
         setHasOptionsMenu(true);
-
-
 
 
         mAdapter = new NewsFeedAdapter(getActivity(), newsArray);
@@ -104,7 +96,7 @@ public class NewsFeedTab extends Fragment implements LoaderManager.LoaderCallbac
             public void onRefresh() {
                 newsArray.clear();
                 mAdapter.notifyDataSetChanged();
-                loaderManager.restartLoader(NEWS_LOADER_ID, null, NewsFeedTab.this);
+                loaderManager.restartLoader(NEWS_LOADER_ID, null, TechnologyNewsTab.this);
                 mSwipeRefreshLayout.setRefreshing(true);
             }
         });
@@ -113,13 +105,6 @@ public class NewsFeedTab extends Fragment implements LoaderManager.LoaderCallbac
         newsRecyclerView.setLayoutManager(layoutManager);
         newsRecyclerView.setHasFixedSize(true);
         newsRecyclerView.setAdapter(mAdapter);
-
-        scrollListener = new EndLessRecyclerViewScrollListener(layoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                loadNextDataFromApi(page);
-            }
-        };
 
         ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
@@ -134,18 +119,10 @@ public class NewsFeedTab extends Fragment implements LoaderManager.LoaderCallbac
         });
 
         loaderManager = getLoaderManager();
-        loaderManager.initLoader(NEWS_LOADER_ID, null, NewsFeedTab.this);
-        loaderManager.initLoader(WEATHER_LOADER_ID, null, NewsFeedTab.this);
+        loaderManager.initLoader(NEWS_LOADER_ID, null, TechnologyNewsTab.this);
+        loaderManager.initLoader(WEATHER_LOADER_ID, null, TechnologyNewsTab.this);
 
         return rootView;
-    }
-
-    public void loadNextDataFromApi(int offset) {
-        // Send an API request to retrieve appropriate paginated data
-        //  --> Send the request including an offset value (i.e `page`) as a query parameter.
-        //  --> Deserialize and construct new model objects from the API response
-        //  --> Append the new data objects to the existing set of items inside the array of items
-        //  --> Notify the adapter of the new items made with `notifyItemRangeInserted()`
     }
 
     @NonNull
@@ -322,7 +299,6 @@ public class NewsFeedTab extends Fragment implements LoaderManager.LoaderCallbac
     }
 
 
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
@@ -341,7 +317,7 @@ public class NewsFeedTab extends Fragment implements LoaderManager.LoaderCallbac
                     mSearchQuery = query;
                     newsArray.clear();
                     mAdapter.notifyDataSetChanged();
-                    loaderManager.restartLoader(NEWS_LOADER_ID, null, NewsFeedTab.this);
+                    loaderManager.restartLoader(NEWS_LOADER_ID, null, TechnologyNewsTab.this);
                     return true;
                 }
 
@@ -361,7 +337,7 @@ public class NewsFeedTab extends Fragment implements LoaderManager.LoaderCallbac
                     mSearchQuery = null;
                     newsArray.clear();
                     mAdapter.notifyDataSetChanged();
-                    loaderManager.restartLoader(NEWS_LOADER_ID, null, NewsFeedTab.this);
+                    loaderManager.restartLoader(NEWS_LOADER_ID, null, TechnologyNewsTab.this);
                     return true;
                 }
             });
@@ -379,4 +355,5 @@ public class NewsFeedTab extends Fragment implements LoaderManager.LoaderCallbac
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

@@ -83,6 +83,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
                 if(!isChecked) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         Toast.makeText(mContext, "else", Toast.LENGTH_SHORT).show();
+                        holder.favoriteButton.setChecked(false);
                         holder.favoriteButton.setBackgroundDrawable(mContext.getDrawable(R.drawable.ic_star_border));
                     }
                     editor.remove(currentNewsFullUri);
