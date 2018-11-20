@@ -30,48 +30,35 @@
                     style="@style/articleAttributes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="90dp"
-                    android:layout_marginRight="90dp"
-                    tools:text="@string/section_example"
-                    android:textColor="@android:color/black" />
-
-                <ToggleButton
-                    android:id="@+id/favorite_button"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="50dp"
-                    android:layout_marginRight="50dp"
-                    android:textOff=""
-                    android:textOn="" />
+                    android:layout_marginEnd="@dimen/section_name_margin_right"
+                    android:layout_marginRight="@dimen/section_name_margin_right"
+                    android:textColor="@android:color/black"
+                    tools:text="@string/section_example" />
 
                 <Button
                     android:id="@+id/share_button"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="@dimen/article_share_button_width_and_height"
+                    android:layout_height="@dimen/article_share_button_width_and_height"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/ic_share" />
+                    android:layout_marginTop="@dimen/article_share_button_mar_top"
+                    android:layout_marginEnd="@dimen/article_share_button_mar_right"
+                    android:layout_marginRight="@dimen/article_share_button_mar_right" />
 
             </RelativeLayout>
 
             <android.support.v7.widget.CardView
+                android:id="@+id/image_card_view"
                 style="@style/articleAttributes"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 app:cardCornerRadius="@dimen/card_corner_radius_for_all"
                 app:cardElevation="@dimen/article_image_card_elevation">
 
                 <ImageView
                     android:id="@+id/thumbnailImageView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/article_thumbnail" />
 
@@ -82,51 +69,80 @@
                 style="@style/articleAttributes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="@string/title_example"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/article_title_text_size"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="@string/title_example" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/contributor_layout_height"
+                android:layout_marginTop="@dimen/contributor_layout_mar_top_bottom"
+                android:layout_marginBottom="@dimen/contributor_layout_mar_top_bottom"
                 android:orientation="horizontal">
 
                 <View
                     android:layout_width="@dimen/article_marginStart"
                     android:layout_height="@dimen/article_marginStart" />
 
-                <TextView
-                    android:id="@+id/firstNameTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="@string/first_name_example"
-                    android:textSize="@dimen/article_publishedTime_text_size" />
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/contributor_image"
+                    android:layout_width="@dimen/contributor_image_width_height"
+                    android:layout_height="@dimen/contributor_image_width_height"
+                    android:scaleType="fitCenter"
+                    app:riv_border_color="@color/colorAccent"
+                    app:riv_border_width="2dp"
+                    app:riv_corner_radius="5dp"
+                    app:riv_mutate_background="true"
+                    app:riv_oval="true" />
 
-                <TextView
-                    android:id="@+id/lastNameTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/last_name_text_view_margin_start"
-                    android:layout_marginLeft="@dimen/last_name_text_view_margin_start"
-                    android:textSize="@dimen/article_publishedTime_text_size" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/contributor_name_section_mar_left"
+                    android:layout_marginLeft="@dimen/contributor_name_section_mar_left">
 
-                <TextView
-                    android:id="@+id/separator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/separator_gap_both_sides"
-                    android:layout_marginEnd="@dimen/separator_gap_both_sides"
-                    android:textColor="@android:color/black"
-                    tools:text="@string/separator" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        tools:ignore="UselessParent">
 
-                <TextView
-                    android:id="@+id/publishedAtTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/article_marginBottom"
-                    android:textSize="@dimen/article_publishedTime_text_size"
-                    tools:text="@string/published_at_example" />
+                        <TextView
+                            android:id="@+id/firstNameTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/article_publishedTime_text_size"
+                            tools:text="@string/first_name_example" />
+
+                        <TextView
+                            android:id="@+id/lastNameTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/last_name_text_view_margin_start"
+                            android:layout_marginLeft="@dimen/last_name_text_view_margin_start"
+                            android:textSize="@dimen/article_publishedTime_text_size" />
+
+                        <TextView
+                            android:id="@+id/separator"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/separator_gap_both_sides"
+                            android:layout_marginEnd="@dimen/separator_gap_both_sides"
+                            android:textColor="@android:color/black"
+                            tools:text="@string/separator" />
+
+                        <TextView
+                            android:id="@+id/publishedAtTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/article_marginBottom"
+                            android:textSize="@dimen/article_publishedTime_text_size"
+                            tools:text="@string/published_at_example" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
 
             </LinearLayout>
 

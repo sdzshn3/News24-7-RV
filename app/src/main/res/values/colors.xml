@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#2B3D4D</color>
-    <color name="colorPrimaryDark">#23303D</color>
-    <color name="colorAccent">#0D47A1</color>
-
-    <color name="navigationBarColor">#E0E0E0</color>
+    <color name="colorPrimary">#039BE5</color>
+    <color name="colorPrimaryDark">#0385C4</color>
+    <color name="colorAccent">#FB8C00</color>
 
     <!-- Screens background color-->
     <color name="bg_screen1">#f64c73</color>

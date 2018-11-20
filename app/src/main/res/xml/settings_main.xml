@@ -20,6 +20,7 @@
         android:inputType="number"
         android:key="@string/number_of_articles_key"
         android:selectAllOnFocus="true"
+        android:maxLength="3"
         android:title="@string/number_of_articles_label"/>
 
     <SwitchPreference
@@ -27,6 +28,11 @@
         android:key="@string/author_name_key"
         android:defaultValue="@string/default_show_author_name"
         android:summary="@string/show_author_name_summary"/>
+
+    <Preference
+        android:title="@string/show_article_in_label"
+        android:key="@string/show_article_in_key"
+        android:defaultValue="@string/default_show_as_plain"/>
 
     <SwitchPreference
         android:title="@string/show_article_images_label"

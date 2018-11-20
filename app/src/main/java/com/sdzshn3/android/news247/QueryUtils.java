@@ -6,6 +6,9 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,42 +20,48 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-public final class QueryUtils {
+import com.sdzshn3.android.news247.SupportClasses.DataHolder.holder;
 
-    public static final int readTimeout = 10000;
-    public static final int connectTimeout = 15000;
+final class QueryUtils {
 
-    private static final String LOG_TAG = QueryUtils.class.getSimpleName();
+    private static final int readTimeout = 10000;
+    private static final int connectTimeout = 15000;
+    private String mTitle;
+    private String mPubDate;
+    private String mLink;
+    private String mImageLink;
 
-    private QueryUtils() {
+    private final String LOG_TAG = QueryUtils.class.getSimpleName();
+
+    QueryUtils() {
     }
 
-    private static ArrayList<News> extractWeatherFromJson(String weatherJson) {
-        if(TextUtils.isEmpty(weatherJson)) {
+    private ArrayList<News> extractWeatherFromJson(String weatherJson) {
+        if (TextUtils.isEmpty(weatherJson)) {
             return null;
         }
         ArrayList<News> weathers = new ArrayList<>();
 
         try {
             JSONObject object = new JSONObject(weatherJson);
-            JSONArray weather = object.getJSONArray("weather");
-            JSONObject currentWeather = weather.getJSONObject(0);
-            String weatherId = currentWeather.optString("id");
-            String weatherDesc = currentWeather.optString("description");
-            String iconId = currentWeather.optString("icon");
-            JSONObject main = object.getJSONObject("main");
-            String temp = main.optString("temp");
+            int code = object.optInt("cod");
+            if (code != 404) {
+                JSONArray weather = object.getJSONArray("weather");
+                JSONObject currentWeather = weather.getJSONObject(0);
+                String iconId = currentWeather.optString("icon");
+                JSONObject main = object.getJSONObject("main");
+                String temp = main.optString("temp");
 
-            News weatherResult = new News(weatherId, weatherDesc, iconId, temp);
-            weathers.add(weatherResult);
-
-        } catch (JSONException e){
+                News weatherResult = new News(iconId, temp);
+                weathers.add(weatherResult);
+            }
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return weathers;
     }
 
-    public static ArrayList<News> fetchNewsData(int id, String requestUrl) {
+    ArrayList<News> fetchNewsData(int id, String requestUrl, int noOfArticles) {
 
         URL url = createUrl(requestUrl);
 
@@ -63,68 +72,137 @@ public final class QueryUtils {
             Log.e(LOG_TAG, "Problem making the HTTP request.", e);
         }
 
-        switch (id){
-            case 1:
+        switch (id) {
+            case holder.NEWS_LOADER_ID:
                 return extractFeatureFromJson(jsonResponse);
-            case 2:
+            case holder.WEATHER_LOADER_ID:
                 return extractWeatherFromJson(jsonResponse);
-            case 3:
-                return extractFavoritesFromJson(jsonResponse);
-            case 4:
-                return extractWeatherFromJson(jsonResponse);
-            case 5:
-                return extractFavoritesFromJson(jsonResponse);
+            case holder.TELUGU_NEWS_LOADER_ID:
+                return extractTeluguNewsFromRss(requestUrl, noOfArticles);
         }
 
         return extractFeatureFromJson(jsonResponse);
     }
 
-    private static ArrayList<News> extractFavoritesFromJson(String newsJson) {
-        if (TextUtils.isEmpty(newsJson)) {
-            return null;
-        }
+    private ArrayList<News> extractTeluguNewsFromRss(String requestUrl, int noOfArticles) {
 
-        ArrayList<News> news = new ArrayList<>();
+
+        String title;
+        String link;
+        String publishedDate;
+        String imageUrl;
+
+        ArrayList<News> allNews = new ArrayList<>();
         try {
-            JSONObject base = new JSONObject(newsJson);
-            JSONObject response = base.getJSONObject("response");
-            String status = response.getString("status");
-            if (status.equals("ok")){
-                JSONObject content = response.getJSONObject("content");
-                String sectionName = content.optString("sectionName");
-                String title = content.optString("webTitle");
-                String articleUrl = content.optString("webUrl");
-                String apiUrl = content.optString("apiUrl");
-                String publishedAt = content.optString("webPublicationDate");
-                String thumbnail;
-                try {
-                    JSONObject fields = content.optJSONObject("fields");
-                    thumbnail = fields.optString("thumbnail");
-                } catch (NullPointerException e) {
-                    Log.e(LOG_TAG, "Images not found from JSON or field not requested in website");
-                    thumbnail = "moImage";
+            URL url = new URL(requestUrl);
+
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(false);
+
+            XmlPullParser xpp = factory.newPullParser();
+
+            try {
+                xpp.setInput(getInputStream(url), "UTF_8");
+            }
+            catch (IllegalArgumentException e) {
+                Log.e(LOG_TAG, "No internet connection");
+                return null;
+            }
+
+            boolean insideItem = false;
+            int eventType = xpp.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                if (eventType == XmlPullParser.START_TAG) {
+                    if (xpp.getName().equalsIgnoreCase("item")) {
+                        insideItem = true;
+                    } else if (xpp.getName().equalsIgnoreCase("title")) {
+                        if (insideItem) {
+                            title = xpp.nextText();
+                            if(title != null) {
+                                mTitle = title;
+                            }
+                        }
+                    } else if (xpp.getName().equalsIgnoreCase("link")) {
+                        if (insideItem) {
+                            link = xpp.nextText();
+                            if(link != null) {
+                                mLink = link;
+                            }
+                        }
+                    } else if (xpp.getName().equalsIgnoreCase("enclosure")) {
+                        if (insideItem) {
+                            imageUrl = xpp.getAttributeValue(null, "url");
+                            if(imageUrl != null) {
+                                mImageLink = imageUrl;
+                            }
+                        }
+                    } else if (xpp.getName().equalsIgnoreCase("pubDate")) {
+                        if (insideItem) {
+                            publishedDate = xpp.nextText();
+                            if(publishedDate != null) {
+                                mPubDate = publishedDate;
+                            }
+                        }
+                    }
+                } else if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")) {
+                    insideItem = false;
                 }
-                String firstName = "";
-                String lastName = "";
                 try {
-                    JSONArray tags = content.getJSONArray("tags");
-                    JSONObject currentTags = tags.getJSONObject(0);
-                    firstName = currentTags.optString("firstName");
-                    lastName = currentTags.optString("lastName");
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, "No info found about author");
+                    eventType = xpp.next();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e("HERE", "Here");
                 }
 
-                News newsResult = new News(sectionName, title, articleUrl, apiUrl, publishedAt, firstName, lastName, thumbnail);
-                news.add(newsResult);
+
+                if(mTitle != null && mLink !=null && mImageLink != null && mPubDate != null){
+                    News newsResult = new News(null, mTitle, mLink, null, mPubDate, null, null, mImageLink, null, null);
+                    mTitle = null;
+                    mLink = null;
+                    mImageLink = null;
+                    mPubDate= null;
+                    allNews.add(newsResult);
+                    if(allNews.size() == noOfArticles){
+                        return allNews;
+                    }
+                }
             }
-        } catch (JSONException e){
+
+        } catch (MalformedURLException e) {
+            Log.e(LOG_TAG, "Couldn't load new URL(request);");
+            e.printStackTrace();
+        } catch (XmlPullParserException e) {
+            Log.e(LOG_TAG, "Error in Pull parser");
+            e.printStackTrace();
+        } catch (IOException e){
+            Log.e(LOG_TAG, "Error with .next or .nextText");
             e.printStackTrace();
         }
-        return news;
+
+        return allNews;
     }
 
-    private static ArrayList<News> extractFeatureFromJson(String newsJSON) {
+    private static InputStream getInputStream(URL url) {
+        HttpURLConnection urlConnection;
+        InputStream inputStream = null;
+        try {
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setReadTimeout(20000/*Milliseconds*/);
+            urlConnection.setConnectTimeout(30000/*Milliseconds*/);
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+            if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                inputStream = urlConnection.getInputStream();
+            }
+            ////return url.openConnection().getInputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return inputStream;
+    }
+
+    private ArrayList<News> extractFeatureFromJson(String newsJSON) {
         if (TextUtils.isEmpty(newsJSON)) {
             return null;
         }
@@ -147,27 +225,30 @@ public final class QueryUtils {
                     String apiUrl = currentNewsArticle.optString("apiUrl");
                     apiUrl = apiUrl + "?api-key=" + BuildConfig.GUARDIAN_API_KEY;
                     String publishedAt = currentNewsArticle.optString("webPublicationDate");
-                    String thumbnail;
+                    String thumbnail = null;
+                    String bodyHtml = null;
                     try {
                         JSONObject fields = currentNewsArticle.optJSONObject("fields");
                         thumbnail = fields.optString("thumbnail");
+                        bodyHtml = fields.optString("body");
                     } catch (NullPointerException e) {
                         Log.e(LOG_TAG, "Images not found from JSON or field not requested in website");
-                        thumbnail = "moImage";
                     }
 
                     String firstName = "";
                     String lastName = "";
+                    String contributorImage = "";
                     try {
                         JSONArray tags = currentNewsArticle.getJSONArray("tags");
                         JSONObject currentTags = tags.getJSONObject(0);
                         firstName = currentTags.optString("firstName");
                         lastName = currentTags.optString("lastName");
+                        contributorImage = currentTags.optString("bylineImageUrl");
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, "No info found about author");
                     }
 
-                    News newsResult = new News(sectionName, title, articleUrl, apiUrl, publishedAt, firstName, lastName, thumbnail);
+                    News newsResult = new News(sectionName, title, articleUrl, apiUrl, publishedAt, firstName, lastName, thumbnail, contributorImage, bodyHtml);
                     news.add(newsResult);
                 }
             }
@@ -177,7 +258,7 @@ public final class QueryUtils {
         return news;
     }
 
-    private static URL createUrl(String stringUrl) {
+    private URL createUrl(String stringUrl) {
         URL url = null;
         try {
             url = new URL(stringUrl);
@@ -187,7 +268,7 @@ public final class QueryUtils {
         return url;
     }
 
-    private static String makeHttpRequest(URL url) throws IOException {
+    private String makeHttpRequest(URL url) throws IOException {
         String jsonResponse = "";
 
         if (url == null) {
@@ -210,7 +291,7 @@ public final class QueryUtils {
                 Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
+            Log.e(LOG_TAG, "Problem retrieving the JSON or RSS results.", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -222,7 +303,7 @@ public final class QueryUtils {
         return jsonResponse;
     }
 
-    private static String readFromStream(InputStream inputStream) throws IOException {
+    private String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
         if (inputStream != null) {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));

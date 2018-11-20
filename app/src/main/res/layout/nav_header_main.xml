@@ -14,22 +14,20 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:contentDescription="Navigation header"
-        android:paddingTop="8dp"
+        android:layout_width="@dimen/navigation_header_image_width_height"
+        android:layout_height="@dimen/navigation_header_image_width_height"
+        android:contentDescription="@string/navigation_header_image_description"
         app:srcCompat="@drawable/app_icon" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="7dp"
-        android:textColor="@android:color/white"
-        android:paddingStart="8dp"
+        android:layout_marginTop="@dimen/navigation_header_title_mar_top"
+        android:paddingStart="@dimen/navigation_header_title_padding_start"
+        android:paddingLeft="@dimen/navigation_header_title_padding_start"
         android:text="@string/app_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:paddingLeft="7dp"
+        android:textColor="@android:color/white"
         tools:ignore="RtlSymmetry" />
 
 

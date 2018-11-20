@@ -9,9 +9,12 @@ public class News {
     private String mFirstName;
     private String mLastName;
     private String mThumbnail;
-    private String mWeatherId, mWeatherDesc, mIconId, mTemp;
+    private String mIconId;
+    private static String mTemp;
+    private String mContributorImage;
+    private String mBodyHtml;
 
-    public News(String sectionName, String title, String articleUrl, String apiUrl, String publishedAt, String firstName, String lastName, String thumbnail) {
+    public News(String sectionName, String title, String articleUrl, String apiUrl, String publishedAt, String firstName, String lastName, String thumbnail, String contributorImage, String bodyHtml) {
         mSectionName = sectionName;
         mTitle = title;
         mUrl = articleUrl;
@@ -20,14 +23,15 @@ public class News {
         mFirstName = firstName;
         mLastName = lastName;
         mThumbnail = thumbnail;
+        mContributorImage = contributorImage;
+        mBodyHtml = bodyHtml;
     }
 
-    public News(String weatherId, String weatherDesc, String iconId, String temp){
-        mWeatherId = weatherId;
-        mWeatherDesc = weatherDesc;
+    public News(String iconId, String temp) {
         mIconId = iconId;
         mTemp = temp;
     }
+
 
     public String getSectionName() {
         return mSectionName;
@@ -39,10 +43,6 @@ public class News {
 
     public String getArticleUrl() {
         return mUrl;
-    }
-
-    public String getApiUrl(){
-        return mApiUrl;
     }
 
     public String getPublishedAt() {
@@ -61,19 +61,19 @@ public class News {
         return mThumbnail;
     }
 
-    public String getWeatherId(){
-        return mWeatherId;
-    }
-
-    public String getWeatherDesc(){
-        return mWeatherDesc;
-    }
-
-    public String getIconId(){
+    public String getIconId() {
         return mIconId;
     }
 
-    public String getTemp(){
+    public static String getTemp() {
         return mTemp;
+    }
+
+    public String getContributorImage() {
+        return mContributorImage;
+    }
+
+    public String getBodyHtml() {
+        return mBodyHtml;
     }
 }

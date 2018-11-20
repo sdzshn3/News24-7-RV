@@ -17,14 +17,4 @@
         style="@style/slideDescAttributes"
         android:text="@string/slide_4_desc" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="60dp"
-        android:text="@string/made_with_love_for_udacity"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/slide_desc_textSize" />
-
 </RelativeLayout>

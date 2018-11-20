@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:ads="http://schemas.android.com/apk/res-auto">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
@@ -19,26 +20,27 @@
 
                 <ImageView
                     android:id="@+id/weather_icon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_width="@dimen/weather_icon_width_and_height"
+                    android:layout_height="@dimen/weather_icon_width_and_height"
+                    android:layout_marginTop="@dimen/weather_icon_margin_top"
+                    android:layout_marginEnd="@dimen/weather_icon_right_margin"
+                    android:layout_marginRight="@dimen/weather_icon_right_margin"
                     android:layout_toStartOf="@id/weather_temp"
                     android:layout_toLeftOf="@id/weather_temp"
+                    android:contentDescription="@string/weather_icon_description"
                     android:src="@drawable/unknown" />
 
                 <TextView
                     android:id="@+id/weather_temp"
                     android:layout_width="wrap_content"
-                    android:layout_height="30dp"
+                    android:layout_height="@dimen/weather_temp_height"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:paddingTop="5dp"
-                    android:text="30"
+                    android:layout_marginTop="@dimen/weather_temp_margin_top"
+                    android:layout_marginEnd="@dimen/weather_temp_right_margin"
+                    android:layout_marginRight="@dimen/weather_temp_right_margin"
+                    android:paddingTop="@dimen/weather_temp_padding_top"
+                    android:text="@string/temperature_value_default"
                     android:textAlignment="center"
                     android:textColor="@android:color/black" />
 
@@ -79,4 +81,19 @@
         android:textColor="@android:color/black"
         android:visibility="gone" />
 
+    <ProgressBar
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/banner_ad_news_feed"/>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/banner_ad_news_feed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-4795017891549742/4347560199"
+        android:layout_marginBottom="11dp"/>
+        <!--ads:adUnitId="ca-app-pub-3940256099942544/6300978111"-->
 </RelativeLayout>

@@ -16,23 +16,17 @@
     <string name="slide_3_title">New articles in real time</string>
     <string name="slide_3_desc">New articles available almost instantly!</string>
 
-    <string name="slide_4_title">News articles from The Guardian</string>
-    <string name="slide_4_desc">Get news articles from The Guardian website!</string>
+    <string name="slide_4_title">News articles from different news websites</string>
+    <string name="slide_4_desc">Get news articles from websites like Guardian, oneIndia, etc</string>
 
-    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
-    <string name="play_again">Play Again</string>
-
-    <string name="title_activity_welcome">Home Screen</string>
     <string name="next">NEXT</string>
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
-    <string name="made_with_love_for_udacity">Made with love for Udacity</string>
     <string name="it_has_news_paper_icon_init">It has news paper icon init</string>
     <string name="it_has_new_icon">It has \'New\' icon</string>
     <string name="it_has_filter_icon">It has filter icon</string>
     <string name="it_has_news_icon">It has news icon</string>
     <string name="first_name_example">Syed</string>
-    <string name="last_name_example">Zeeshan</string>
     <string name="article_thumbnail">article thumbnail</string>
 
     <string name="default_no_of_news_articles">10</string>
@@ -45,7 +39,6 @@
     <string name="default_show_author_name">true</string>
     <string name="show_author_name_label">Show author name</string>
     <string name="show_author_name_summary">Shows author name or contributor name of news article</string>
-    <string name="about_app_label">About app</string>
     <string name="show_article_images_label">Show article images</string>
     <string name="show_article_images_key">show_article_images</string>
     <string name="default_show_article_images">true</string>
@@ -53,11 +46,34 @@
     <string name="weather_city_title">City</string>
     <string name="weather_city_key">weather_city</string>
     <string name="weather_city_default">delhi</string>
-    <string name="tab_1_title">News feed</string>
-    <string name="tab_2_title">Science</string>
-    <string name="tab_3_title">Technology</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
+    <string name="temperature_value_default">\?</string>
+    <string name="weather_icon_description">Shows weather icon</string>
+    <string name="weather_city_not_supported_text">City not found</string>
+    <string name="navigation_header_image_description">Navigation header</string>
+    <string name="fragment_1_title">News feed</string>
+    <string name="fragment_2_title">Science</string>
+    <string name="fragment_3_title">Technology</string>
+    <string name="fragment_4_title">Business</string>
+    <string name="navigation_section_tools_title">Tools</string>
+    <string name="navigation_settings_title">Settings</string>
+    <string name="menu_search_item_title">Search</string>
+    <string name="share_article_link_hint">Share link</string>
+    <string name="weather_temperature_concatenate">%1$s ℃</string>
+    <string name="language_menu_label">Change language</string>
+    <string name="navigation_change_language_title">Change Language</string>
+    <string name="activity_language_selection_title">Choose language</string>
+    <string name="english_button_text">English</string>
+    <string name="telugu_button_text">TELUGU</string>
+    <string name="change_language_hint_text">You can also change language later in Navigation drawer or in menu item.</string>
+    <string name="menu_share_app_item_title">Share app</string>
+    <string name="show_article_in_key">show_article_in</string>
+    <string name="show_article_in_label">Show detailed article in</string>
+    <string name="default_show_as_plain">plain</string>
+    <string name="show_in_browser">browser</string>
+    <string name="show_as_plain_text_label">Show as plain text</string>
+    <string name="show_in_browser_label">Show in browser</string>
+    <string name="done_text">done</string>
 </resources>

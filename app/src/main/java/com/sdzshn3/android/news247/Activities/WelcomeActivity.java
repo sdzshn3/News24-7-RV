@@ -2,8 +2,10 @@ package com.sdzshn3.android.news247.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 
 import com.sdzshn3.android.news247.PrefManager;
 import com.sdzshn3.android.news247.R;
+import com.sdzshn3.android.news247.SupportClasses.DataHolder;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -63,7 +66,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         prefManager = new PrefManager(this);
         if (!prefManager.isFirstTimeLaunch()) {
-            launchHomeScreen();
+            launchMainActivity();
             finish();
             return;
         }
@@ -78,7 +81,6 @@ public class WelcomeActivity extends AppCompatActivity {
         dotsLayout = findViewById(R.id.layoutDots);
         btnSkip = findViewById(R.id.btn_skip);
         btnNext = findViewById(R.id.btn_next);
-
 
         layouts = new int[]{
                 R.layout.welcome_slide1,
@@ -96,7 +98,7 @@ public class WelcomeActivity extends AppCompatActivity {
         btnSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchHomeScreen();
+                launchLanguageScreen();
             }
         });
 
@@ -107,7 +109,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 if (current < layouts.length) {
                     viewPager.setCurrentItem(current);
                 } else {
-                    launchHomeScreen();
+                    launchLanguageScreen();
                 }
             }
         });
@@ -136,9 +138,20 @@ public class WelcomeActivity extends AppCompatActivity {
         return viewPager.getCurrentItem() + i;
     }
 
-    private void launchHomeScreen() {
-        prefManager.setFirstTimeLaunch(false);
-        startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+    private void launchMainActivity() {
+        SharedPreferences sharedPreferences = this.getSharedPreferences(DataHolder.holder.LANGUAGE_PREF_NAME, MODE_PRIVATE);
+        String string = sharedPreferences.getString(DataHolder.holder.SELECTED_LANGUAGE, null);
+        if(string != null) {
+            startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+            finish();
+        } else {
+            startActivity(new Intent(WelcomeActivity.this, LanguageSelectionActivity.class));
+            finish();
+        }
+    }
+
+    private void launchLanguageScreen() {
+        startActivity(new Intent(WelcomeActivity.this, LanguageSelectionActivity.class));
         finish();
     }
 
@@ -156,8 +169,9 @@ public class WelcomeActivity extends AppCompatActivity {
         public MyViewPagerAdapter() {
         }
 
+        @NonNull
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
             layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             View view = layoutInflater.inflate(layouts[position], container, false);
@@ -172,13 +186,13 @@ public class WelcomeActivity extends AppCompatActivity {
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object obj) {
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object obj) {
             return view == obj;
         }
 
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             View view = (View) object;
             container.removeView(view);
         }
