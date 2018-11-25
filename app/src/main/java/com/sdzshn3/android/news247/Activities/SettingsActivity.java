@@ -80,48 +80,42 @@ public class SettingsActivity extends AppCompatActivity {
             } else if (currentPref.equals(getString(R.string.show_in_browser))) {
                 showArticlesIn.setSummary(getString(R.string.show_in_browser_label));
             }
-            showArticlesIn.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(final Preference preference) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    LayoutInflater inflater = getActivity().getLayoutInflater();
-                    View dialogView = inflater.inflate(R.layout.radio_group_dialog, null);
-                    builder.setView(dialogView);
-                    builder.setCancelable(false);
-                    Button button = dialogView.findViewById(R.id.done_button);
-                    final RadioButton showAsPlainText = dialogView.findViewById(R.id.show_as_plain_text);
-                    final RadioButton showInBrowser = dialogView.findViewById(R.id.show_in_browser);
+            showArticlesIn.setOnPreferenceClickListener(preference -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.radio_group_dialog, null);
+                builder.setView(dialogView);
+                builder.setCancelable(false);
+                Button button = dialogView.findViewById(R.id.done_button);
+                final RadioButton showAsPlainText = dialogView.findViewById(R.id.show_as_plain_text);
+                final RadioButton showInBrowser = dialogView.findViewById(R.id.show_in_browser);
 
-                    final SharedPreferences.Editor editor = preferences.edit();
-                    String currentPref = preferences.getString(getString(R.string.show_article_in_key), getString(R.string.default_show_as_plain));
-                    if (currentPref.equals(getString(R.string.default_show_as_plain))) {
-                        showAsPlainText.setChecked(true);
-                        showInBrowser.setChecked(false);
-                    } else if (currentPref.equals(getString(R.string.show_in_browser))) {
-                        showInBrowser.setChecked(true);
-                        showAsPlainText.setChecked(false);
-                    }
-                    final AlertDialog dialog = builder.create();
-
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            if (showAsPlainText.isChecked()) {
-                                editor.putString(preference.getKey(), getString(R.string.default_show_as_plain));
-                                editor.apply();
-                                showArticlesIn.setSummary(getString(R.string.show_as_plain_text_label));
-                            } else if (showInBrowser.isChecked()) {
-                                editor.putString(preference.getKey(), getString(R.string.show_in_browser));
-                                editor.apply();
-                                showArticlesIn.setSummary(getString(R.string.show_in_browser_label));
-                            }
-                            dialog.cancel();
-                        }
-                    });
-                    dialog.show();
-                    return true;
+                final SharedPreferences.Editor editor = preferences.edit();
+                String currentPref1 = preferences.getString(getString(R.string.show_article_in_key), getString(R.string.default_show_as_plain));
+                if (currentPref1.equals(getString(R.string.default_show_as_plain))) {
+                    showAsPlainText.setChecked(true);
+                    showInBrowser.setChecked(false);
+                } else if (currentPref1.equals(getString(R.string.show_in_browser))) {
+                    showInBrowser.setChecked(true);
+                    showAsPlainText.setChecked(false);
                 }
+                final AlertDialog dialog = builder.create();
+
+                button.setOnClickListener(v -> {
+
+                    if (showAsPlainText.isChecked()) {
+                        editor.putString(preference.getKey(), getString(R.string.default_show_as_plain));
+                        editor.apply();
+                        showArticlesIn.setSummary(getString(R.string.show_as_plain_text_label));
+                    } else if (showInBrowser.isChecked()) {
+                        editor.putString(preference.getKey(), getString(R.string.show_in_browser));
+                        editor.apply();
+                        showArticlesIn.setSummary(getString(R.string.show_in_browser_label));
+                    }
+                    dialog.cancel();
+                });
+                dialog.show();
+                return true;
             });
 
             final EditTextPreference weatherCityEditTextPreference = (EditTextPreference) getPreferenceScreen().findPreference(getString(R.string.weather_city_key));

@@ -1,7 +1,6 @@
 package com.sdzshn3.android.news247.Fragments;
 
 import android.app.SearchManager;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -47,7 +46,6 @@ import com.sdzshn3.android.news247.SupportClasses.DataHolder.holder;
 import com.sdzshn3.android.news247.ViewModel.TechnologyViewModel;
 import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 
-import java.util.List;
 import java.util.Objects;
 
 public class TechnologyNewsFragment extends Fragment {
@@ -92,17 +90,14 @@ public class TechnologyNewsFragment extends Fragment {
         weatherIcon = rootView.findViewById(R.id.weather_icon);
         mSwipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mSwipeRefreshLayout.setRefreshing(true);
-                if (isConnected()) {
-                    TechnologyViewModel.loadData();
-                    WeatherViewModel.loadData();
-                } else {
-                    Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mSwipeRefreshLayout.setRefreshing(true);
+            if (isConnected()) {
+                TechnologyViewModel.loadData();
+                WeatherViewModel.loadData();
+            } else {
+                Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -114,63 +109,54 @@ public class TechnologyNewsFragment extends Fragment {
         newsRecyclerView.setNestedScrollingEnabled(false);
 
         technologyViewModel = ViewModelProviders.of(TechnologyNewsFragment.this).get(TechnologyViewModel.class);
-        technologyViewModel.getData().observe(TechnologyNewsFragment.this, new Observer<List<News>>() {
-            @Override
-            public void onChanged(@Nullable List<News> newsList) {
-                if (newsList != null && !newsList.isEmpty()) {
-                    mAdapter.submitList(newsList);
-                    mEmptyStateTextView.setVisibility(View.GONE);
+        technologyViewModel.getData().observe(TechnologyNewsFragment.this, newsList -> {
+            if (newsList != null && !newsList.isEmpty()) {
+                mAdapter.submitList(newsList);
+                mEmptyStateTextView.setVisibility(View.GONE);
+            } else {
+                if (isConnected()) {
+                    mEmptyStateTextView.setVisibility(View.VISIBLE);
                 } else {
-                    if (isConnected()) {
-                        mEmptyStateTextView.setVisibility(View.VISIBLE);
-                    } else {
-                        Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
-                    }
+                    Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
                 }
-                progressBar.setVisibility(View.GONE);
-                mSwipeRefreshLayout.setRefreshing(false);
             }
+            progressBar.setVisibility(View.GONE);
+            mSwipeRefreshLayout.setRefreshing(false);
         });
 
         weatherViewModel = ViewModelProviders.of(TechnologyNewsFragment.this).get(WeatherViewModel.class);
-        weatherViewModel.getData().observe(TechnologyNewsFragment.this, new Observer<List<News>>() {
-            @Override
-            public void onChanged(@Nullable List<News> newsList) {
-                if (newsList != null) {
-                    News news = newsList.get(0);
-                    String temp = News.getTemp().split("\\.", 2)[0];
-                    weatherTemp.setText(getString(R.string.weather_temperature_concatenate, temp));
+        weatherViewModel.getData().observe(TechnologyNewsFragment.this, newsList -> {
+            if (newsList != null) {
+                News news = newsList.get(0);
+                String temp = News.getTemp().split("\\.", 2)[0];
+                weatherTemp.setText(getString(R.string.weather_temperature_concatenate, temp));
 
-                    String iconId = news.getIconId();
-                    weatherIcon.setImageResource(WeatherIcon.getWeatherIcon(iconId));
-                } else {
-                    if (isConnected()) {
-                        weatherTemp.setText("Unable to load");
-                        weatherIcon.setImageResource(R.drawable.unknown);
-                    }
+                String iconId = news.getIconId();
+                weatherIcon.setImageResource(WeatherIcon.getWeatherIcon(iconId));
+            } else {
+                if (isConnected()) {
+                    weatherTemp.setText("Unable to load");
+                    weatherIcon.setImageResource(R.drawable.unknown);
                 }
             }
         });
 
-        ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                String currentPref = preferences.getString(getString(R.string.show_article_in_key), getString(R.string.default_show_as_plain));
-                if (currentPref.equals(getString(R.string.default_show_as_plain))) {
-                    News currentNews = mAdapter.getItem(position);
-                    String bodyHtml = currentNews.getBodyHtml();
-                    Intent intent = new Intent(getActivity(), NewsDetailsActivity.class);
-                    intent.setData(Uri.parse(bodyHtml));
-                    startActivity(intent);
-                } else {
-                    News currentNews = mAdapter.getItem(position);
-                    Uri newsUri = Uri.parse(currentNews.getArticleUrl());
-                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                    CustomTabsIntent customTabsIntent = builder.build();
-                    builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
-                    customTabsIntent.launchUrl(mContext, newsUri);
-                }
+        ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener((recyclerView, position, v) -> {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String currentPref = preferences.getString(getString(R.string.show_article_in_key), getString(R.string.default_show_as_plain));
+            if (currentPref.equals(getString(R.string.default_show_as_plain))) {
+                News currentNews = mAdapter.getItem(position);
+                String bodyHtml = currentNews.getBodyHtml();
+                Intent intent = new Intent(getActivity(), NewsDetailsActivity.class);
+                intent.setData(Uri.parse(bodyHtml));
+                startActivity(intent);
+            } else {
+                News currentNews = mAdapter.getItem(position);
+                Uri newsUri = Uri.parse(currentNews.getArticleUrl());
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                CustomTabsIntent customTabsIntent = builder.build();
+                builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
+                customTabsIntent.launchUrl(mContext, newsUri);
             }
         });
         return rootView;

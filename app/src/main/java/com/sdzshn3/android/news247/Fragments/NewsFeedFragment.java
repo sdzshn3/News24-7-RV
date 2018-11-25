@@ -1,8 +1,9 @@
 package com.sdzshn3.android.news247.Fragments;
 
 import android.app.SearchManager;
-import androidx.lifecycle.Observer;
+
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
@@ -19,10 +21,12 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.snackbar.Snackbar;
+
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,7 +51,6 @@ import com.sdzshn3.android.news247.SupportClasses.WeatherIcon;
 import com.sdzshn3.android.news247.ViewModel.NewsFeedViewModel;
 import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 
-import java.util.List;
 import java.util.Objects;
 
 public class NewsFeedFragment extends Fragment {
@@ -64,6 +67,7 @@ public class NewsFeedFragment extends Fragment {
     private NewsFeedViewModel newsViewModel;
     private WeatherViewModel weatherViewModel;
     private NewsFeedAdapter mAdapter;
+    private int pageNumber = 1;
 
     public NewsFeedFragment() {
         //Required empty public constructor
@@ -93,17 +97,14 @@ public class NewsFeedFragment extends Fragment {
         weatherIcon = rootView.findViewById(R.id.weather_icon);
         mSwipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mSwipeRefreshLayout.setRefreshing(true);
-                if (isConnected()) {
-                    NewsFeedViewModel.loadData();
-                    WeatherViewModel.loadData();
-                } else {
-                    Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mSwipeRefreshLayout.setRefreshing(true);
+            if (isConnected()) {
+                NewsFeedViewModel.loadData();
+                WeatherViewModel.loadData();
+            } else {
+                Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -116,63 +117,55 @@ public class NewsFeedFragment extends Fragment {
         newsRecyclerView.setAdapter(mAdapter);
 
         newsViewModel = ViewModelProviders.of(NewsFeedFragment.this).get(NewsFeedViewModel.class);
-        newsViewModel.getData().observe(NewsFeedFragment.this, new Observer<List<News>>() {
-            @Override
-            public void onChanged(@Nullable List<News> newsList) {
-                if (newsList != null && !newsList.isEmpty()) {
-                    mAdapter.submitList(newsList);
-                    mEmptyStateTextView.setVisibility(View.GONE);
+        newsViewModel.getData().observe(NewsFeedFragment.this, newsList -> {
+            if (newsList != null && !newsList.isEmpty()) {
+                mAdapter.submitList(newsList);
+                newsRecyclerView.setAdapter(mAdapter);
+                mEmptyStateTextView.setVisibility(View.GONE);
+            } else {
+                if (isConnected()) {
+                    mEmptyStateTextView.setVisibility(View.VISIBLE);
                 } else {
-                    if (isConnected()) {
-                        mEmptyStateTextView.setVisibility(View.VISIBLE);
-                    } else {
-                        Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
-                    }
+                    Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
                 }
-                progressBar.setVisibility(View.GONE);
-                mSwipeRefreshLayout.setRefreshing(false);
             }
+            progressBar.setVisibility(View.GONE);
+            mSwipeRefreshLayout.setRefreshing(false);
         });
 
         weatherViewModel = ViewModelProviders.of(NewsFeedFragment.this).get(WeatherViewModel.class);
-        weatherViewModel.getData().observe(NewsFeedFragment.this, new Observer<List<News>>() {
-            @Override
-            public void onChanged(@Nullable List<News> newsList) {
-                if (newsList != null) {
-                    News news = newsList.get(0);
-                    String temp = News.getTemp().split("\\.", 2)[0];
-                    weatherTemp.setText(getString(R.string.weather_temperature_concatenate, temp));
+        weatherViewModel.getData().observe(NewsFeedFragment.this, newsList -> {
+            if (newsList != null) {
+                News news = newsList.get(0);
+                String temp = News.getTemp().split("\\.", 2)[0];
+                weatherTemp.setText(getString(R.string.weather_temperature_concatenate, temp));
 
-                    String iconId = news.getIconId();
-                    weatherIcon.setImageResource(WeatherIcon.getWeatherIcon(iconId));
-                } else {
-                    if (isConnected()) {
-                        weatherTemp.setText("Unable to load");
-                        weatherIcon.setImageResource(R.drawable.unknown);
-                    }
+                String iconId = news.getIconId();
+                weatherIcon.setImageResource(WeatherIcon.getWeatherIcon(iconId));
+            } else {
+                if (isConnected()) {
+                    weatherTemp.setText("Unable to load");
+                    weatherIcon.setImageResource(R.drawable.unknown);
                 }
             }
         });
 
-        ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                String currentPref = preferences.getString(getString(R.string.show_article_in_key), getString(R.string.default_show_as_plain));
-                if (currentPref.equals(getString(R.string.default_show_as_plain))) {
-                    News currentNews = mAdapter.getItem(position);
-                    String bodyHtml = currentNews.getBodyHtml();
-                    Intent intent = new Intent(getActivity(), NewsDetailsActivity.class);
-                    intent.setData(Uri.parse(bodyHtml));
-                    startActivity(intent);
-                } else {
-                    News currentNews = mAdapter.getItem(position);
-                    Uri newsUri = Uri.parse(currentNews.getArticleUrl());
-                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                    CustomTabsIntent customTabsIntent = builder.build();
-                    builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
-                    customTabsIntent.launchUrl(mContext, newsUri);
-                }
+        ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener((recyclerView, position, v) -> {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String currentPref = preferences.getString(getString(R.string.show_article_in_key), getString(R.string.default_show_as_plain));
+            if (currentPref.equals(getString(R.string.default_show_as_plain))) {
+                News currentNews = mAdapter.getItem(position);
+                String bodyHtml = currentNews.getBodyHtml();
+                Intent intent = new Intent(getActivity(), NewsDetailsActivity.class);
+                intent.setData(Uri.parse(bodyHtml));
+                startActivity(intent);
+            } else {
+                News currentNews = mAdapter.getItem(position);
+                Uri newsUri = Uri.parse(currentNews.getArticleUrl());
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                CustomTabsIntent customTabsIntent = builder.build();
+                builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
+                customTabsIntent.launchUrl(mContext, newsUri);
             }
         });
         return rootView;
@@ -228,6 +221,7 @@ public class NewsFeedFragment extends Fragment {
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
         uriBuilder.appendQueryParameter(holder.apiKey, BuildConfig.GUARDIAN_API_KEY);
+        uriBuilder.appendQueryParameter(holder.page, String.valueOf(pageNumber));
         if (showAuthorName) {
             uriBuilder.appendQueryParameter(holder.showTags, holder.contributorTag);
         }

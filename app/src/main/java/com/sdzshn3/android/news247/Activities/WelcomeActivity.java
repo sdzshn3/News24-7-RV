@@ -95,22 +95,14 @@ public class WelcomeActivity extends AppCompatActivity {
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
 
-        btnSkip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchLanguageScreen();
-            }
-        });
+        btnSkip.setOnClickListener(v -> launchLanguageScreen());
 
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int current = getItem(+1);
-                if (current < layouts.length) {
-                    viewPager.setCurrentItem(current);
-                } else {
-                    launchLanguageScreen();
-                }
+        btnNext.setOnClickListener(v -> {
+            int current = getItem(+1);
+            if (current < layouts.length) {
+                viewPager.setCurrentItem(current);
+            } else {
+                launchLanguageScreen();
             }
         });
     }

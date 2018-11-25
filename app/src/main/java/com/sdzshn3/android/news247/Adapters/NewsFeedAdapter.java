@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +46,10 @@ public class NewsFeedAdapter extends ListAdapter<News, NewsFeedAdapter.ViewHolde
 
         @Override
         public boolean areContentsTheSame(@NonNull News news, @NonNull News t1) {
-            return news == t1;
+            return news.getTitle().equals(t1.getTitle()) &&
+                    news.getSectionName().equals(t1.getSectionName()) &&
+                    news.getArticleUrl().equals(t1.getArticleUrl()) &&
+                    news.getPublishedAt().equals(t1.getPublishedAt());
         }
     };
 
@@ -71,15 +76,12 @@ public class NewsFeedAdapter extends ListAdapter<News, NewsFeedAdapter.ViewHolde
 
         holder.shareButton.setBackground(VectorDrawableCompat.create(mContext.getResources(), R.drawable.ic_share, null));
         //Article URL sharing intent
-        holder.shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, currentNews.getArticleUrl());
-                sendIntent.setType("text/plain");
-                mContext.startActivity(Intent.createChooser(sendIntent, mContext.getString(R.string.share_article_link_hint)));
-            }
+        holder.shareButton.setOnClickListener(v -> {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, currentNews.getArticleUrl());
+            sendIntent.setType("text/plain");
+            mContext.startActivity(Intent.createChooser(sendIntent, mContext.getString(R.string.share_article_link_hint)));
         });
 
         String thumbnailUrl = currentNews.getThumbnail();

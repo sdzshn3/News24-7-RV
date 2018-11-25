@@ -1,6 +1,5 @@
 package com.sdzshn3.android.news247.Fragments;
 
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -42,7 +41,6 @@ import com.sdzshn3.android.news247.SupportClasses.WeatherIcon;
 import com.sdzshn3.android.news247.ViewModel.TeluguViewModel;
 import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 
-import java.util.List;
 import java.util.Objects;
 
 public class TeluguNewsFragment extends Fragment {
@@ -84,19 +82,16 @@ public class TeluguNewsFragment extends Fragment {
         weatherIcon = rootView.findViewById(R.id.weather_icon);
         mSwipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mSwipeRefreshLayout.setRefreshing(true);
-                if (isConnected()) {
-                    TeluguViewModel.loadData();
-                    WeatherViewModel.loadData();
-                } else {
-                    Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
-
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mSwipeRefreshLayout.setRefreshing(true);
+            if (isConnected()) {
+                TeluguViewModel.loadData();
+                WeatherViewModel.loadData();
+            } else {
+                Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
+
         });
 
         setNoOfArticles();
@@ -107,54 +102,45 @@ public class TeluguNewsFragment extends Fragment {
         newsRecyclerView.setNestedScrollingEnabled(false);
 
         teluguViewModel = ViewModelProviders.of(TeluguNewsFragment.this).get(TeluguViewModel.class);
-        teluguViewModel.getData().observe(TeluguNewsFragment.this, new Observer<List<News>>() {
-            @Override
-            public void onChanged(@Nullable List<News> newsList) {
-                if (newsList != null && !newsList.isEmpty()) {
-                    mAdapter.submitList(newsList);
-                    mEmptyStateTextView.setVisibility(View.GONE);
+        teluguViewModel.getData().observe(TeluguNewsFragment.this, newsList -> {
+            if (newsList != null && !newsList.isEmpty()) {
+                mAdapter.submitList(newsList);
+                mEmptyStateTextView.setVisibility(View.GONE);
+            } else {
+                if (isConnected()) {
+                    mEmptyStateTextView.setVisibility(View.VISIBLE);
                 } else {
-                    if (isConnected()) {
-                        mEmptyStateTextView.setVisibility(View.VISIBLE);
-                    } else {
-                        Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
-                    }
+                    Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
                 }
-                progressBar.setVisibility(View.GONE);
-                mSwipeRefreshLayout.setRefreshing(false);
             }
+            progressBar.setVisibility(View.GONE);
+            mSwipeRefreshLayout.setRefreshing(false);
         });
 
         weatherViewModel = ViewModelProviders.of(TeluguNewsFragment.this).get(WeatherViewModel.class);
-        weatherViewModel.getData().observe(TeluguNewsFragment.this, new Observer<List<News>>() {
-            @Override
-            public void onChanged(@Nullable List<News> newsList) {
-                if (newsList != null) {
-                    News news = newsList.get(0);
-                    String temp = News.getTemp().split("\\.", 2)[0];
-                    weatherTemp.setText(getString(R.string.weather_temperature_concatenate, temp));
+        weatherViewModel.getData().observe(TeluguNewsFragment.this, newsList -> {
+            if (newsList != null) {
+                News news = newsList.get(0);
+                String temp = News.getTemp().split("\\.", 2)[0];
+                weatherTemp.setText(getString(R.string.weather_temperature_concatenate, temp));
 
-                    String iconId = news.getIconId();
-                    weatherIcon.setImageResource(WeatherIcon.getWeatherIcon(iconId));
-                } else {
-                    if (isConnected()) {
-                        weatherTemp.setText("unable to load");
-                        weatherIcon.setImageResource(R.drawable.unknown);
-                    }
+                String iconId = news.getIconId();
+                weatherIcon.setImageResource(WeatherIcon.getWeatherIcon(iconId));
+            } else {
+                if (isConnected()) {
+                    weatherTemp.setText("unable to load");
+                    weatherIcon.setImageResource(R.drawable.unknown);
                 }
             }
         });
 
-        ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                News currentNews = mAdapter.getItem(position);
-                Uri newsUri = Uri.parse(currentNews.getArticleUrl());
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                CustomTabsIntent customTabsIntent = builder.build();
-                builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
-                customTabsIntent.launchUrl(mContext, newsUri);
-            }
+        ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener((recyclerView, position, v) -> {
+            News currentNews = mAdapter.getItem(position);
+            Uri newsUri = Uri.parse(currentNews.getArticleUrl());
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            CustomTabsIntent customTabsIntent = builder.build();
+            builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
+            customTabsIntent.launchUrl(mContext, newsUri);
         });
 
         return rootView;
