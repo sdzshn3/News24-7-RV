@@ -1,0 +1,103 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/weather_icon"
+                    android:orientation="vertical"
+                    android:nestedScrollingEnabled="false"
+                    tools:targetApi="lollipop"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    />
+
+                <ImageView
+                    android:id="@+id/weather_icon"
+                    android:layout_width="@dimen/weather_icon_width_and_height"
+                    android:layout_height="@dimen/weather_icon_width_and_height"
+                    android:layout_marginTop="@dimen/weather_icon_margin_top"
+                    android:layout_marginEnd="@dimen/weather_icon_right_margin"
+                    android:layout_marginRight="@dimen/weather_icon_right_margin"
+                    android:layout_toStartOf="@id/weather_temp"
+                    android:contentDescription="@string/weather_icon_description"
+                    android:src="@drawable/unknown"
+                    android:layout_toLeftOf="@id/weather_temp" />
+
+                <TextView
+                    android:id="@+id/weather_temp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/weather_temp_height"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/weather_temp_margin_top"
+                    android:layout_marginEnd="@dimen/weather_temp_right_margin"
+                    android:layout_marginRight="@dimen/weather_temp_right_margin"
+                    android:paddingTop="@dimen/weather_temp_padding_top"
+                    android:text="@string/temperature_value_default"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/black"
+                    android:layout_alignParentRight="true" />
+
+
+            </RelativeLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/no_data_found"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/no_data_found"
+        android:textColor="@android:color/black"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/loading_circle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
+    <TextView
+        android:id="@+id/no_internet_connection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/no_internet_connection"
+        android:textColor="@android:color/black"
+        android:visibility="gone" />
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/banner_ad_news_feed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="11dp"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-4795017891549742/4347560199" />
+    <!--ads:adUnitId="ca-app-pub-3940256099942544/6300978111"-->
+
+
+</RelativeLayout>

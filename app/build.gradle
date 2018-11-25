@@ -1,0 +1,80 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.sdzshn3.android.news247"
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 11
+        versionName "2.1.1"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    sourceSets {
+        main {
+            assets.srcDirs = ['src/main/assets', 'src/main/assets/fonts']
+        }
+    }
+
+    buildTypes.each {
+        it.buildConfigField 'String', 'GUARDIAN_API_KEY', myGuardianApiKey
+        it.buildConfigField 'String', 'WEATHER_API_KEY', myWeatherApiKey
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+    implementation 'com.google.android.material:material:1.1.0-alpha01'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.browser:browser:1.0.0'
+    implementation 'com.jakewharton:butterknife:9.0.0-rc2'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc2'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.vectordrawable:vectordrawable:1.0.1'
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    implementation 'androidx.exifinterface:exifinterface:1.0.0'
+    implementation 'org.jetbrains:annotations-java5:15.0'
+
+    implementation 'com.makeramen:roundedimageview:2.3.0'
+
+    implementation 'com.google.android.gms:play-services-ads:17.1.1'
+
+    implementation 'com.google.firebase:firebase-core:16.0.5'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.6'
+    implementation('com.crashlytics.sdk.android:answers:1.4.3@aar') {
+        transitive = true
+    }
+
+    implementation 'org.sufficientlysecure:html-textview:3.2'
+
+    //for lifecycle and LiveData and ViewModel
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.0.0"
+
+    //for paging
+    implementation 'androidx.paging:paging-runtime:2.1.0-beta01'
+}
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'io.fabric'
