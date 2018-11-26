@@ -119,6 +119,7 @@ public class NewsFeedFragment extends Fragment {
         newsViewModel = ViewModelProviders.of(NewsFeedFragment.this).get(NewsFeedViewModel.class);
         newsViewModel.getData().observe(NewsFeedFragment.this, newsList -> {
             if (newsList != null && !newsList.isEmpty()) {
+                mAdapter.submitList(newsList);
                 mEmptyStateTextView.setVisibility(View.GONE);
             } else {
                 if (isConnected()) {
