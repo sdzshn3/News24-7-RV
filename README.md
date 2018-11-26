@@ -8,11 +8,9 @@ Features or implementations:
 - Welcome Screen
 - Splash Screen
 - Adaptive icon
-- Ads
-- Crash reports by Firebase and Fabric
+- Android Architecture Components (LiveData, ViewModel)
 - News articles from Guardian and Telugu One
 - Fetched from JSON and RSS feed
 - Weather feature
-- Search news articles
 - Various settings (preferences)
 - Custom Tabs by Chrome
