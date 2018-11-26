@@ -33,7 +33,7 @@ import android.widget.TextView;
 
 import com.sdzshn3.android.news247.Activities.LanguageSelectionActivity;
 import com.sdzshn3.android.news247.Activities.SettingsActivity;
-import com.sdzshn3.android.news247.Adapters.NewsFeedAdapter;
+import com.sdzshn3.android.news247.Adapters.TeluguNewsAdapter;
 import com.sdzshn3.android.news247.News;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
@@ -51,7 +51,7 @@ public class TeluguNewsFragment extends Fragment {
     private ProgressBar progressBar;
     private TextView mEmptyStateTextView, weatherTemp;
     private ImageView weatherIcon;
-    private NewsFeedAdapter mAdapter;
+    private TeluguNewsAdapter mAdapter;
     public static String numberOfArticles;
     private WeatherViewModel weatherViewModel;
     private TeluguViewModel teluguViewModel;
@@ -73,7 +73,7 @@ public class TeluguNewsFragment extends Fragment {
         AdView adView = rootView.findViewById(R.id.banner_ad_news_feed);
         adView.loadAd(adRequest);
 
-        mAdapter = new NewsFeedAdapter();
+        mAdapter = new TeluguNewsAdapter();
 
         newsRecyclerView = rootView.findViewById(R.id.recycler_view_list);
         progressBar = rootView.findViewById(R.id.loading_circle);

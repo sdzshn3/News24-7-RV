@@ -4,11 +4,12 @@ public final class DataHolder {
     public static final class holder {
         public static final int NEWS_LOADER_ID = 1;
         public static final int WEATHER_LOADER_ID = 2;
-        public static final String NEWS_FEED_REQUEST_URL = "http://content.guardianapis.com/world/india";
-        public static final String SCIENCE_NEWS_REQUEST_URL = "http://content.guardianapis.com/science";
-        public static final String TECHNOLOGY_NEWS_REQUEST_URL = "http://content.guardianapis.com/uk/technology";
-        public static final String BUSINESS_NEWS_REQUEST_URL = "http://content.guardianapis.com/uk/business";
-        public static final String SEARCH_REQUEST_URL = "https://content.guardianapis.com/search?q=";
+        public static final String BASE_URL = "http://content.guardianapis.com/";
+        public static final String NEWS_FEED_REQUEST_URL = "world/india";
+        public static final String SCIENCE_NEWS_REQUEST_URL = "science";
+        public static final String TECHNOLOGY_NEWS_REQUEST_URL = "uk/technology";
+        public static final String BUSINESS_NEWS_REQUEST_URL = "uk/business";
+        public static final String SEARCH_REQUEST_URL = "search?q=";
         public static final String WEATHER_REQUEST_URL = "http://api.openweathermap.org/data/2.5/weather?q=";
         //remove -news if you want more articles
         public static final String TELUGU_NEWS_REQUEST_URL = "https://telugu.oneindia.com/rss/telugu-fb.xml";

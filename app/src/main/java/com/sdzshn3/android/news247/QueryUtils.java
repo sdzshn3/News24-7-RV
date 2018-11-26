@@ -74,15 +74,13 @@ public class QueryUtils {
         }
 
         switch (id) {
-            case holder.NEWS_LOADER_ID:
-                return extractFeatureFromJson(jsonResponse);
             case holder.WEATHER_LOADER_ID:
                 return extractWeatherFromJson(jsonResponse);
             case holder.TELUGU_NEWS_LOADER_ID:
                 return extractTeluguNewsFromRss(requestUrl, noOfArticles);
         }
 
-        return extractFeatureFromJson(jsonResponse);
+        return null;
     }
 
     private ArrayList<News> extractTeluguNewsFromRss(String requestUrl, int noOfArticles) {
@@ -155,7 +153,7 @@ public class QueryUtils {
 
 
                 if (mTitle != null && mLink != null && mImageLink != null && mPubDate != null) {
-                    News newsResult = new News(null, mTitle, mLink, null, mPubDate, null, mImageLink, null, null);
+                    News newsResult = new News(mTitle, mLink, mPubDate, mImageLink);
                     mTitle = null;
                     mLink = null;
                     mImageLink = null;
@@ -201,6 +199,7 @@ public class QueryUtils {
         return inputStream;
     }
 
+    /**Kept for reference. Don't remove*/
     private ArrayList<News> extractFeatureFromJson(String newsJSON) {
         if (TextUtils.isEmpty(newsJSON)) {
             return null;
@@ -245,7 +244,7 @@ public class QueryUtils {
                         Log.e(LOG_TAG, "No info found about author");
                     }
 
-                    News newsResult = new News(sectionName, title, articleUrl, apiUrl, publishedAt, authorName, thumbnail, contributorImage, bodyHtml);
+                    News newsResult = new News(title, articleUrl, publishedAt, thumbnail);
                     news.add(newsResult);
                 }
             }

@@ -1,28 +1,18 @@
 package com.sdzshn3.android.news247;
 
 public class News {
-    private String mSectionName;
     private String mTitle;
     private String mUrl;
-    private String mApiUrl;
     private String mPublishedAt;
-    private String mAuthorName;
     private String mThumbnail;
     private String mIconId;
     private static String mTemp;
-    private String mContributorImage;
-    private String mBodyHtml;
 
-    public News(String sectionName, String title, String articleUrl, String apiUrl, String publishedAt, String authorName, String thumbnail, String contributorImage, String bodyHtml) {
-        mSectionName = sectionName;
+    public News(String title, String articleUrl, String publishedAt, String thumbnail) {
         mTitle = title;
         mUrl = articleUrl;
-        mApiUrl = apiUrl;
         mPublishedAt = publishedAt;
-        mAuthorName = authorName;
         mThumbnail = thumbnail;
-        mContributorImage = contributorImage;
-        mBodyHtml = bodyHtml;
     }
 
     public News(String iconId, String temp) {
@@ -31,9 +21,6 @@ public class News {
     }
 
 
-    public String getSectionName() {
-        return mSectionName;
-    }
 
     public String getTitle() {
         return mTitle;
@@ -45,10 +32,6 @@ public class News {
 
     public String getPublishedAt() {
         return mPublishedAt;
-    }
-
-    public String getAuthorName() {
-        return mAuthorName;
     }
 
     public String getThumbnail() {
@@ -63,11 +46,4 @@ public class News {
         return mTemp;
     }
 
-    public String getContributorImage() {
-        return mContributorImage;
-    }
-
-    public String getBodyHtml() {
-        return mBodyHtml;
-    }
 }

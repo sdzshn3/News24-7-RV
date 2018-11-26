@@ -45,6 +45,7 @@ import com.sdzshn3.android.news247.Adapters.NewsFeedAdapter;
 import com.sdzshn3.android.news247.BuildConfig;
 import com.sdzshn3.android.news247.News;
 import com.sdzshn3.android.news247.R;
+import com.sdzshn3.android.news247.Retrofit.Results;
 import com.sdzshn3.android.news247.SupportClasses.DataHolder.holder;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
 import com.sdzshn3.android.news247.SupportClasses.WeatherIcon;
@@ -100,7 +101,7 @@ public class NewsFeedFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
             if (isConnected()) {
-                NewsFeedViewModel.loadData();
+                newsViewModel.refresh();
                 WeatherViewModel.loadData();
             } else {
                 Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
@@ -117,9 +118,9 @@ public class NewsFeedFragment extends Fragment {
         newsRecyclerView.setAdapter(mAdapter);
 
         newsViewModel = ViewModelProviders.of(NewsFeedFragment.this).get(NewsFeedViewModel.class);
-        newsViewModel.getData().observe(NewsFeedFragment.this, newsList -> {
-            if (newsList != null && !newsList.isEmpty()) {
-                mAdapter.submitList(newsList);
+        newsViewModel.getData().observe(NewsFeedFragment.this, results -> {
+            if (results != null && !results.isEmpty()) {
+                mAdapter.submitList(results);
                 mEmptyStateTextView.setVisibility(View.GONE);
             } else {
                 if (isConnected()) {
@@ -153,14 +154,14 @@ public class NewsFeedFragment extends Fragment {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
             String currentPref = preferences.getString(getString(R.string.show_article_in_key), getString(R.string.default_show_as_plain));
             if (currentPref.equals(getString(R.string.default_show_as_plain))) {
-                News currentNews = mAdapter.getItem(position);
-                String bodyHtml = currentNews.getBodyHtml();
+                Results currentNews = mAdapter.getItem(position);
+                String bodyHtml = currentNews.getFields().getBody();
                 Intent intent = new Intent(getActivity(), NewsDetailsActivity.class);
                 intent.setData(Uri.parse(bodyHtml));
                 startActivity(intent);
             } else {
-                News currentNews = mAdapter.getItem(position);
-                Uri newsUri = Uri.parse(currentNews.getArticleUrl());
+                Results currentNews = mAdapter.getItem(position);
+                Uri newsUri = Uri.parse(currentNews.getWebUrl());
                 CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
                 CustomTabsIntent customTabsIntent = builder.build();
                 builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
