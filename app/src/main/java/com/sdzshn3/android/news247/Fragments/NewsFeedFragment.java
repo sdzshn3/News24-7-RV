@@ -120,7 +120,6 @@ public class NewsFeedFragment extends Fragment {
         newsViewModel.getData().observe(NewsFeedFragment.this, newsList -> {
             if (newsList != null && !newsList.isEmpty()) {
                 mAdapter.submitList(newsList);
-                newsRecyclerView.setAdapter(mAdapter);
                 mEmptyStateTextView.setVisibility(View.GONE);
             } else {
                 if (isConnected()) {
