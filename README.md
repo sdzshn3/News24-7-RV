@@ -10,7 +10,7 @@ Features or implementations:
 - Adaptive icon
 - Ads
 - Crash reports by Firebase and Fabric
-- News articles from Guardian and Telugu One
+- News articles from NEWS API and Telugu One
 - Fetched from JSON and RSS feed
 - Weather feature
 - Search news articles
