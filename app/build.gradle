@@ -31,7 +31,7 @@ android {
     }
 
     buildTypes.each {
-        it.buildConfigField 'String', 'GUARDIAN_API_KEY', myGuardianApiKey
+        it.buildConfigField 'String', 'NEWS_API_KEY', myNewsApiKey
         it.buildConfigField 'String', 'WEATHER_API_KEY', myWeatherApiKey
     }
 }

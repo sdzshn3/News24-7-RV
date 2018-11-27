@@ -21,80 +21,85 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/sectionTextView"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/image_card_view"
                     style="@style/articleAttributes"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="3dp"
+                    app:cardCornerRadius="@dimen/card_corner_radius_for_all"
+                    app:cardElevation="@dimen/article_image_card_elevation">
+
+                    <ImageView
+                        android:id="@+id/thumbnailImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@string/article_thumbnail"
+                        android:scaleType="centerCrop" />
+
+                </androidx.cardview.widget.CardView>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/section_name_margin_right"
-                    android:layout_marginRight="@dimen/section_name_margin_right"
-                    android:textColor="@android:color/black"
-                    tools:text="@string/section_example" />
+                    android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/share_button"
-                    android:layout_width="@dimen/article_share_button_width_and_height"
-                    android:layout_height="@dimen/article_share_button_width_and_height"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginTop="@dimen/article_share_button_mar_top"
-                    android:layout_marginEnd="@dimen/article_share_button_mar_right"
-                    android:layout_marginRight="@dimen/article_share_button_mar_right" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-            </RelativeLayout>
+                        <TextView
+                            android:id="@+id/sectionTextView"
+                            style="@style/articleAttributes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/section_name_margin_right"
+                            android:layout_marginRight="@dimen/section_name_margin_right"
+                            android:textColor="@android:color/black"
+                            tools:text="@string/section_example" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/image_card_view"
-                style="@style/articleAttributes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="@dimen/card_corner_radius_for_all"
-                app:cardElevation="@dimen/article_image_card_elevation">
+                        <Button
+                            android:id="@+id/share_button"
+                            android:layout_width="@dimen/article_share_button_width_and_height"
+                            android:layout_height="@dimen/article_share_button_width_and_height"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginTop="@dimen/article_share_button_mar_top"
+                            android:layout_marginEnd="@dimen/article_share_button_mar_right"
+                            android:layout_marginRight="@dimen/article_share_button_mar_right" />
 
-                <ImageView
-                    android:id="@+id/thumbnailImageView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/article_thumbnail" />
+                    </RelativeLayout>
 
-            </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:id="@+id/titleTextView"
+                        style="@style/articleAttributes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/article_title_text_size"
+                        android:textStyle="bold"
+                        tools:text="@string/title_example" />
 
-            <TextView
-                android:id="@+id/titleTextView"
-                style="@style/articleAttributes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/article_title_text_size"
-                android:textStyle="bold"
-                tools:text="@string/title_example" />
+                </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/contributor_layout_height"
                 android:layout_marginTop="@dimen/contributor_layout_mar_top_bottom"
-                android:layout_marginBottom="@dimen/contributor_layout_mar_top_bottom"
                 android:orientation="horizontal">
 
                 <View
                     android:layout_width="@dimen/article_marginStart"
                     android:layout_height="@dimen/article_marginStart" />
-
-                <com.makeramen.roundedimageview.RoundedImageView
-                    android:id="@+id/contributor_image"
-                    android:layout_width="@dimen/contributor_image_width_height"
-                    android:layout_height="@dimen/contributor_image_width_height"
-                    android:scaleType="fitCenter"
-                    app:riv_border_color="@color/colorAccent"
-                    app:riv_border_width="2dp"
-                    app:riv_corner_radius="5dp"
-                    app:riv_mutate_background="true"
-                    app:riv_oval="true" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -128,7 +133,6 @@
                             android:id="@+id/publishedAtTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/article_marginBottom"
                             android:textSize="@dimen/article_publishedTime_text_size"
                             tools:text="@string/published_at_example" />
 

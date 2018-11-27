@@ -1,22 +1,32 @@
+
 package com.sdzshn3.android.news247.Retrofit;
 
+import java.util.List;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class NewsModel {
-    private Response response;
 
-    public Response getResponse ()
-    {
-        return response;
+    @SerializedName("status")
+    @Expose
+    private String status;
+    @SerializedName("totalResults")
+    @Expose
+    private Integer totalResults;
+    @SerializedName("articles")
+    @Expose
+    private List<Article> articles = null;
+
+    public String getStatus() {
+        return status;
     }
 
-    public void setResponse (Response response)
-    {
-        this.response = response;
+    public Integer getTotalResults() {
+        return totalResults;
     }
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [response = "+response+"]";
+    public List<Article> getArticles() {
+        return articles;
     }
+
 }

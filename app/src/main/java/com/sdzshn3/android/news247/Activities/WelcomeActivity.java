@@ -20,7 +20,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.sdzshn3.android.news247.PrefManager;
+import com.sdzshn3.android.news247.SupportClasses.PrefManager;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.SupportClasses.DataHolder;
 
@@ -131,8 +131,8 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void launchMainActivity() {
-        SharedPreferences sharedPreferences = this.getSharedPreferences(DataHolder.holder.LANGUAGE_PREF_NAME, MODE_PRIVATE);
-        String string = sharedPreferences.getString(DataHolder.holder.SELECTED_LANGUAGE, null);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(DataHolder.LANGUAGE_PREF_NAME, MODE_PRIVATE);
+        String string = sharedPreferences.getString(DataHolder.SELECTED_LANGUAGE, null);
         if(string != null) {
             startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
             finish();

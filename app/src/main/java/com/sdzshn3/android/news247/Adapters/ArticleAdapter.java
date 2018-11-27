@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -22,7 +23,7 @@ import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.sdzshn3.android.news247.R;
-import com.sdzshn3.android.news247.Retrofit.Results;
+import com.sdzshn3.android.news247.Retrofit.Article;
 import com.squareup.picasso.Picasso;
 
 
@@ -30,26 +31,26 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class NewsFeedAdapter extends ListAdapter<Results, NewsFeedAdapter.ViewHolder> {
+public class ArticleAdapter extends ListAdapter<Article, ArticleAdapter.ViewHolder> {
 
     private Context mContext;
 
-    public NewsFeedAdapter() {
+    public ArticleAdapter() {
         super(DIFF_CALLBACK);
     }
 
-    private static final DiffUtil.ItemCallback<Results> DIFF_CALLBACK = new DiffUtil.ItemCallback<Results>() {
+    private static final DiffUtil.ItemCallback<Article> DIFF_CALLBACK = new DiffUtil.ItemCallback<Article>() {
         @Override
-        public boolean areItemsTheSame(@NonNull Results news, @NonNull Results t1) {
-            return news.getWebTitle().equals(t1.getWebTitle());
+        public boolean areItemsTheSame(@NonNull Article news, @NonNull Article t1) {
+            return news.getTitle().equals(t1.getTitle());
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull Results news, @NonNull Results t1) {
-            return news.getWebTitle().equals(t1.getWebTitle()) &&
-                    news.getSectionName().equals(t1.getSectionName()) &&
-                    news.getWebUrl().equals(t1.getWebUrl()) &&
-                    news.getWebPublicationDate().equals(t1.getWebPublicationDate());
+        public boolean areContentsTheSame(@NonNull Article news, @NonNull Article t1) {
+            return news.getTitle().equals(t1.getTitle()) &&
+                    news.getSource().getName().equals(t1.getSource().getName()) &&
+                    news.getUrl().equals(t1.getUrl()) &&
+                    news.getPublishedAt().equals(t1.getPublishedAt());
         }
     };
 
@@ -63,10 +64,15 @@ public class NewsFeedAdapter extends ListAdapter<Results, NewsFeedAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        final Results currentNews = getItem(position);
+        final Article currentArticle = getItem(position);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
 
+        //showAuthorName boolean decides whether to show author name images or not
+        boolean showAuthorName = sharedPreferences.getBoolean(
+                mContext.getString(R.string.author_name_key),
+                Boolean.parseBoolean(mContext.getString(R.string.default_show_author_name))
+        );
         //showArticleImages boolean decides whether to show article images or not
         boolean showArticleImages = sharedPreferences.getBoolean(
                 mContext.getString(R.string.show_article_images_key),
@@ -79,72 +85,48 @@ public class NewsFeedAdapter extends ListAdapter<Results, NewsFeedAdapter.ViewHo
         holder.shareButton.setOnClickListener(v -> {
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, currentNews.getWebUrl());
+            sendIntent.putExtra(Intent.EXTRA_TEXT, currentArticle.getUrl());
             sendIntent.setType("text/plain");
             mContext.startActivity(Intent.createChooser(sendIntent, mContext.getString(R.string.share_article_link_hint)));
         });
 
-        String thumbnailUrl = currentNews.getFields().getThumbnail();
-        if (thumbnailUrl != null && showArticleImages) {
-            if (!thumbnailUrl.isEmpty()) {
-                Picasso.get().load(thumbnailUrl).resize(272, 153).into(holder.thumbnailView);
-            }
+        String thumbnailUrl = currentArticle.getUrlToImage();
+        if (currentArticle.getUrlToImage() != null && !currentArticle.getUrlToImage().isEmpty() && showArticleImages) {
+            Picasso.get().load(thumbnailUrl).resize(320, 180).into(holder.thumbnailView);
         } else {
             holder.thumbnailView.setVisibility(View.GONE);
             holder.cardView.setVisibility(View.GONE);
-        }
-        String contributorImageUrl;
-        try {
-            contributorImageUrl = currentNews.getTags()[0].getBylineImageUrl();
-        } catch (ArrayIndexOutOfBoundsException e) {
-            contributorImageUrl = null;
-        }
-
-        if(contributorImageUrl != null){
-            if(!contributorImageUrl.isEmpty()) {
-                Picasso.get().load(contributorImageUrl).into(holder.contributorImage);
-            }
-            else {
-                holder.contributorImage.setVisibility(View.GONE);
-            }
-        }else {
-            holder.contributorImage.setVisibility(View.GONE);
         }
 
         Typeface semiBoldText = Typeface.createFromAsset(mContext.getAssets(), "GoogleSans-Medium.ttf");
         Typeface regularText = Typeface.createFromAsset(mContext.getAssets(), "GoogleSans-Regular.ttf");
 
-        if(currentNews.getSectionName() != null) {
+        if (currentArticle.getSource().getName() != null) {
             holder.sectionView.setTypeface(regularText);
-            holder.sectionView.setText(currentNews.getSectionName());
+            holder.sectionView.setText(currentArticle.getSource().getName().replace(".com", "").replace(".in", "").replace(".co", "")
+                    .replace("www.", "").replace("Www.", "").replace(".co.in", "").replace(".org", ""));
         }
 
         holder.titleView.setTypeface(semiBoldText);
-        holder.titleView.setText(currentNews.getWebTitle());
+        holder.titleView.setText(currentArticle.getTitle());
 
-        String authorName;
-        try {
-            authorName = currentNews.getTags()[0].getWebTitle();
-        } catch (ArrayIndexOutOfBoundsException e) {
-            authorName = null;
-        }
-        if (authorName == null) {
+        if (currentArticle.getAuthor() != null && !currentArticle.getAuthor().isEmpty() && showAuthorName) {
+            holder.authorNameView.setVisibility(View.VISIBLE);
+            holder.separator.setVisibility(View.VISIBLE);
+            holder.authorNameView.setText(currentArticle.getAuthor());
+        } else {
             holder.authorNameView.setVisibility(View.GONE);
             holder.separator.setVisibility(View.GONE);
-        } else {
-            if (!authorName.equals("")) {
-                holder.authorNameView.setText(authorName);
-            }
-            holder.separator.setVisibility(View.VISIBLE);
         }
 
-        if(currentNews.getWebPublicationDate() != null) {
-            holder.publishedAtView.setText(currentNews.getWebPublicationDate().replace("T", " at ").replace("Z", " "));
+
+        if (currentArticle.getPublishedAt() != null) {
+            holder.publishedAtView.setText(currentArticle.getPublishedAt().replace("T", " at ").replace("Z", " "));
         }
     }
 
     @Override
-    public Results getItem(int position) {
+    public Article getItem(int position) {
         return super.getItem(position);
     }
 
@@ -168,8 +150,6 @@ public class NewsFeedAdapter extends ListAdapter<Results, NewsFeedAdapter.ViewHo
         TextView publishedAtView;
         @BindView(R.id.share_button)
         Button shareButton;
-        @BindView(R.id.contributor_image)
-        RoundedImageView contributorImage;
         @BindView(R.id.image_card_view)
         CardView cardView;
 

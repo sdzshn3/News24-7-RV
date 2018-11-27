@@ -1,7 +1,9 @@
 package com.sdzshn3.android.news247.Fragments;
 
 import android.app.SearchManager;
+
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +12,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
@@ -18,10 +21,12 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.snackbar.Snackbar;
+
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,16 +39,15 @@ import android.widget.TextView;
 
 import com.sdzshn3.android.news247.Activities.LanguageSelectionActivity;
 import com.sdzshn3.android.news247.Activities.MainActivity;
-import com.sdzshn3.android.news247.Activities.NewsDetailsActivity;
 import com.sdzshn3.android.news247.Activities.SettingsActivity;
-import com.sdzshn3.android.news247.Adapters.NewsFeedAdapter;
+import com.sdzshn3.android.news247.Adapters.ArticleAdapter;
 import com.sdzshn3.android.news247.BuildConfig;
-import com.sdzshn3.android.news247.Retrofit.Results;
+import com.sdzshn3.android.news247.Retrofit.Article;
+import com.sdzshn3.android.news247.SupportClasses.DataHolder;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
 import com.sdzshn3.android.news247.News;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.SupportClasses.WeatherIcon;
-import com.sdzshn3.android.news247.SupportClasses.DataHolder.holder;
 import com.sdzshn3.android.news247.ViewModel.TechnologyViewModel;
 import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 
@@ -61,7 +65,7 @@ public class TechnologyNewsFragment extends Fragment {
     private ImageView weatherIcon;
     private TechnologyViewModel technologyViewModel;
     private WeatherViewModel weatherViewModel;
-    private NewsFeedAdapter mAdapter;
+    private ArticleAdapter mAdapter;
 
     public TechnologyNewsFragment() {
         //Required empty public constructor
@@ -82,7 +86,7 @@ public class TechnologyNewsFragment extends Fragment {
         AdView adView = rootView.findViewById(R.id.banner_ad_news_feed);
         adView.loadAd(adRequest);
 
-        mAdapter = new NewsFeedAdapter();
+        mAdapter = new ArticleAdapter();
 
         newsRecyclerView = rootView.findViewById(R.id.recycler_view_list);
         progressBar = rootView.findViewById(R.id.loading_circle);
@@ -110,9 +114,9 @@ public class TechnologyNewsFragment extends Fragment {
         newsRecyclerView.setNestedScrollingEnabled(false);
 
         technologyViewModel = ViewModelProviders.of(TechnologyNewsFragment.this).get(TechnologyViewModel.class);
-        technologyViewModel.getData().observe(TechnologyNewsFragment.this, results -> {
-            if (results != null && !results.isEmpty()) {
-                mAdapter.submitList(results);
+        technologyViewModel.getData().observe(TechnologyNewsFragment.this, articles -> {
+            if (articles != null && !articles.isEmpty()) {
+                mAdapter.submitList(articles);
                 mEmptyStateTextView.setVisibility(View.GONE);
             } else {
                 if (isConnected()) {
@@ -143,22 +147,12 @@ public class TechnologyNewsFragment extends Fragment {
         });
 
         ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener((recyclerView, position, v) -> {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String currentPref = preferences.getString(getString(R.string.show_article_in_key), getString(R.string.default_show_as_plain));
-            if (currentPref.equals(getString(R.string.default_show_as_plain))) {
-                Results currentNews = mAdapter.getItem(position);
-                String bodyHtml = currentNews.getFields().getBody();
-                Intent intent = new Intent(getActivity(), NewsDetailsActivity.class);
-                intent.setData(Uri.parse(bodyHtml));
-                startActivity(intent);
-            } else {
-                Results currentNews = mAdapter.getItem(position);
-                Uri newsUri = Uri.parse(currentNews.getWebUrl());
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                CustomTabsIntent customTabsIntent = builder.build();
-                builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
-                customTabsIntent.launchUrl(mContext, newsUri);
-            }
+            Article currentArticle = mAdapter.getItem(position);
+            Uri newsUri = Uri.parse(currentArticle.getUrl());
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            CustomTabsIntent customTabsIntent = builder.build();
+            builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
+            customTabsIntent.launchUrl(mContext, newsUri);
         });
         return rootView;
     }
@@ -192,41 +186,23 @@ public class TechnologyNewsFragment extends Fragment {
                     getString(R.string.default_no_of_news_articles));
         }
 
-        boolean showAuthorName = sharedPrefs.getBoolean(
-                getString(R.string.author_name_key),
-                Boolean.parseBoolean(getString(R.string.default_show_author_name))
-        );
-
-        boolean showArticleImages = sharedPrefs.getBoolean(
-                getString(R.string.show_article_images_key),
-                Boolean.parseBoolean(getString(R.string.default_show_article_images))
-        );
-
         Uri baseUri;
         if (mSearchQuery == null) {
-            baseUri = Uri.parse(holder.TECHNOLOGY_NEWS_REQUEST_URL);
+            baseUri = Uri.parse(DataHolder.TOP_HEADLINES_REQUEST_URL);
             progressBar.setVisibility(View.VISIBLE);
         } else {
-            baseUri = Uri.parse(holder.SEARCH_REQUEST_URL + mSearchQuery);
+            baseUri = Uri.parse(DataHolder.SEARCH_REQUEST_URL + mSearchQuery);
             progressBar.setVisibility(View.VISIBLE);
         }
         Uri.Builder uriBuilder = baseUri.buildUpon();
-
-        uriBuilder.appendQueryParameter(holder.apiKey, BuildConfig.GUARDIAN_API_KEY);
-        if (showAuthorName) {
-            uriBuilder.appendQueryParameter(holder.showTags, holder.contributorTag);
-        }
-        if (showArticleImages) {
-            uriBuilder.appendQueryParameter(holder.showFields, holder.thumbnailField + "," + holder.bodyField);
-        } else {
-            uriBuilder.appendQueryParameter(holder.showFields, holder.bodyField);
-        }
+        uriBuilder.appendQueryParameter(DataHolder.category, DataHolder.technology);
+        uriBuilder.appendQueryParameter(DataHolder.apiKey, BuildConfig.NEWS_API_KEY);
         if (!numberOfArticles.isEmpty()) {
             if (Integer.parseInt(numberOfArticles) > 100) {
                 numberOfArticles = "100";
             }
         }
-        uriBuilder.appendQueryParameter(holder.pageSize, numberOfArticles);
+        uriBuilder.appendQueryParameter(DataHolder.pageSize, numberOfArticles);
         URL = uriBuilder.toString();
     }
 

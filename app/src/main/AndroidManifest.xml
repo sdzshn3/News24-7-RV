@@ -54,9 +54,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sdzshn3.android.news247.Activities.MainActivity" />
         </activity>
-        <activity android:name=".Activities.NewsDetailsActivity"
-            android:theme="@style/AppTheme.WithActionBar">
-        </activity>
     </application>
 
 </manifest>

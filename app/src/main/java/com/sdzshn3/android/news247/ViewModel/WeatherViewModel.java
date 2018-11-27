@@ -40,8 +40,8 @@ public class WeatherViewModel extends AndroidViewModel {
                         MainActivity.activity.getString(R.string.weather_city_key),
                         MainActivity.activity.getString(R.string.weather_city_default)
                 );
-                String url = DataHolder.holder.WEATHER_REQUEST_URL + weatherCity + "&units=metric&APPID=" + BuildConfig.WEATHER_API_KEY;
-                return queryUtils.fetchNewsData(DataHolder.holder.WEATHER_LOADER_ID, url, 0);
+                String url = DataHolder.WEATHER_REQUEST_URL + weatherCity + "&units=metric&APPID=" + BuildConfig.WEATHER_API_KEY;
+                return queryUtils.fetchNewsData(DataHolder.WEATHER_LOADER_ID, url, 0);
             }
 
             @Override

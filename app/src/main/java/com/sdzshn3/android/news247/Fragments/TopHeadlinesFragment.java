@@ -39,22 +39,21 @@ import android.widget.TextView;
 
 import com.sdzshn3.android.news247.Activities.LanguageSelectionActivity;
 import com.sdzshn3.android.news247.Activities.MainActivity;
-import com.sdzshn3.android.news247.Activities.NewsDetailsActivity;
 import com.sdzshn3.android.news247.Activities.SettingsActivity;
-import com.sdzshn3.android.news247.Adapters.NewsFeedAdapter;
+import com.sdzshn3.android.news247.Adapters.ArticleAdapter;
 import com.sdzshn3.android.news247.BuildConfig;
 import com.sdzshn3.android.news247.News;
 import com.sdzshn3.android.news247.R;
-import com.sdzshn3.android.news247.Retrofit.Results;
-import com.sdzshn3.android.news247.SupportClasses.DataHolder.holder;
+import com.sdzshn3.android.news247.Retrofit.Article;
+import com.sdzshn3.android.news247.SupportClasses.DataHolder;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
 import com.sdzshn3.android.news247.SupportClasses.WeatherIcon;
-import com.sdzshn3.android.news247.ViewModel.NewsFeedViewModel;
+import com.sdzshn3.android.news247.ViewModel.TopHeadlinesViewModel;
 import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 
 import java.util.Objects;
 
-public class NewsFeedFragment extends Fragment {
+public class TopHeadlinesFragment extends Fragment {
 
     public static String URL;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -65,12 +64,12 @@ public class NewsFeedFragment extends Fragment {
     private TextView mEmptyStateTextView, weatherTemp;
     private ImageView weatherIcon;
     private LinearLayoutManager linearLayoutManager;
-    private NewsFeedViewModel newsViewModel;
+    private TopHeadlinesViewModel newsViewModel;
     private WeatherViewModel weatherViewModel;
-    private NewsFeedAdapter mAdapter;
+    private ArticleAdapter mAdapter;
     private int pageNumber = 1;
 
-    public NewsFeedFragment() {
+    public TopHeadlinesFragment() {
         //Required empty public constructor
     }
 
@@ -89,7 +88,7 @@ public class NewsFeedFragment extends Fragment {
         AdView adView = rootView.findViewById(R.id.banner_ad_news_feed);
         adView.loadAd(adRequest);
 
-        mAdapter = new NewsFeedAdapter();
+        mAdapter = new ArticleAdapter();
 
         newsRecyclerView = rootView.findViewById(R.id.recycler_view_list);
         progressBar = rootView.findViewById(R.id.loading_circle);
@@ -117,10 +116,10 @@ public class NewsFeedFragment extends Fragment {
         newsRecyclerView.setHasFixedSize(true);
         newsRecyclerView.setAdapter(mAdapter);
 
-        newsViewModel = ViewModelProviders.of(NewsFeedFragment.this).get(NewsFeedViewModel.class);
-        newsViewModel.getData().observe(NewsFeedFragment.this, results -> {
-            if (results != null && !results.isEmpty()) {
-                mAdapter.submitList(results);
+        newsViewModel = ViewModelProviders.of(TopHeadlinesFragment.this).get(TopHeadlinesViewModel.class);
+        newsViewModel.getData().observe(TopHeadlinesFragment.this, articles -> {
+            if (articles != null && !articles.isEmpty()) {
+                mAdapter.submitList(articles);
                 mEmptyStateTextView.setVisibility(View.GONE);
             } else {
                 if (isConnected()) {
@@ -133,8 +132,8 @@ public class NewsFeedFragment extends Fragment {
             mSwipeRefreshLayout.setRefreshing(false);
         });
 
-        weatherViewModel = ViewModelProviders.of(NewsFeedFragment.this).get(WeatherViewModel.class);
-        weatherViewModel.getData().observe(NewsFeedFragment.this, newsList -> {
+        weatherViewModel = ViewModelProviders.of(TopHeadlinesFragment.this).get(WeatherViewModel.class);
+        weatherViewModel.getData().observe(TopHeadlinesFragment.this, newsList -> {
             if (newsList != null) {
                 News news = newsList.get(0);
                 String temp = News.getTemp().split("\\.", 2)[0];
@@ -151,22 +150,12 @@ public class NewsFeedFragment extends Fragment {
         });
 
         ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener((recyclerView, position, v) -> {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String currentPref = preferences.getString(getString(R.string.show_article_in_key), getString(R.string.default_show_as_plain));
-            if (currentPref.equals(getString(R.string.default_show_as_plain))) {
-                Results currentNews = mAdapter.getItem(position);
-                String bodyHtml = currentNews.getFields().getBody();
-                Intent intent = new Intent(getActivity(), NewsDetailsActivity.class);
-                intent.setData(Uri.parse(bodyHtml));
-                startActivity(intent);
-            } else {
-                Results currentNews = mAdapter.getItem(position);
-                Uri newsUri = Uri.parse(currentNews.getWebUrl());
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                CustomTabsIntent customTabsIntent = builder.build();
-                builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
-                customTabsIntent.launchUrl(mContext, newsUri);
-            }
+            Article currentNews = mAdapter.getItem(position);
+            Uri newsUri = Uri.parse(currentNews.getUrl());
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            CustomTabsIntent customTabsIntent = builder.build();
+            builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
+            customTabsIntent.launchUrl(mContext, newsUri);
         });
         return rootView;
     }
@@ -200,42 +189,24 @@ public class NewsFeedFragment extends Fragment {
                     getString(R.string.default_no_of_news_articles));
         }
 
-        boolean showAuthorName = sharedPrefs.getBoolean(
-                getString(R.string.author_name_key),
-                Boolean.parseBoolean(getString(R.string.default_show_author_name))
-        );
-
-        boolean showArticleImages = sharedPrefs.getBoolean(
-                getString(R.string.show_article_images_key),
-                Boolean.parseBoolean(getString(R.string.default_show_article_images))
-        );
-
         Uri baseUri;
         if (mSearchQuery == null) {
-            baseUri = Uri.parse(holder.NEWS_FEED_REQUEST_URL);
+            baseUri = Uri.parse(DataHolder.TOP_HEADLINES_REQUEST_URL);
             progressBar.setVisibility(View.VISIBLE);
         } else {
-            baseUri = Uri.parse(holder.SEARCH_REQUEST_URL + mSearchQuery);
+            baseUri = Uri.parse(DataHolder.SEARCH_REQUEST_URL + mSearchQuery);
             progressBar.setVisibility(View.VISIBLE);
         }
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
-        uriBuilder.appendQueryParameter(holder.apiKey, BuildConfig.GUARDIAN_API_KEY);
-        uriBuilder.appendQueryParameter(holder.page, String.valueOf(pageNumber));
-        if (showAuthorName) {
-            uriBuilder.appendQueryParameter(holder.showTags, holder.contributorTag);
-        }
-        if (showArticleImages) {
-            uriBuilder.appendQueryParameter(holder.showFields, holder.thumbnailField + "," + holder.bodyField);
-        } else {
-            uriBuilder.appendQueryParameter(holder.showFields, holder.bodyField);
-        }
+        uriBuilder.appendQueryParameter(DataHolder.apiKey, BuildConfig.NEWS_API_KEY);
+        uriBuilder.appendQueryParameter(DataHolder.page, String.valueOf(pageNumber));
         if (!numberOfArticles.isEmpty()) {
             if (Integer.parseInt(numberOfArticles) > 100) {
                 numberOfArticles = "100";
             }
         }
-        uriBuilder.appendQueryParameter(holder.pageSize, numberOfArticles);
+        uriBuilder.appendQueryParameter(DataHolder.pageSize, numberOfArticles);
         URL = uriBuilder.toString();
     }
 

@@ -13,14 +13,14 @@ import retrofit2.Response;
 
 import com.sdzshn3.android.news247.Fragments.ScienceNewsFragment;
 import com.sdzshn3.android.news247.Retrofit.ApiService;
+import com.sdzshn3.android.news247.Retrofit.Article;
 import com.sdzshn3.android.news247.Retrofit.Client;
 import com.sdzshn3.android.news247.Retrofit.NewsModel;
-import com.sdzshn3.android.news247.Retrofit.Results;
 
 import java.util.List;
 
 public class ScienceViewModel extends AndroidViewModel {
-    private static MutableLiveData<List<Results>> data = new MutableLiveData<>();
+    private static MutableLiveData<List<Article>> data = new MutableLiveData<>();
     private ApiService apiService;
     private static Call<NewsModel> call;
 
@@ -36,7 +36,7 @@ public class ScienceViewModel extends AndroidViewModel {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
                 if (response.isSuccessful()) {
-                    data.postValue(response.body().getResponse().getResults());
+                    data.postValue(response.body().getArticles());
                 }
             }
 
@@ -53,7 +53,7 @@ public class ScienceViewModel extends AndroidViewModel {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
                 if (response.isSuccessful()) {
-                    data.postValue(response.body().getResponse().getResults());
+                    data.postValue(response.body().getArticles());
                 }
             }
 
@@ -65,7 +65,7 @@ public class ScienceViewModel extends AndroidViewModel {
         });
     }
 
-    public LiveData<List<Results>> getData() {
+    public LiveData<List<Article>> getData() {
         return data;
     }
 }

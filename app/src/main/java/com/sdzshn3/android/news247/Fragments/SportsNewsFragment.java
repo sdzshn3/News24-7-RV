@@ -1,9 +1,6 @@
 package com.sdzshn3.android.news247.Fragments;
 
 import android.app.SearchManager;
-
-import androidx.lifecycle.ViewModelProviders;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,21 +9,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.browser.customtabs.CustomTabsIntent;
-
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,6 +19,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.material.snackbar.Snackbar;
 import com.sdzshn3.android.news247.Activities.LanguageSelectionActivity;
 import com.sdzshn3.android.news247.Activities.MainActivity;
 import com.sdzshn3.android.news247.Activities.SettingsActivity;
@@ -48,13 +34,21 @@ import com.sdzshn3.android.news247.Retrofit.Article;
 import com.sdzshn3.android.news247.SupportClasses.DataHolder;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
 import com.sdzshn3.android.news247.SupportClasses.WeatherIcon;
-import com.sdzshn3.android.news247.ViewModel.BusinessViewModel;
+import com.sdzshn3.android.news247.ViewModel.SportsViewModel;
 import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 
 import java.util.Objects;
 
-public class BusinessNewsFragment extends Fragment {
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+public class SportsNewsFragment extends Fragment {
     public static String URL;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView newsRecyclerView;
@@ -64,10 +58,10 @@ public class BusinessNewsFragment extends Fragment {
     private TextView mEmptyStateTextView, weatherTemp;
     private ImageView weatherIcon;
     private WeatherViewModel weatherViewModel;
-    private BusinessViewModel businessViewModel;
+    private SportsViewModel sportsViewModel;
     private ArticleAdapter mAdapter;
 
-    public BusinessNewsFragment() {
+    public SportsNewsFragment() {
         //Required empty public constructor
     }
 
@@ -98,7 +92,7 @@ public class BusinessNewsFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
             if (isConnected()) {
-                businessViewModel.Refresh();
+                sportsViewModel.Refresh();
                 WeatherViewModel.loadData();
             } else {
                 Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
@@ -113,8 +107,8 @@ public class BusinessNewsFragment extends Fragment {
         newsRecyclerView.setNestedScrollingEnabled(false);
         newsRecyclerView.setAdapter(mAdapter);
 
-        businessViewModel = ViewModelProviders.of(BusinessNewsFragment.this).get(BusinessViewModel.class);
-        businessViewModel.getData().observe(BusinessNewsFragment.this, articles -> {
+        sportsViewModel = ViewModelProviders.of(SportsNewsFragment.this).get(SportsViewModel.class);
+        sportsViewModel.getData().observe(SportsNewsFragment.this, articles -> {
             if (articles != null && !articles.isEmpty()) {
                 mAdapter.submitList(articles);
                 mEmptyStateTextView.setVisibility(View.GONE);
@@ -129,8 +123,8 @@ public class BusinessNewsFragment extends Fragment {
             mSwipeRefreshLayout.setRefreshing(false);
         });
 
-        weatherViewModel = ViewModelProviders.of(BusinessNewsFragment.this).get(WeatherViewModel.class);
-        weatherViewModel.getData().observe(BusinessNewsFragment.this, newsList -> {
+        weatherViewModel = ViewModelProviders.of(SportsNewsFragment.this).get(WeatherViewModel.class);
+        weatherViewModel.getData().observe(SportsNewsFragment.this, newsList -> {
             if (newsList != null) {
                 News news = newsList.get(0);
                 String temp = News.getTemp().split("\\.", 2)[0];
@@ -195,7 +189,7 @@ public class BusinessNewsFragment extends Fragment {
             progressBar.setVisibility(View.VISIBLE);
         }
         Uri.Builder uriBuilder = baseUri.buildUpon();
-        uriBuilder.appendQueryParameter(DataHolder.category, DataHolder.business);
+        uriBuilder.appendQueryParameter(DataHolder.category, DataHolder.sports);
         uriBuilder.appendQueryParameter(DataHolder.apiKey, BuildConfig.NEWS_API_KEY);
         if (!numberOfArticles.isEmpty()) {
             if (Integer.parseInt(numberOfArticles) > 100) {

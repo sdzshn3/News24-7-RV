@@ -9,7 +9,7 @@ public class Client {
 
     private static Retrofit getRetrofitInstance() {
         return new Retrofit.Builder()
-                .baseUrl(DataHolder.holder.BASE_URL)
+                .baseUrl(DataHolder.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }

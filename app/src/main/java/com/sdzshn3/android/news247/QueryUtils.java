@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sdzshn3.android.news247.SupportClasses.DataHolder.holder;
+import com.sdzshn3.android.news247.SupportClasses.DataHolder;
 
 public class QueryUtils {
 
@@ -74,9 +74,9 @@ public class QueryUtils {
         }
 
         switch (id) {
-            case holder.WEATHER_LOADER_ID:
+            case DataHolder.WEATHER_LOADER_ID:
                 return extractWeatherFromJson(jsonResponse);
-            case holder.TELUGU_NEWS_LOADER_ID:
+            case DataHolder.TELUGU_NEWS_LOADER_ID:
                 return extractTeluguNewsFromRss(requestUrl, noOfArticles);
         }
 
@@ -221,7 +221,7 @@ public class QueryUtils {
                     String title = currentNewsArticle.optString("webTitle");
                     String articleUrl = currentNewsArticle.optString("webUrl");
                     String apiUrl = currentNewsArticle.optString("apiUrl");
-                    apiUrl = apiUrl + "?api-key=" + BuildConfig.GUARDIAN_API_KEY;
+                    apiUrl = apiUrl + "?api-key=" + BuildConfig.NEWS_API_KEY;
                     String publishedAt = currentNewsArticle.optString("webPublicationDate");
                     String thumbnail = null;
                     String bodyHtml = null;

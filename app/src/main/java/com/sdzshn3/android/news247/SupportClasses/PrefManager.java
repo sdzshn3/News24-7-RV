@@ -1,4 +1,4 @@
-package com.sdzshn3.android.news247;
+package com.sdzshn3.android.news247.SupportClasses;
 
 import android.content.Context;
 import android.content.SharedPreferences;

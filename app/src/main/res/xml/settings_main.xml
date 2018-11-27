@@ -29,11 +29,6 @@
         android:defaultValue="@string/default_show_author_name"
         android:summary="@string/show_author_name_summary"/>
 
-    <Preference
-        android:title="@string/show_article_in_label"
-        android:key="@string/show_article_in_key"
-        android:defaultValue="@string/default_show_as_plain"/>
-
     <SwitchPreference
         android:title="@string/show_article_images_label"
         android:key="@string/show_article_images_key"

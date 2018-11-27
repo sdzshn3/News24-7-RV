@@ -29,7 +29,7 @@ public class TeluguViewModel extends AndroidViewModel {
             protected List<News> doInBackground(Void... voids) {
                 QueryUtils queryUtils = new QueryUtils();
                 try {
-                    return queryUtils.fetchNewsData(DataHolder.holder.TELUGU_NEWS_LOADER_ID, DataHolder.holder.TELUGU_NEWS_REQUEST_URL, Integer.parseInt(TeluguNewsFragment.numberOfArticles));
+                    return queryUtils.fetchNewsData(DataHolder.TELUGU_NEWS_LOADER_ID, DataHolder.TELUGU_NEWS_REQUEST_URL, Integer.parseInt(TeluguNewsFragment.numberOfArticles));
                 } catch (NumberFormatException e) {
                     Log.e("TeluguViewModel", "numberOfArticles not initialised");
                     return null;

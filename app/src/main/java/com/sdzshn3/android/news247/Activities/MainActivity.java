@@ -18,12 +18,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.sdzshn3.android.news247.Fragments.BusinessNewsFragment;
-import com.sdzshn3.android.news247.Fragments.NewsFeedFragment;
+import com.sdzshn3.android.news247.Fragments.EntertainmentNewsFragment;
+import com.sdzshn3.android.news247.Fragments.HealthNewsFragment;
+import com.sdzshn3.android.news247.Fragments.SportsNewsFragment;
+import com.sdzshn3.android.news247.Fragments.TopHeadlinesFragment;
 import com.sdzshn3.android.news247.Fragments.ScienceNewsFragment;
 import com.sdzshn3.android.news247.Fragments.TechnologyNewsFragment;
 import com.sdzshn3.android.news247.Fragments.TeluguNewsFragment;
 import com.sdzshn3.android.news247.R;
-import com.sdzshn3.android.news247.SupportClasses.DataHolder.holder;
+import com.sdzshn3.android.news247.SupportClasses.DataHolder;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         activity = MainActivity.this;
 
         //Setting up the action bar and Navigation drawer
+        drawer = findViewById(R.id.drawer_layout);
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -56,15 +60,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         //Getting the language name from sharedPreferences.
-        SharedPreferences sharedPreferences = this.getSharedPreferences(holder.LANGUAGE_PREF_NAME, MODE_PRIVATE);
-        newsLanguage = sharedPreferences.getString(holder.SELECTED_LANGUAGE, holder.english);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(DataHolder.LANGUAGE_PREF_NAME, MODE_PRIVATE);
+        newsLanguage = sharedPreferences.getString(DataHolder.SELECTED_LANGUAGE, DataHolder.english);
         //Setting the default Fragment when app launched
         if(savedInstanceState == null) {
-            if (newsLanguage.equals(holder.telugu)) {
+            if (newsLanguage.equals(DataHolder.telugu)) {
                 hideEnglishItems();
                 setFragment(new TeluguNewsFragment());
             } else {
-                setFragment(new NewsFeedFragment());
+                setFragment(new TopHeadlinesFragment());
             }
         }
     }
@@ -72,9 +76,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     /**If telugu language is selected, then hideEnglishItems will be called to hide English navMenus */
     private void hideEnglishItems(){
         Menu navMenu = navigationView.getMenu();
-        navMenu.findItem(R.id.business_nav_item).setVisible(false);
-        navMenu.findItem(R.id.science_nav_item).setVisible(false);
-        navMenu.findItem(R.id.technology_nav_item).setVisible(false);
+        navMenu.findItem(R.id.business_nav_item).setVisible(false).setEnabled(false).setChecked(false);
+        navMenu.findItem(R.id.science_nav_item).setVisible(false).setEnabled(false).setChecked(false);
+        navMenu.findItem(R.id.technology_nav_item).setVisible(false).setEnabled(false).setChecked(false);
+        navMenu.findItem(R.id.health_nav_item).setVisible(false).setEnabled(false).setChecked(false);
+        navMenu.findItem(R.id.entertainment_nav_item).setVisible(false).setEnabled(false).setChecked(false);
+        navMenu.findItem(R.id.sports_nav_item).setVisible(false).setEnabled(false).setChecked(false);
     }
 
     @Override
@@ -92,9 +99,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = menuItem.getItemId();
         switch (id) {
             case R.id.news_feed_nav_item:
-                if(newsLanguage.equals(holder.english)) {
-                    setFragment(new NewsFeedFragment());
-                } else if (newsLanguage.equals(holder.telugu)){
+                if(newsLanguage.equals(DataHolder.english)) {
+                    setFragment(new TopHeadlinesFragment());
+                } else if (newsLanguage.equals(DataHolder.telugu)){
                     setFragment(new TeluguNewsFragment());
                 }
                 break;
@@ -106,6 +113,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.business_nav_item:
                 setFragment(new BusinessNewsFragment());
+                break;
+            case R.id.health_nav_item:
+                setFragment(new HealthNewsFragment());
+                break;
+            case R.id.entertainment_nav_item:
+                setFragment(new EntertainmentNewsFragment());
+                break;
+            case R.id.sports_nav_item:
+                setFragment(new SportsNewsFragment());
                 break;
             case R.id.settings_nav_item:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
@@ -132,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ft.replace(R.id.frame_layout, fragment);
             ft.commit();
         }
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
 }

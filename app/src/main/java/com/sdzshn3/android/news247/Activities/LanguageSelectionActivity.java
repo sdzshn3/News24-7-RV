@@ -11,9 +11,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.sdzshn3.android.news247.PrefManager;
+import com.sdzshn3.android.news247.SupportClasses.PrefManager;
 import com.sdzshn3.android.news247.R;
-import com.sdzshn3.android.news247.SupportClasses.DataHolder.holder;
+import com.sdzshn3.android.news247.SupportClasses.DataHolder;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,7 +50,7 @@ public class LanguageSelectionActivity extends AppCompatActivity {
         languageHint.setTypeface(regularText);
 
         //Initialising the language name sharedPreferences and editor
-        sharedPreferences = this.getSharedPreferences(holder.LANGUAGE_PREF_NAME, MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences(DataHolder.LANGUAGE_PREF_NAME, MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
 
@@ -73,7 +73,7 @@ public class LanguageSelectionActivity extends AppCompatActivity {
             //Setting first time launch as false because app is launched and setup
             prefManager.setFirstTimeLaunch(false);
             //Saving the language preference to english so that when app launches again, it starts with english language
-            editor.putString(holder.SELECTED_LANGUAGE, holder.english);
+            editor.putString(DataHolder.SELECTED_LANGUAGE, DataHolder.english);
             editor.apply();
             Intent intent = new Intent(LanguageSelectionActivity.this, MainActivity.class);
             startActivity(intent);
@@ -95,7 +95,7 @@ public class LanguageSelectionActivity extends AppCompatActivity {
             //Setting first time launch as false because app is launched and setup
             prefManager.setFirstTimeLaunch(false);
             //Saving the language preference to telugu so that when app launches again, it starts with telugu language
-            editor.putString(holder.SELECTED_LANGUAGE, holder.telugu);
+            editor.putString(DataHolder.SELECTED_LANGUAGE, DataHolder.telugu);
             editor.apply();
             Intent intent = new Intent(LanguageSelectionActivity.this, MainActivity.class);
             startActivity(intent);

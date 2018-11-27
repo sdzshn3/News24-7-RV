@@ -17,7 +17,7 @@
     <string name="slide_3_desc">New articles available almost instantly!</string>
 
     <string name="slide_4_title">News articles from different news websites</string>
-    <string name="slide_4_desc">Get news articles from websites like Guardian, oneIndia, etc</string>
+    <string name="slide_4_desc">Get news articles from websites like News API, oneIndia, etc</string>
 
     <string name="next">NEXT</string>
     <string name="skip">SKIP</string>
@@ -29,7 +29,7 @@
     <string name="first_name_example">Syed</string>
     <string name="article_thumbnail">article thumbnail</string>
 
-    <string name="default_no_of_news_articles">10</string>
+    <string name="default_no_of_news_articles">20</string>
     <string name="number_of_articles_key">number_of_articles</string>
     <string name="number_of_articles_label">Number of articles to load</string>
 
@@ -53,10 +53,15 @@
     <string name="weather_icon_description">Shows weather icon</string>
     <string name="weather_city_not_supported_text">City not found</string>
     <string name="navigation_header_image_description">Navigation header</string>
-    <string name="fragment_1_title">News feed</string>
+
+    <string name="fragment_1_title">Top Headlines</string>
     <string name="fragment_2_title">Science</string>
     <string name="fragment_3_title">Technology</string>
     <string name="fragment_4_title">Business</string>
+    <string name="fragment_5_title">Health</string>
+    <string name="fragment_6_title">Entertainment</string>
+    <string name="fragment_7_title">Sports</string>
+
     <string name="navigation_section_tools_title">Tools</string>
     <string name="navigation_settings_title">Settings</string>
     <string name="menu_search_item_title">Search</string>
@@ -69,11 +74,6 @@
     <string name="telugu_button_text">TELUGU</string>
     <string name="change_language_hint_text">You can also change language later in Navigation drawer or in menu item.</string>
     <string name="menu_share_app_item_title">Share app</string>
-    <string name="show_article_in_key">show_article_in</string>
-    <string name="show_article_in_label">Show detailed article in</string>
-    <string name="default_show_as_plain">plain</string>
-    <string name="show_in_browser">browser</string>
-    <string name="show_as_plain_text_label">Show as plain text</string>
-    <string name="show_in_browser_label">Show in browser</string>
     <string name="done_text">done</string>
+
 </resources>

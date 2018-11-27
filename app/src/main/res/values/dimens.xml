@@ -12,7 +12,7 @@
     <dimen name="article_marginStart">8dp</dimen>
     <dimen name="article_marginTop">8dp</dimen>
     <dimen name="article_marginBottom">8dp</dimen>
-    <dimen name="article_title_text_size">18sp</dimen>
+    <dimen name="article_title_text_size">16sp</dimen>
     <dimen name="article_publishedTime_text_size">12sp</dimen>
     <dimen name="slide_icon_marginBottom">20dp</dimen>
     <dimen name="slide_desc_marginTop">20dp</dimen>
@@ -36,8 +36,8 @@
     <dimen name="article_share_button_width_and_height">30dp</dimen>
     <dimen name="article_share_button_mar_top">5dp</dimen>
     <dimen name="article_share_button_mar_right">10dp</dimen>
-    <dimen name="contributor_layout_height">40dp</dimen>
-    <dimen name="contributor_layout_mar_top_bottom">5dp</dimen>
+    <dimen name="contributor_layout_height">35dp</dimen>
+    <dimen name="contributor_layout_mar_top_bottom">3dp</dimen>
     <dimen name="contributor_image_width_height">40dp</dimen>
     <dimen name="contributor_name_section_mar_left">5dp</dimen>
     <dimen name="navigation_header_image_width_height">80dp</dimen>

@@ -82,13 +82,12 @@ public class TeluguNewsAdapter extends ListAdapter<News, TeluguNewsAdapter.ViewH
         String thumbnailUrl = currentNews.getThumbnail();
         if (thumbnailUrl != null && showArticleImages) {
             if (!thumbnailUrl.isEmpty()) {
-                Picasso.get().load(thumbnailUrl).resize(272, 153).into(holder.thumbnailView);
+                Picasso.get().load(thumbnailUrl).resize(320, 240).into(holder.thumbnailView);
             }
         } else {
             holder.thumbnailView.setVisibility(View.GONE);
             holder.cardView.setVisibility(View.GONE);
         }
-        holder.contributorImage.setVisibility(View.GONE);
 
         Typeface semiBoldText = Typeface.createFromAsset(mContext.getAssets(), "GoogleSans-Medium.ttf");
 
@@ -129,8 +128,6 @@ public class TeluguNewsAdapter extends ListAdapter<News, TeluguNewsAdapter.ViewH
         TextView publishedAtView;
         @BindView(R.id.share_button)
         Button shareButton;
-        @BindView(R.id.contributor_image)
-        RoundedImageView contributorImage;
         @BindView(R.id.image_card_view)
         CardView cardView;
 

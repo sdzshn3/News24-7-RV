@@ -3,6 +3,15 @@ package com.sdzshn3.android.news247.ViewModel;
 import android.app.Application;
 import android.util.Log;
 
+import com.sdzshn3.android.news247.Fragments.HealthNewsFragment;
+import com.sdzshn3.android.news247.Retrofit.ApiService;
+import com.sdzshn3.android.news247.Retrofit.Article;
+import com.sdzshn3.android.news247.Retrofit.Client;
+import com.sdzshn3.android.news247.Retrofit.NewsModel;
+
+import java.util.List;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -10,24 +19,21 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import com.sdzshn3.android.news247.Fragments.NewsFeedFragment;
-import com.sdzshn3.android.news247.Retrofit.ApiService;
-import com.sdzshn3.android.news247.Retrofit.NewsModel;
-import com.sdzshn3.android.news247.Retrofit.Client;
-import com.sdzshn3.android.news247.Retrofit.Results;
+public class HealthViewModel extends AndroidViewModel {
+    private static MutableLiveData<List<Article>> data = new MutableLiveData<>();
 
-import java.util.List;
-
-public class NewsFeedViewModel extends AndroidViewModel {
-    private static MutableLiveData<List<Results>> data = new MutableLiveData<>();
-    private static Call<NewsModel> call;
     private ApiService apiService;
+    private static Call<NewsModel> call;
 
-    public NewsFeedViewModel(Application application) {
+    public HealthViewModel(@NonNull Application application) {
         super(application);
         apiService = Client.getApiService();
-        call = apiService.getResponse(NewsFeedFragment.URL);
+        call = apiService.getResponse(HealthNewsFragment.URL);
         loadData();
+    }
+
+    public LiveData<List<Article>> getData() {
+        return data;
     }
 
     private void loadData() {
@@ -35,36 +41,32 @@ public class NewsFeedViewModel extends AndroidViewModel {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
                 if (response.isSuccessful()) {
-                    data.postValue(response.body().getResponse().getResults());
+                    data.postValue(response.body().getArticles());
                 }
             }
 
             @Override
             public void onFailure(Call<NewsModel> call, Throwable t) {
-                Log.e("NewsFeedViewModel", "onFailure", t);
+                Log.e("HealthViewModel", "onFailure", t);
                 data.postValue(null);
             }
         });
     }
 
-    public void refresh() {
+    public void Refresh() {
         call.clone().enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
                 if (response.isSuccessful()) {
-                    data.postValue(response.body().getResponse().getResults());
+                    data.postValue(response.body().getArticles());
                 }
             }
 
             @Override
             public void onFailure(Call<NewsModel> call, Throwable t) {
-                Log.e("NewsFeedViewModel", "onFailure", t);
+                Log.e("HealthViewModel", "onFailure", t);
                 data.postValue(null);
             }
         });
-    }
-
-    public LiveData<List<Results>> getData() {
-        return data;
     }
 }
