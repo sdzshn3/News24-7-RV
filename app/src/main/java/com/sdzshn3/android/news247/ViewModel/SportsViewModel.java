@@ -28,7 +28,6 @@ public class SportsViewModel extends AndroidViewModel {
     public SportsViewModel(@NonNull Application application) {
         super(application);
         apiService = Client.getApiService();
-        call = apiService.getResponse(SportsNewsFragment.URL);
         loadData();
     }
 
@@ -37,6 +36,7 @@ public class SportsViewModel extends AndroidViewModel {
     }
 
     private void loadData() {
+        call = apiService.getResponse(SportsNewsFragment.URL);
         call.enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
@@ -53,7 +53,8 @@ public class SportsViewModel extends AndroidViewModel {
         });
     }
 
-    public void Refresh() {
+    public void refresh() {
+        call = apiService.getResponse(SportsNewsFragment.URL);
         call.clone().enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {

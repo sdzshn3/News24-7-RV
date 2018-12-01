@@ -51,7 +51,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="temperature_value_default">\?</string>
     <string name="weather_icon_description">Shows weather icon</string>
-    <string name="weather_city_not_supported_text">City not found</string>
     <string name="navigation_header_image_description">Navigation header</string>
 
     <string name="fragment_1_title">Top Headlines</string>
@@ -66,7 +65,7 @@
     <string name="navigation_settings_title">Settings</string>
     <string name="menu_search_item_title">Search</string>
     <string name="share_article_link_hint">Share link</string>
-    <string name="weather_temperature_concatenate">%1$s ℃</string>
+    <string name="weather_temperature_concatenate">%1$s ℃ - %2$s</string>
     <string name="language_menu_label">Change language</string>
     <string name="navigation_change_language_title">Change Language</string>
     <string name="activity_language_selection_title">Choose language</string>
@@ -74,6 +73,9 @@
     <string name="telugu_button_text">TELUGU</string>
     <string name="change_language_hint_text">You can also change language later in Navigation drawer or in menu item.</string>
     <string name="menu_share_app_item_title">Share app</string>
-    <string name="done_text">done</string>
+    <string name="detect_city_automatically_key">detect_city_automatically</string>
+    <string name="detect_city_automatically_title">Detect city automatically</string>
+    <string name="detect_city_automatically_default">true</string>
+    <string name="detect_city_automatically_summary">Need location permission to work or turn off and enter city name below</string>
 
 </resources>

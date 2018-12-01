@@ -13,12 +13,15 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:isScrollContainer="true"
             android:fillViewport="true"
-            android:scrollbars="none">
+            android:scrollbars="none"
+            android:focusable="false">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:descendantFocusability="blocksDescendants">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_list"
@@ -40,6 +43,7 @@
                     android:layout_marginTop="@dimen/weather_icon_margin_top"
                     android:layout_marginEnd="@dimen/weather_icon_right_margin"
                     android:layout_marginRight="@dimen/weather_icon_right_margin"
+                    android:focusable="false"
                     android:layout_toStartOf="@id/weather_temp"
                     android:contentDescription="@string/weather_icon_description"
                     android:src="@drawable/unknown"
@@ -51,6 +55,7 @@
                     android:layout_height="@dimen/weather_temp_height"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="@dimen/weather_temp_margin_top"
+                    android:focusable="false"
                     android:layout_marginEnd="@dimen/weather_temp_right_margin"
                     android:layout_marginRight="@dimen/weather_temp_right_margin"
                     android:paddingTop="@dimen/weather_temp_padding_top"

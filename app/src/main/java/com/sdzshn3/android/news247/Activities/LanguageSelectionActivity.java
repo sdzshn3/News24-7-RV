@@ -20,13 +20,13 @@ import butterknife.ButterKnife;
 
 public class LanguageSelectionActivity extends AppCompatActivity {
 
-    PrefManager prefManager;
+    private PrefManager prefManager;
     @BindView(R.id.english_button)
     Button englishButton;
     @BindView(R.id.telugu_button)
     Button teluguButton;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @BindView(R.id.choose_language_title)
     TextView title;
@@ -60,7 +60,7 @@ public class LanguageSelectionActivity extends AppCompatActivity {
     }
 
     //OnClickListener for English language button
-    View.OnClickListener englishButtonClickListener = new View.OnClickListener() {
+    private View.OnClickListener englishButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             try {
@@ -81,8 +81,8 @@ public class LanguageSelectionActivity extends AppCompatActivity {
         }
     };
 
-    ////OnClickListener for Telugu language button
-    View.OnClickListener teluguButtonClickListener = new View.OnClickListener() {
+    //OnClickListener for Telugu language button
+    private View.OnClickListener teluguButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             try {

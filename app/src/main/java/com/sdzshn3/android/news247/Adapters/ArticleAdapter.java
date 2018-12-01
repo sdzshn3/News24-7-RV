@@ -21,7 +21,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.makeramen.roundedimageview.RoundedImageView;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.Retrofit.Article;
 import com.squareup.picasso.Picasso;

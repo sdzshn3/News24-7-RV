@@ -29,11 +29,11 @@ public class TechnologyViewModel extends AndroidViewModel {
     public TechnologyViewModel(@NonNull Application application) {
         super(application);
         apiService = Client.getApiService();
-        call = apiService.getResponse(TechnologyNewsFragment.URL);
         loadData();
     }
 
     private void loadData() {
+        call = apiService.getResponse(TechnologyNewsFragment.URL);
         call.enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
@@ -51,6 +51,7 @@ public class TechnologyViewModel extends AndroidViewModel {
     }
 
     public void refresh() {
+        call = apiService.getResponse(TechnologyNewsFragment.URL);
         call.clone().enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {

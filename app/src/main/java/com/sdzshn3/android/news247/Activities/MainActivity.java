@@ -1,22 +1,37 @@
 package com.sdzshn3.android.news247.Activities;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Build;
+
 import androidx.annotation.NonNull;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.navigation.NavigationView;
+
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.sdzshn3.android.news247.Fragments.BusinessNewsFragment;
 import com.sdzshn3.android.news247.Fragments.EntertainmentNewsFragment;
 import com.sdzshn3.android.news247.Fragments.HealthNewsFragment;
@@ -27,6 +42,11 @@ import com.sdzshn3.android.news247.Fragments.TechnologyNewsFragment;
 import com.sdzshn3.android.news247.Fragments.TeluguNewsFragment;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.SupportClasses.DataHolder;
+import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,8 +60,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout drawer;
     @BindView(R.id.nav_view)
     NavigationView navigationView;
-    String newsLanguage;
+    private String newsLanguage;
     public static Activity activity;
+    private int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    public static String city;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private boolean detectCityAutomatically;
+    SharedPreferences sharedPrefs;
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
@@ -50,6 +75,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         activity = MainActivity.this;
+
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        detectCityAutomatically = sharedPrefs.getBoolean(
+                getString(R.string.detect_city_automatically_key),
+                Boolean.valueOf(getString(R.string.detect_city_automatically_default))
+        );
+
+        if (detectCityAutomatically) {
+            getLocation();
+        }
 
         //Setting up the action bar and Navigation drawer
         drawer = findViewById(R.id.drawer_layout);
@@ -63,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences sharedPreferences = this.getSharedPreferences(DataHolder.LANGUAGE_PREF_NAME, MODE_PRIVATE);
         newsLanguage = sharedPreferences.getString(DataHolder.SELECTED_LANGUAGE, DataHolder.english);
         //Setting the default Fragment when app launched
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             if (newsLanguage.equals(DataHolder.telugu)) {
                 hideEnglishItems();
                 setFragment(new TeluguNewsFragment());
@@ -71,6 +106,55 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 setFragment(new TopHeadlinesFragment());
             }
         }
+    }
+
+    public void getLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+            mFusedLocationProviderClient.getLastLocation()
+                    .addOnSuccessListener(this, location -> {
+                        if (location != null) {
+                            Geocoder gcd = new Geocoder(this, Locale.getDefault());
+                            List<Address> addresses = null;
+                            try {
+                                addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            if (addresses != null && addresses.size() > 0) {
+                                city = addresses.get(0).getLocality();
+                                WeatherViewModel weatherViewModel = new WeatherViewModel(getApplication());
+                                weatherViewModel.refresh();
+                            }
+                        }
+                    });
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            boolean coarseLocation = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+            boolean fineLocation = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            if (fineLocation && coarseLocation) {
+                if (detectCityAutomatically) {
+                    getLocation();
+                }
+            } else {
+                Snackbar.make(this.findViewById(android.R.id.content), "Please allow permission for weather or change in settings", Snackbar.LENGTH_LONG).setAction("ENABLE", v -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                    }
+                }).show();
+                Handler handler = new Handler();
+                handler.postDelayed(() -> sharedPrefs.edit().putBoolean(getString(R.string.detect_city_automatically_key), false).apply(), 3500);
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /**If telugu language is selected, then hideEnglishItems will be called to hide English navMenus */
@@ -142,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     //Setting fragment
-    public void setFragment(Fragment fragment) {
+    private void setFragment(Fragment fragment) {
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.frame_layout, fragment);

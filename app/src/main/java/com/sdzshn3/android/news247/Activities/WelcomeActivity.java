@@ -33,7 +33,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private int[] layouts;
     private Button btnSkip, btnNext;
 
-    ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
+    private ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
 
         @Override
         public void onPageSelected(int position) {
@@ -155,10 +155,10 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
-    public class MyViewPagerAdapter extends PagerAdapter {
+    private class MyViewPagerAdapter extends PagerAdapter {
         private LayoutInflater layoutInflater;
 
-        public MyViewPagerAdapter() {
+        MyViewPagerAdapter() {
         }
 
         @NonNull

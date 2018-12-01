@@ -12,8 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.makeramen.roundedimageview.RoundedImageView;
-import com.sdzshn3.android.news247.News;
+import com.sdzshn3.android.news247.TeluguNewsModel;
 import com.sdzshn3.android.news247.R;
 import com.squareup.picasso.Picasso;
 
@@ -27,21 +26,21 @@ import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TeluguNewsAdapter extends ListAdapter<News, TeluguNewsAdapter.ViewHolder> {
+public class TeluguNewsAdapter extends ListAdapter<TeluguNewsModel, TeluguNewsAdapter.ViewHolder> {
     private Context mContext;
 
     public TeluguNewsAdapter() {
         super(DIFF_CALLBACK);
     }
 
-    private static final DiffUtil.ItemCallback<News> DIFF_CALLBACK = new DiffUtil.ItemCallback<News>() {
+    private static final DiffUtil.ItemCallback<TeluguNewsModel> DIFF_CALLBACK = new DiffUtil.ItemCallback<TeluguNewsModel>() {
         @Override
-        public boolean areItemsTheSame(@NonNull News news, @NonNull News t1) {
+        public boolean areItemsTheSame(@NonNull TeluguNewsModel news, @NonNull TeluguNewsModel t1) {
             return news.getTitle().equals(t1.getTitle());
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull News news, @NonNull News t1) {
+        public boolean areContentsTheSame(@NonNull TeluguNewsModel news, @NonNull TeluguNewsModel t1) {
             return news.getTitle().equals(t1.getTitle()) &&
                     news.getArticleUrl().equals(t1.getArticleUrl()) &&
                     news.getPublishedAt().equals(t1.getPublishedAt());
@@ -58,7 +57,7 @@ public class TeluguNewsAdapter extends ListAdapter<News, TeluguNewsAdapter.ViewH
 
     @Override
     public void onBindViewHolder(@NonNull final TeluguNewsAdapter.ViewHolder holder, int position) {
-        final News currentNews = getItem(position);
+        final TeluguNewsModel currentNews = getItem(position);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
 
@@ -99,12 +98,16 @@ public class TeluguNewsAdapter extends ListAdapter<News, TeluguNewsAdapter.ViewH
         holder.separator.setVisibility(View.GONE);
 
         if(currentNews.getPublishedAt() != null) {
-            holder.publishedAtView.setText(currentNews.getPublishedAt().replace("T", " at ").replace("Z", " "));
+            holder.publishedAtView.setText(currentNews.getPublishedAt());
+            String orgDate= currentNews.getPublishedAt();
+            int index = orgDate.indexOf("+");
+            String finalDate = orgDate.substring(0, index);
+            holder.publishedAtView.setText(finalDate.substring(0, finalDate.lastIndexOf(":")));
         }
     }
 
     @Override
-    public News getItem(int position) {
+    public TeluguNewsModel getItem(int position) {
         return super.getItem(position);
     }
 

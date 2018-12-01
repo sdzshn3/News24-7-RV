@@ -20,7 +20,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HealthViewModel extends AndroidViewModel {
-    private static MutableLiveData<List<Article>> data = new MutableLiveData<>();
+    private static final MutableLiveData<List<Article>> data = new MutableLiveData<>();
 
     private ApiService apiService;
     private static Call<NewsModel> call;
@@ -28,7 +28,6 @@ public class HealthViewModel extends AndroidViewModel {
     public HealthViewModel(@NonNull Application application) {
         super(application);
         apiService = Client.getApiService();
-        call = apiService.getResponse(HealthNewsFragment.URL);
         loadData();
     }
 
@@ -37,6 +36,7 @@ public class HealthViewModel extends AndroidViewModel {
     }
 
     private void loadData() {
+        call = apiService.getResponse(HealthNewsFragment.URL);
         call.enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
@@ -53,7 +53,8 @@ public class HealthViewModel extends AndroidViewModel {
         });
     }
 
-    public void Refresh() {
+    public void refresh() {
+        call = apiService.getResponse(HealthNewsFragment.URL);
         call.clone().enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {

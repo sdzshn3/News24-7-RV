@@ -33,9 +33,6 @@
             android:id="@+id/sports_nav_item"
             android:icon="@drawable/ic_sports"
             android:title="@string/fragment_7_title"/>
-        <item
-            android:id="@+id/sources_nav_item"
-            android:title="Sources"/>
     </group>
 
     <item android:title="@string/navigation_section_tools_title">

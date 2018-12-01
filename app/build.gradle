@@ -6,8 +6,8 @@ android {
         applicationId "com.sdzshn3.android.news247"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 11
-        versionName "2.1.1"
+        versionCode 13
+        versionName "3.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -66,15 +66,12 @@ dependencies {
         transitive = true
     }
 
-    implementation 'org.sufficientlysecure:html-textview:3.2'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
 
     //for lifecycle and LiveData and ViewModel
     implementation 'androidx.lifecycle:lifecycle-runtime:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.0.0"
-
-    //for paging
-    implementation 'androidx.paging:paging-runtime:2.1.0-beta01'
 
     // GSON with Retrofit
     implementation 'com.google.code.gson:gson:2.8.2'

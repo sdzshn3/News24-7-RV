@@ -1,13 +1,10 @@
 package com.sdzshn3.android.news247.SupportClasses;
 
 public final class DataHolder {
-    public static final int WEATHER_LOADER_ID = 2;
-    public static final int TELUGU_NEWS_LOADER_ID = 3;
     public static final String BASE_URL = "https://newsapi.org/v2/";
     public static final String TOP_HEADLINES_REQUEST_URL = "top-headlines?country=in";
     public static final String SEARCH_REQUEST_URL = "everything?q=";
-    public static final String WEATHER_REQUEST_URL = "http://api.openweathermap.org/data/2.5/weather?q=";
-    //remove -news if you want more articles
+    public static final String WEATHER_REQUEST_BASE_URL = "https://api.openweathermap.org/data/2.5/";
     public static final String TELUGU_NEWS_REQUEST_URL = "https://telugu.oneindia.com/rss/telugu-fb.xml";
     public static final String apiKey = "apiKey";
     public static final String category = "category";

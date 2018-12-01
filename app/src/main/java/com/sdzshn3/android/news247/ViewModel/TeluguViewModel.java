@@ -9,14 +9,14 @@ import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.sdzshn3.android.news247.Fragments.TeluguNewsFragment;
-import com.sdzshn3.android.news247.News;
+import com.sdzshn3.android.news247.TeluguNewsModel;
 import com.sdzshn3.android.news247.QueryUtils;
 import com.sdzshn3.android.news247.SupportClasses.DataHolder;
 
 import java.util.List;
 
 public class TeluguViewModel extends AndroidViewModel {
-    private static MutableLiveData<List<News>> data = new MutableLiveData<>();
+    private static MutableLiveData<List<TeluguNewsModel>> data = new MutableLiveData<>();
 
     public TeluguViewModel(@NonNull Application application) {
         super(application);
@@ -24,27 +24,26 @@ public class TeluguViewModel extends AndroidViewModel {
     }
 
     public static void loadData() {
-        new AsyncTask<Void, Void, List<News>>() {
+        new AsyncTask<Void, Void, List<TeluguNewsModel>>() {
             @Override
-            protected List<News> doInBackground(Void... voids) {
+            protected List<TeluguNewsModel> doInBackground(Void... voids) {
                 QueryUtils queryUtils = new QueryUtils();
                 try {
-                    return queryUtils.fetchNewsData(DataHolder.TELUGU_NEWS_LOADER_ID, DataHolder.TELUGU_NEWS_REQUEST_URL, Integer.parseInt(TeluguNewsFragment.numberOfArticles));
+                    return queryUtils.extractTeluguNewsFromRss(DataHolder.TELUGU_NEWS_REQUEST_URL, Integer.parseInt(TeluguNewsFragment.numberOfArticles));
                 } catch (NumberFormatException e) {
                     Log.e("TeluguViewModel", "numberOfArticles not initialised");
                     return null;
                 }
-
             }
 
             @Override
-            protected void onPostExecute(List<News> newsList) {
+            protected void onPostExecute(List<TeluguNewsModel> newsList) {
                 data.postValue(newsList);
             }
         }.execute();
     }
 
-    public LiveData<List<News>> getData() {
+    public LiveData<List<TeluguNewsModel>> getData() {
         return data;
     }
 }

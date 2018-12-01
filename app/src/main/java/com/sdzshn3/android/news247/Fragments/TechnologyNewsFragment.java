@@ -45,7 +45,6 @@ import com.sdzshn3.android.news247.BuildConfig;
 import com.sdzshn3.android.news247.Retrofit.Article;
 import com.sdzshn3.android.news247.SupportClasses.DataHolder;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
-import com.sdzshn3.android.news247.News;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.SupportClasses.WeatherIcon;
 import com.sdzshn3.android.news247.ViewModel.TechnologyViewModel;
@@ -99,7 +98,7 @@ public class TechnologyNewsFragment extends Fragment {
             mSwipeRefreshLayout.setRefreshing(true);
             if (isConnected()) {
                 technologyViewModel.refresh();
-                WeatherViewModel.loadData();
+                weatherViewModel.refresh();
             } else {
                 Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -120,6 +119,9 @@ public class TechnologyNewsFragment extends Fragment {
                 mEmptyStateTextView.setVisibility(View.GONE);
             } else {
                 if (isConnected()) {
+                    if (mSearchQuery != null) {
+                        mAdapter.submitList(articles);
+                    }
                     mEmptyStateTextView.setVisibility(View.VISIBLE);
                 } else {
                     Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
@@ -130,13 +132,13 @@ public class TechnologyNewsFragment extends Fragment {
         });
 
         weatherViewModel = ViewModelProviders.of(TechnologyNewsFragment.this).get(WeatherViewModel.class);
-        weatherViewModel.getData().observe(TechnologyNewsFragment.this, newsList -> {
-            if (newsList != null) {
-                News news = newsList.get(0);
-                String temp = News.getTemp().split("\\.", 2)[0];
-                weatherTemp.setText(getString(R.string.weather_temperature_concatenate, temp));
+        weatherViewModel.getData().observe(TechnologyNewsFragment.this, weatherModel -> {
+            if (weatherModel != null) {
+                String temp = String.valueOf(weatherModel.getMain().getTemp()).split("\\.", 2)[0];
 
-                String iconId = news.getIconId();
+                weatherTemp.setText(getString(R.string.weather_temperature_concatenate, temp, weatherModel.getName()));
+
+                String iconId = weatherModel.getWeather().get(0).getIcon();
                 weatherIcon.setImageResource(WeatherIcon.getWeatherIcon(iconId));
             } else {
                 if (isConnected()) {
@@ -224,6 +226,8 @@ public class TechnologyNewsFragment extends Fragment {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     mSearchQuery = query;
+                    setUpUrl();
+                    technologyViewModel.refresh();
                     return true;
                 }
 
@@ -241,6 +245,8 @@ public class TechnologyNewsFragment extends Fragment {
                 @Override
                 public boolean onMenuItemActionCollapse(MenuItem item) {
                     mSearchQuery = null;
+                    setUpUrl();
+                    technologyViewModel.refresh();
                     return true;
                 }
             });

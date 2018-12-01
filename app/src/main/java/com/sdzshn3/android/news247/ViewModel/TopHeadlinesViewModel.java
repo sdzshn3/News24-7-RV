@@ -26,11 +26,11 @@ public class TopHeadlinesViewModel extends AndroidViewModel {
     public TopHeadlinesViewModel(Application application) {
         super(application);
         apiService = Client.getApiService();
-        call = apiService.getResponse(TopHeadlinesFragment.URL);
         loadData();
     }
 
     private void loadData() {
+        call = apiService.getResponse(TopHeadlinesFragment.URL);
         call.enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
@@ -48,6 +48,7 @@ public class TopHeadlinesViewModel extends AndroidViewModel {
     }
 
     public void refresh() {
+        call = apiService.getResponse(TopHeadlinesFragment.URL);
         call.clone().enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {

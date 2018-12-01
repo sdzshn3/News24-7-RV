@@ -42,7 +42,6 @@ import com.sdzshn3.android.news247.Activities.MainActivity;
 import com.sdzshn3.android.news247.Activities.SettingsActivity;
 import com.sdzshn3.android.news247.Adapters.ArticleAdapter;
 import com.sdzshn3.android.news247.BuildConfig;
-import com.sdzshn3.android.news247.News;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.Retrofit.Article;
 import com.sdzshn3.android.news247.SupportClasses.DataHolder;
@@ -67,7 +66,6 @@ public class TopHeadlinesFragment extends Fragment {
     private TopHeadlinesViewModel newsViewModel;
     private WeatherViewModel weatherViewModel;
     private ArticleAdapter mAdapter;
-    private int pageNumber = 1;
 
     public TopHeadlinesFragment() {
         //Required empty public constructor
@@ -101,7 +99,7 @@ public class TopHeadlinesFragment extends Fragment {
             mSwipeRefreshLayout.setRefreshing(true);
             if (isConnected()) {
                 newsViewModel.refresh();
-                WeatherViewModel.loadData();
+                weatherViewModel.refresh();
             } else {
                 Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -123,6 +121,9 @@ public class TopHeadlinesFragment extends Fragment {
                 mEmptyStateTextView.setVisibility(View.GONE);
             } else {
                 if (isConnected()) {
+                    if (mSearchQuery != null) {
+                        mAdapter.submitList(articles);
+                    }
                     mEmptyStateTextView.setVisibility(View.VISIBLE);
                 } else {
                     Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
@@ -133,13 +134,12 @@ public class TopHeadlinesFragment extends Fragment {
         });
 
         weatherViewModel = ViewModelProviders.of(TopHeadlinesFragment.this).get(WeatherViewModel.class);
-        weatherViewModel.getData().observe(TopHeadlinesFragment.this, newsList -> {
-            if (newsList != null) {
-                News news = newsList.get(0);
-                String temp = News.getTemp().split("\\.", 2)[0];
-                weatherTemp.setText(getString(R.string.weather_temperature_concatenate, temp));
+        weatherViewModel.getData().observe(TopHeadlinesFragment.this, weatherModel -> {
+            if (weatherModel != null) {
+                String temp =String.valueOf(weatherModel.getMain().getTemp()).split("\\.", 2)[0];
+                weatherTemp.setText(getString(R.string.weather_temperature_concatenate, temp, weatherModel.getName()));
 
-                String iconId = news.getIconId();
+                String iconId = weatherModel.getWeather().get(0).getIcon();
                 weatherIcon.setImageResource(WeatherIcon.getWeatherIcon(iconId));
             } else {
                 if (isConnected()) {
@@ -200,7 +200,6 @@ public class TopHeadlinesFragment extends Fragment {
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
         uriBuilder.appendQueryParameter(DataHolder.apiKey, BuildConfig.NEWS_API_KEY);
-        uriBuilder.appendQueryParameter(DataHolder.page, String.valueOf(pageNumber));
         if (!numberOfArticles.isEmpty()) {
             if (Integer.parseInt(numberOfArticles) > 100) {
                 numberOfArticles = "100";
@@ -228,6 +227,8 @@ public class TopHeadlinesFragment extends Fragment {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     mSearchQuery = query;
+                    setUpUrl();
+                    newsViewModel.refresh();
                     return true;
                 }
 
@@ -245,6 +246,8 @@ public class TopHeadlinesFragment extends Fragment {
                 @Override
                 public boolean onMenuItemActionCollapse(MenuItem item) {
                     mSearchQuery = null;
+                    setUpUrl();
+                    newsViewModel.refresh();
                     return true;
                 }
             });

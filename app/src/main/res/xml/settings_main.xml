@@ -5,6 +5,12 @@
     <PreferenceCategory
         android:title="Weather settings"/>
 
+    <SwitchPreference
+        android:title="@string/detect_city_automatically_title"
+        android:key="@string/detect_city_automatically_key"
+        android:defaultValue="@string/detect_city_automatically_default"
+        android:summary="@string/detect_city_automatically_summary"/>
+
     <EditTextPreference
         android:defaultValue="@string/weather_city_default"
         android:inputType="text"

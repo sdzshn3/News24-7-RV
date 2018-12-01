@@ -11,12 +11,10 @@
     <dimen name="article_marginEnd">8dp</dimen>
     <dimen name="article_marginStart">8dp</dimen>
     <dimen name="article_marginTop">8dp</dimen>
-    <dimen name="article_marginBottom">8dp</dimen>
     <dimen name="article_title_text_size">16sp</dimen>
     <dimen name="article_publishedTime_text_size">12sp</dimen>
     <dimen name="slide_icon_marginBottom">20dp</dimen>
     <dimen name="slide_desc_marginTop">20dp</dimen>
-    <dimen name="last_name_text_view_margin_start">4dp</dimen>
     <dimen name="separator_gap_both_sides">3dp</dimen>
     <dimen name="LI_main_card_view_margin_bottom">4dp</dimen>
     <dimen name="LI_main_card_view_margin_end">4dp</dimen>
@@ -38,7 +36,6 @@
     <dimen name="article_share_button_mar_right">10dp</dimen>
     <dimen name="contributor_layout_height">35dp</dimen>
     <dimen name="contributor_layout_mar_top_bottom">3dp</dimen>
-    <dimen name="contributor_image_width_height">40dp</dimen>
     <dimen name="contributor_name_section_mar_left">5dp</dimen>
     <dimen name="navigation_header_image_width_height">80dp</dimen>
     <dimen name="navigation_header_title_mar_top">7dp</dimen>

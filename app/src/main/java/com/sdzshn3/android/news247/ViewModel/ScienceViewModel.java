@@ -27,11 +27,11 @@ public class ScienceViewModel extends AndroidViewModel {
     public ScienceViewModel(@NonNull Application application) {
         super(application);
         apiService = Client.getApiService();
-        call = apiService.getResponse(ScienceNewsFragment.URL);
         loadData();
     }
 
     private void loadData() {
+        call = apiService.getResponse(ScienceNewsFragment.URL);
         call.enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
@@ -49,6 +49,7 @@ public class ScienceViewModel extends AndroidViewModel {
     }
 
     public void refresh() {
+        call = apiService.getResponse(ScienceNewsFragment.URL);
         call.clone().enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {

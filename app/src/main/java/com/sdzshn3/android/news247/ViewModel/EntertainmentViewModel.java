@@ -3,7 +3,6 @@ package com.sdzshn3.android.news247.ViewModel;
 import android.app.Application;
 import android.util.Log;
 
-import com.sdzshn3.android.news247.Fragments.BusinessNewsFragment;
 import com.sdzshn3.android.news247.Fragments.EntertainmentNewsFragment;
 import com.sdzshn3.android.news247.Retrofit.ApiService;
 import com.sdzshn3.android.news247.Retrofit.Article;
@@ -23,13 +22,12 @@ import retrofit2.Response;
 public class EntertainmentViewModel extends AndroidViewModel {
     private static MutableLiveData<List<Article>> data = new MutableLiveData<>();
 
-    private ApiService apiService;
+    private final ApiService apiService;
     private static Call<NewsModel> call;
 
     public EntertainmentViewModel(@NonNull Application application) {
         super(application);
         apiService = Client.getApiService();
-        call = apiService.getResponse(EntertainmentNewsFragment.URL);
         loadData();
     }
 
@@ -38,6 +36,7 @@ public class EntertainmentViewModel extends AndroidViewModel {
     }
 
     private void loadData() {
+        call = apiService.getResponse(EntertainmentNewsFragment.URL);
         call.enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
@@ -54,7 +53,8 @@ public class EntertainmentViewModel extends AndroidViewModel {
         });
     }
 
-    public void Refresh() {
+    public void refresh() {
+        call = apiService.getResponse(EntertainmentNewsFragment.URL);
         call.clone().enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {

@@ -34,7 +34,7 @@ import android.widget.TextView;
 import com.sdzshn3.android.news247.Activities.LanguageSelectionActivity;
 import com.sdzshn3.android.news247.Activities.SettingsActivity;
 import com.sdzshn3.android.news247.Adapters.TeluguNewsAdapter;
-import com.sdzshn3.android.news247.News;
+import com.sdzshn3.android.news247.TeluguNewsModel;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
 import com.sdzshn3.android.news247.SupportClasses.WeatherIcon;
@@ -86,7 +86,7 @@ public class TeluguNewsFragment extends Fragment {
             mSwipeRefreshLayout.setRefreshing(true);
             if (isConnected()) {
                 TeluguViewModel.loadData();
-                WeatherViewModel.loadData();
+                weatherViewModel.refresh();
             } else {
                 Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -118,13 +118,12 @@ public class TeluguNewsFragment extends Fragment {
         });
 
         weatherViewModel = ViewModelProviders.of(TeluguNewsFragment.this).get(WeatherViewModel.class);
-        weatherViewModel.getData().observe(TeluguNewsFragment.this, newsList -> {
-            if (newsList != null) {
-                News news = newsList.get(0);
-                String temp = News.getTemp().split("\\.", 2)[0];
-                weatherTemp.setText(getString(R.string.weather_temperature_concatenate, temp));
+        weatherViewModel.getData().observe(TeluguNewsFragment.this, weatherModel -> {
+            if (weatherModel != null) {
+                String temp = String.valueOf(weatherModel.getMain().getTemp()).split("\\.", 2)[0];
+                weatherTemp.setText(getString(R.string.weather_temperature_concatenate, temp, weatherModel.getName()));
 
-                String iconId = news.getIconId();
+                String iconId = weatherModel.getWeather().get(0).getIcon();
                 weatherIcon.setImageResource(WeatherIcon.getWeatherIcon(iconId));
             } else {
                 if (isConnected()) {
@@ -135,7 +134,7 @@ public class TeluguNewsFragment extends Fragment {
         });
 
         ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener((recyclerView, position, v) -> {
-            News currentNews = mAdapter.getItem(position);
+            TeluguNewsModel currentNews = mAdapter.getItem(position);
             Uri newsUri = Uri.parse(currentNews.getArticleUrl());
             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
             CustomTabsIntent customTabsIntent = builder.build();

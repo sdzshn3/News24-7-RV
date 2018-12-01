@@ -20,7 +20,7 @@ import com.sdzshn3.android.news247.Retrofit.NewsModel;
 import java.util.List;
 
 public class BusinessViewModel extends AndroidViewModel {
-    private static MutableLiveData<List<Article>> data = new MutableLiveData<>();
+    private static final MutableLiveData<List<Article>> data = new MutableLiveData<>();
 
     private ApiService apiService;
     private static Call<NewsModel> call;
@@ -28,7 +28,6 @@ public class BusinessViewModel extends AndroidViewModel {
     public BusinessViewModel(@NonNull Application application) {
         super(application);
         apiService = Client.getApiService();
-        call = apiService.getResponse(BusinessNewsFragment.URL);
         loadData();
     }
 
@@ -37,6 +36,7 @@ public class BusinessViewModel extends AndroidViewModel {
     }
 
     private void loadData() {
+        call = apiService.getResponse(BusinessNewsFragment.URL);
         call.enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
@@ -53,7 +53,8 @@ public class BusinessViewModel extends AndroidViewModel {
         });
     }
 
-    public void Refresh() {
+    public void refresh() {
+        call = apiService.getResponse(BusinessNewsFragment.URL);
         call.clone().enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
