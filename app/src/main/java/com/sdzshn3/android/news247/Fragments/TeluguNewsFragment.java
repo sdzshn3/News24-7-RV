@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.sdzshn3.android.news247.Activities.LanguageSelectionActivity;
 import com.sdzshn3.android.news247.Activities.SettingsActivity;
 import com.sdzshn3.android.news247.Adapters.TeluguNewsAdapter;
+import com.sdzshn3.android.news247.Repositories.TeluguRepository;
 import com.sdzshn3.android.news247.TeluguNewsModel;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
@@ -75,7 +76,7 @@ public class TeluguNewsFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
             if (isConnected()) {
-                TeluguViewModel.loadData();
+                TeluguRepository.loadData();
                 weatherViewModel.refresh();
             } else {
                 Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
