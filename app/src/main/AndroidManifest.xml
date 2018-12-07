@@ -39,16 +39,10 @@
                 android:value="com.sdzshn3.android.news247.Activities.MainActivity" />
         </activity>
 
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-4795017891549742~7471582838"
-            />
+
         <meta-data
             android:name="android.app.searchable"
             android:resource="@xml/searchable" />
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="42844476f5b409f90617370ac667517a65473126" />
 
         <activity
             android:name=".Activities.LanguageSelectionActivity"

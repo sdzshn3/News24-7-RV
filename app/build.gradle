@@ -58,14 +58,6 @@ dependencies {
 
     implementation 'com.makeramen:roundedimageview:2.3.0'
 
-    implementation 'com.google.android.gms:play-services-ads:17.1.1'
-
-    implementation 'com.google.firebase:firebase-core:16.0.5'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.6'
-    implementation('com.crashlytics.sdk.android:answers:1.4.3@aar') {
-        transitive = true
-    }
-
     implementation 'com.google.android.gms:play-services-location:16.0.0'
 
     //for lifecycle and LiveData and ViewModel
@@ -78,5 +70,3 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
 }
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'io.fabric'

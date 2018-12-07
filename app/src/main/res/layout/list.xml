@@ -95,15 +95,4 @@
         android:textColor="@android:color/black"
         android:visibility="gone" />
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/banner_ad_news_feed"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="11dp"
-        ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-4795017891549742/4347560199" />
-    <!--ads:adUnitId="ca-app-pub-3940256099942544/6300978111"-->
-
-
 </RelativeLayout>

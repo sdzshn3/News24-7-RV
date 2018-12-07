@@ -23,7 +23,7 @@ public class BusinessViewModel extends AndroidViewModel {
     private static final MutableLiveData<List<Article>> data = new MutableLiveData<>();
 
     private ApiService apiService;
-    private static Call<NewsModel> call;
+    private Call<NewsModel> call;
 
     public BusinessViewModel(@NonNull Application application) {
         super(application);

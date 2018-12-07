@@ -19,9 +19,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.snackbar.Snackbar;
 import com.sdzshn3.android.news247.Activities.LanguageSelectionActivity;
 import com.sdzshn3.android.news247.Activities.MainActivity;
@@ -71,13 +68,6 @@ public class SportsNewsFragment extends Fragment {
         mContext = getContext();
         setHasOptionsMenu(true);
         setRetainInstance(true);
-
-        //Test app id "ca-app-pub-3940256099942544~3347511713"
-        //This app's genuine id "ca-app-pub-4795017891549742~7471582838"
-        MobileAds.initialize(mContext, "ca-app-pub-4795017891549742~7471582838");
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("F5E71A24D5F33E8D35CFDF8B875D6E79").build();
-        AdView adView = rootView.findViewById(R.id.banner_ad_news_feed);
-        adView.loadAd(adRequest);
 
         mAdapter = new ArticleAdapter();
 
