@@ -76,7 +76,7 @@ public class TeluguNewsFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
             if (isConnected()) {
-
+                TeluguRepository.loadData();
                 weatherViewModel.refresh();
             } else {
                 Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
@@ -92,10 +92,8 @@ public class TeluguNewsFragment extends Fragment {
         newsRecyclerView.setAdapter(mAdapter);
         newsRecyclerView.setNestedScrollingEnabled(false);
 
-        TeluguViewModel.Factory factory = new TeluguViewModel.Factory(getActivity().getApplication());
-
-        teluguViewModel = ViewModelProviders.of(TeluguNewsFragment.this, factory).get(TeluguViewModel.class);
-        /*teluguViewModel.getData().observe(TeluguNewsFragment.this, newsList -> {
+        teluguViewModel = ViewModelProviders.of(TeluguNewsFragment.this).get(TeluguViewModel.class);
+        teluguViewModel.getData().observe(TeluguNewsFragment.this, newsList -> {
             if (newsList != null && !newsList.isEmpty()) {
                 mAdapter.submitList(newsList);
                 mEmptyStateTextView.setVisibility(View.GONE);
@@ -108,9 +106,6 @@ public class TeluguNewsFragment extends Fragment {
             }
             progressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setRefreshing(false);
-        });*/
-        teluguViewModel.getmObservableTeluguNewsData().observe(TeluguNewsFragment.this, newsList -> {
-            mAdapter.submitList(newsList);
         });
 
         weatherViewModel = ViewModelProviders.of(TeluguNewsFragment.this).get(WeatherViewModel.class);
@@ -131,7 +126,7 @@ public class TeluguNewsFragment extends Fragment {
 
         ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener((recyclerView, position, v) -> {
             TeluguNewsModel currentNews = mAdapter.getItem(position);
-            Uri newsUri = Uri.parse(currentNews.getUrl());
+            Uri newsUri = Uri.parse(currentNews.getArticleUrl());
             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
             CustomTabsIntent customTabsIntent = builder.build();
             builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));

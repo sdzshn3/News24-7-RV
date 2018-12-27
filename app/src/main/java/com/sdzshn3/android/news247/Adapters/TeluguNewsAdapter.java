@@ -42,7 +42,7 @@ public class TeluguNewsAdapter extends ListAdapter<TeluguNewsModel, TeluguNewsAd
         @Override
         public boolean areContentsTheSame(@NonNull TeluguNewsModel news, @NonNull TeluguNewsModel t1) {
             return news.getTitle().equals(t1.getTitle()) &&
-                    news.getUrl().equals(t1.getUrl()) &&
+                    news.getArticleUrl().equals(t1.getArticleUrl()) &&
                     news.getPublishedAt().equals(t1.getPublishedAt());
         }
     };
@@ -73,7 +73,7 @@ public class TeluguNewsAdapter extends ListAdapter<TeluguNewsModel, TeluguNewsAd
         holder.shareButton.setOnClickListener(v -> {
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, currentNews.getUrl());
+            sendIntent.putExtra(Intent.EXTRA_TEXT, currentNews.getArticleUrl());
             sendIntent.setType("text/plain");
             mContext.startActivity(Intent.createChooser(sendIntent, mContext.getString(R.string.share_article_link_hint)));
         });
