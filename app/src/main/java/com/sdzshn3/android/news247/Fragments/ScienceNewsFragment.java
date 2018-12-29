@@ -2,7 +2,6 @@ package com.sdzshn3.android.news247.Fragments;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,9 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.sdzshn3.android.news247.Activities.LanguageSelectionActivity;
 import com.sdzshn3.android.news247.Activities.MainActivity;
-import com.sdzshn3.android.news247.Activities.SettingsActivity;
 import com.sdzshn3.android.news247.Adapters.ArticleAdapter;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.Retrofit.Article;
@@ -32,21 +29,29 @@ import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-public class ScienceNewsFragment extends Fragment {
+public class ScienceNewsFragment extends BaseFragment {
 
     public static String URL;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private RecyclerView newsRecyclerView;
+    @BindView(R.id.swipe_refresh)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.recycler_view_list)
+    RecyclerView newsRecyclerView;
     private Context mContext;
     private String mSearchQuery;
-    private ProgressBar progressBar;
-    private TextView mEmptyStateTextView, weatherTemp;
-    private ImageView weatherIcon;
+    @BindView(R.id.loading_circle)
+    ProgressBar progressBar;
+    @BindView(R.id.no_data_found)
+    TextView mEmptyStateTextView;
+    @BindView(R.id.weather_temp)
+    TextView weatherTemp;
+    @BindView(R.id.weather_icon)
+    ImageView weatherIcon;
     private ScienceViewModel scienceViewModel;
     private WeatherViewModel weatherViewModel;
     private ArticleAdapter mAdapter;
@@ -65,12 +70,7 @@ public class ScienceNewsFragment extends Fragment {
 
         mAdapter = new ArticleAdapter();
 
-        newsRecyclerView = rootView.findViewById(R.id.recycler_view_list);
-        progressBar = rootView.findViewById(R.id.loading_circle);
-        mEmptyStateTextView = rootView.findViewById(R.id.no_data_found);
-        weatherTemp = rootView.findViewById(R.id.weather_temp);
-        weatherIcon = rootView.findViewById(R.id.weather_icon);
-        mSwipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh);
+        ButterKnife.bind(this, rootView);
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
@@ -179,18 +179,5 @@ public class ScienceNewsFragment extends Fragment {
             });
         }
         super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            Intent settingsIntent = new Intent(mContext, SettingsActivity.class);
-            startActivity(settingsIntent);
-            return true;
-        } else if (id == R.id.action_change_language) {
-            startActivity(new Intent(mContext, LanguageSelectionActivity.class));
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

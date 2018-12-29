@@ -34,21 +34,7 @@ public class Utils {
     }
 
     public static String setUpUrl(Context context, String searchQuery, ProgressBar progressBar, String category) {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Resources resources = context.getResources();
-
-        String numberOfArticles = sharedPrefs.getString(
-                resources.getString(R.string.number_of_articles_key),
-                resources.getString(R.string.default_no_of_news_articles)
-        );
-
-        if (numberOfArticles.trim().isEmpty()) {
-            SharedPreferences.Editor editor = sharedPrefs.edit();
-            editor.putString(resources.getString(R.string.number_of_articles_key), "10");
-            editor.apply();
-            numberOfArticles = sharedPrefs.getString(resources.getString(R.string.number_of_articles_key),
-                    resources.getString(R.string.default_no_of_news_articles));
-        }
+        String numberOfArticles = setNoOfArticles(context);
 
         Uri baseUri;
         if (searchQuery == null) {
@@ -70,6 +56,25 @@ public class Utils {
         }
         uriBuilder.appendQueryParameter(DataHolder.pageSize, numberOfArticles);
         return uriBuilder.toString();
+    }
+
+    public static String setNoOfArticles(Context context) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Resources resources = context.getResources();
+
+        String numberOfArticles = sharedPrefs.getString(
+                resources.getString(R.string.number_of_articles_key),
+                resources.getString(R.string.default_no_of_news_articles)
+        );
+
+        if (numberOfArticles.trim().isEmpty()) {
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.putString(resources.getString(R.string.number_of_articles_key), "10");
+            editor.apply();
+            numberOfArticles = sharedPrefs.getString(resources.getString(R.string.number_of_articles_key),
+                    resources.getString(R.string.default_no_of_news_articles));
+        }
+        return numberOfArticles;
     }
 
     public static void setUpRecyclerView(Context context, RecyclerView recyclerView) {

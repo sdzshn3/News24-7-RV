@@ -81,7 +81,7 @@ public class TeluguNewsFragment extends Fragment {
 
         });
 
-        setNoOfArticles();
+        Utils.setNoOfArticles(mContext);
 
         Utils.setUpRecyclerView(mContext, newsRecyclerView);
         newsRecyclerView.setAdapter(mAdapter);
@@ -130,39 +130,11 @@ public class TeluguNewsFragment extends Fragment {
         return rootView;
     }
 
-    private void setNoOfArticles() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-        numberOfArticles = sharedPrefs.getString(
-                getString(R.string.number_of_articles_key),
-                getString(R.string.default_no_of_news_articles)
-        );
-        if(numberOfArticles.trim().isEmpty()){
-            SharedPreferences.Editor editor = sharedPrefs.edit();
-            editor.putString(getString(R.string.number_of_articles_key), "10");
-            editor.apply();
-            numberOfArticles = sharedPrefs.getString(getString(R.string.number_of_articles_key),
-                    getString(R.string.default_no_of_news_articles));
-        }
-    }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
         MenuItem menuItem = menu.findItem(R.id.action_search);
         menuItem.setVisible(false);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            Intent settingsIntent = new Intent(mContext, SettingsActivity.class);
-            startActivity(settingsIntent);
-            return true;
-        } else if (id == R.id.action_change_language) {
-            startActivity(new Intent(mContext, LanguageSelectionActivity.class));
-        }
-        return super.onOptionsItemSelected(item);
     }
 }
