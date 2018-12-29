@@ -86,8 +86,10 @@ public class TeluguNewsFragment extends Fragment {
         Utils.setUpRecyclerView(mContext, newsRecyclerView);
         newsRecyclerView.setAdapter(mAdapter);
 
-        teluguViewModel = ViewModelProviders.of(TeluguNewsFragment.this).get(TeluguViewModel.class);
-        teluguViewModel.getData().observe(TeluguNewsFragment.this, newsList -> {
+        TeluguViewModel.Factory factory = new TeluguViewModel.Factory(getActivity().getApplication());
+
+        teluguViewModel = ViewModelProviders.of(TeluguNewsFragment.this, factory).get(TeluguViewModel.class);
+        /*teluguViewModel.getData().observe(TeluguNewsFragment.this, newsList -> {
             if (newsList != null && !newsList.isEmpty()) {
                 mAdapter.submitList(newsList);
                 mEmptyStateTextView.setVisibility(View.GONE);
@@ -100,6 +102,9 @@ public class TeluguNewsFragment extends Fragment {
             }
             progressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setRefreshing(false);
+        });*/
+        teluguViewModel.getmObservableTeluguNewsData().observe(TeluguNewsFragment.this, newsList -> {
+            mAdapter.submitList(newsList);
         });
 
         weatherViewModel = ViewModelProviders.of(TeluguNewsFragment.this).get(WeatherViewModel.class);
@@ -120,7 +125,7 @@ public class TeluguNewsFragment extends Fragment {
 
         ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener((recyclerView, position, v) -> {
             TeluguNewsModel currentNews = mAdapter.getItem(position);
-            Uri newsUri = Uri.parse(currentNews.getArticleUrl());
+            Uri newsUri = Uri.parse(currentNews.getUrl());
             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
             CustomTabsIntent customTabsIntent = builder.build();
             builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));

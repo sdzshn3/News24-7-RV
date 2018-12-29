@@ -4,6 +4,9 @@ package com.sdzshn3.android.news247.Retrofit;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+
 public class Article {
 
     @SerializedName("source")
