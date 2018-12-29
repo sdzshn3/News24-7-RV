@@ -26,6 +26,7 @@ import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,7 +34,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TeluguNewsFragment extends BaseFragment {
+public class TeluguNewsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
+        ItemClickSupport.OnItemClickListener {
 
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
@@ -50,11 +52,11 @@ public class TeluguNewsFragment extends BaseFragment {
 
     public static String numberOfArticles;
     private Context mContext;
-    private TeluguNewsAdapter mAdapter;
     private WeatherViewModel weatherViewModel;
     private TeluguViewModel teluguViewModel;
+    private TeluguNewsAdapter mAdapter;
 
-    public TeluguNewsFragment(){
+    public TeluguNewsFragment() {
     }
 
     @Nullable
@@ -68,17 +70,7 @@ public class TeluguNewsFragment extends BaseFragment {
 
         ButterKnife.bind(this, rootView);
 
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            mSwipeRefreshLayout.setRefreshing(true);
-            if (Utils.isConnected(mContext)) {
-                TeluguRepository.loadData();
-                weatherViewModel.refresh();
-            } else {
-                Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-
-        });
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         Utils.setNoOfArticles(mContext);
 
@@ -117,14 +109,7 @@ public class TeluguNewsFragment extends BaseFragment {
             }
         });
 
-        ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener((recyclerView, position, v) -> {
-            TeluguNewsModel currentNews = mAdapter.getItem(position);
-            Uri newsUri = Uri.parse(currentNews.getArticleUrl());
-            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-            CustomTabsIntent customTabsIntent = builder.build();
-            builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
-            customTabsIntent.launchUrl(mContext, newsUri);
-        });
+        ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener(this);
         return rootView;
     }
 
@@ -134,5 +119,27 @@ public class TeluguNewsFragment extends BaseFragment {
         super.onCreateOptionsMenu(menu, inflater);
         MenuItem menuItem = menu.findItem(R.id.action_search);
         menuItem.setVisible(false);
+    }
+
+    @Override
+    public void onRefresh() {
+        mSwipeRefreshLayout.setRefreshing(true);
+        if (Utils.isConnected(mContext)) {
+            TeluguRepository.loadData();
+            weatherViewModel.refresh();
+        } else {
+            Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    @Override
+    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+        TeluguNewsModel currentNews = mAdapter.getItem(position);
+        Uri newsUri = Uri.parse(currentNews.getArticleUrl());
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
+        customTabsIntent.launchUrl(mContext, newsUri);
     }
 }

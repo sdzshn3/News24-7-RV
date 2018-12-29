@@ -28,6 +28,7 @@ import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,7 +36,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class BusinessNewsFragment extends BaseFragment {
+public class BusinessNewsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
+        ItemClickSupport.OnItemClickListener, SearchView.OnQueryTextListener,MenuItem.OnActionExpandListener {
 
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
@@ -73,16 +75,7 @@ public class BusinessNewsFragment extends BaseFragment {
 
         ButterKnife.bind(this, rootView);
 
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            mSwipeRefreshLayout.setRefreshing(true);
-            if (Utils.isConnected(mContext)) {
-                businessViewModel.refresh();
-                weatherViewModel.refresh();
-            } else {
-                Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         URL = Utils.setUpUrl(mContext, mSearchQuery, progressBar, DataHolder.business);
 
@@ -124,14 +117,7 @@ public class BusinessNewsFragment extends BaseFragment {
             }
         });
 
-        ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener((recyclerView, position, v) -> {
-            Article currentArticle = mAdapter.getItem(position);
-            Uri newsUri = Uri.parse(currentArticle.getUrl());
-            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-            CustomTabsIntent customTabsIntent = builder.build();
-            builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
-            customTabsIntent.launchUrl(mContext, newsUri);
-        });
+        ItemClickSupport.addTo(newsRecyclerView).setOnItemClickListener(this);
         return rootView;
     }
 
@@ -149,35 +135,57 @@ public class BusinessNewsFragment extends BaseFragment {
             if (searchManager != null) {
                 searchView.setSearchableInfo(searchManager.getSearchableInfo(mainActivity.getComponentName()));
             }
-            searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    mSearchQuery = query;
-                    Utils.setUpUrl(mContext, mSearchQuery, progressBar, DataHolder.business);
-                    businessViewModel.refresh();
-                    return true;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    return false;
-                }
-            });
-            searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-                @Override
-                public boolean onMenuItemActionExpand(MenuItem item) {
-                    return true;
-                }
-
-                @Override
-                public boolean onMenuItemActionCollapse(MenuItem item) {
-                    mSearchQuery = null;
-                    Utils.setUpUrl(mContext, null, progressBar, DataHolder.business);
-                    businessViewModel.refresh();
-                    return true;
-                }
-            });
+            searchView.setOnQueryTextListener(this);
+            searchItem.setOnActionExpandListener(this);
         }
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onRefresh() {
+        mSwipeRefreshLayout.setRefreshing(true);
+        if (Utils.isConnected(mContext)) {
+            businessViewModel.refresh();
+            weatherViewModel.refresh();
+        } else {
+            Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    @Override
+    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+        Article currentArticle = mAdapter.getItem(position);
+        Uri newsUri = Uri.parse(currentArticle.getUrl());
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
+        customTabsIntent.launchUrl(mContext, newsUri);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        mSearchQuery = query;
+        Utils.setUpUrl(mContext, mSearchQuery, progressBar, DataHolder.business);
+        businessViewModel.refresh();
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem item) {
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem item) {
+        mSearchQuery = null;
+        Utils.setUpUrl(mContext, null, progressBar, DataHolder.business);
+        businessViewModel.refresh();
+        return true;
     }
 }
