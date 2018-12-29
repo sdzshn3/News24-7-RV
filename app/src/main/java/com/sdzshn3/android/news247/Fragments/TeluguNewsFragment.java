@@ -1,7 +1,6 @@
 package com.sdzshn3.android.news247.Fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,26 +15,21 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 import com.sdzshn3.android.news247.Adapters.TeluguNewsAdapter;
 import com.sdzshn3.android.news247.R;
-import com.sdzshn3.android.news247.Repositories.TeluguRepository;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
 import com.sdzshn3.android.news247.SupportClasses.Utils;
 import com.sdzshn3.android.news247.SupportClasses.WeatherIcon;
-import com.sdzshn3.android.news247.TeluguNewsModel;
 import com.sdzshn3.android.news247.ViewModel.TeluguViewModel;
 import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
-import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TeluguNewsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
-        ItemClickSupport.OnItemClickListener {
+public class TeluguNewsFragment extends BaseFragment {
 
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
@@ -119,27 +113,5 @@ public class TeluguNewsFragment extends BaseFragment implements SwipeRefreshLayo
         super.onCreateOptionsMenu(menu, inflater);
         MenuItem menuItem = menu.findItem(R.id.action_search);
         menuItem.setVisible(false);
-    }
-
-    @Override
-    public void onRefresh() {
-        mSwipeRefreshLayout.setRefreshing(true);
-        if (Utils.isConnected(mContext)) {
-            TeluguRepository.loadData();
-            weatherViewModel.refresh();
-        } else {
-            Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
-            mSwipeRefreshLayout.setRefreshing(false);
-        }
-    }
-
-    @Override
-    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-        TeluguNewsModel currentNews = mAdapter.getItem(position);
-        Uri newsUri = Uri.parse(currentNews.getArticleUrl());
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        CustomTabsIntent customTabsIntent = builder.build();
-        builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
-        customTabsIntent.launchUrl(mContext, newsUri);
     }
 }

@@ -2,7 +2,7 @@ package com.sdzshn3.android.news247.Repositories;
 
 import android.util.Log;
 
-import com.sdzshn3.android.news247.Fragments.ScienceNewsFragment;
+import com.sdzshn3.android.news247.Fragments.BaseFragment;
 import com.sdzshn3.android.news247.Retrofit.ApiService;
 import com.sdzshn3.android.news247.Retrofit.Article;
 import com.sdzshn3.android.news247.Retrofit.Client;
@@ -16,18 +16,24 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ScienceRepository {
-    private static MutableLiveData<List<Article>> data = new MutableLiveData<>();
-    private ApiService apiService;
-    private static Call<NewsModel> call;
+public class BaseRepository {
 
-    public ScienceRepository(){
+    private static final MutableLiveData<List<Article>> data = new MutableLiveData<>();
+
+    private ApiService apiService;
+    private Call<NewsModel> call;
+
+    public BaseRepository(){
         apiService = Client.getApiService();
         loadData();
     }
 
+    public LiveData<List<Article>> getData(){
+        return data;
+    }
+
     private void loadData() {
-        call = apiService.getResponse(ScienceNewsFragment.URL);
+        call = apiService.getResponse(BaseFragment.URL);
         call.enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
@@ -38,14 +44,14 @@ public class ScienceRepository {
 
             @Override
             public void onFailure(Call<NewsModel> call, Throwable t) {
-                Log.e("ScienceViewModel", "onFailure", t);
+                Log.e("BaseRepository", "onFailure", t);
                 data.postValue(null);
             }
         });
     }
 
     public void refresh(){
-        call = apiService.getResponse(ScienceNewsFragment.URL);
+        call = apiService.getResponse(BaseFragment.URL);
         call.clone().enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
@@ -56,13 +62,9 @@ public class ScienceRepository {
 
             @Override
             public void onFailure(Call<NewsModel> call, Throwable t) {
-                Log.e("ScienceViewModel", "onFailure", t);
+                Log.e("BaseRepository", "onFailure", t);
                 data.postValue(null);
             }
         });
-    }
-
-    public LiveData<List<Article>> getData(){
-        return data;
     }
 }
