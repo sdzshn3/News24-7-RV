@@ -2,7 +2,7 @@ package com.sdzshn3.android.news247.ViewModel;
 
 import android.app.Application;
 
-import com.sdzshn3.android.news247.Repositories.BaseRepository;
+import com.sdzshn3.android.news247.Repositories.NewsRepository;
 import com.sdzshn3.android.news247.Retrofit.Article;
 
 import java.util.List;
@@ -11,13 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-public class BaseViewModel extends AndroidViewModel {
+public class NewsViewModel extends AndroidViewModel {
 
-    private BaseRepository repository;
+    private NewsRepository repository;
 
-    public BaseViewModel(@NonNull Application application) {
+    public NewsViewModel(@NonNull Application application) {
         super(application);
-        repository = new BaseRepository();
+        repository = new NewsRepository();
     }
 
     public LiveData<List<Article>> getData() {

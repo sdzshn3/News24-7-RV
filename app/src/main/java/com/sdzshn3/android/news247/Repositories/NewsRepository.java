@@ -2,7 +2,7 @@ package com.sdzshn3.android.news247.Repositories;
 
 import android.util.Log;
 
-import com.sdzshn3.android.news247.Fragments.BaseFragment;
+import com.sdzshn3.android.news247.Fragments.NewsFragment;
 import com.sdzshn3.android.news247.Retrofit.ApiService;
 import com.sdzshn3.android.news247.Retrofit.Article;
 import com.sdzshn3.android.news247.Retrofit.Client;
@@ -16,14 +16,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class BaseRepository {
+public class NewsRepository {
 
     private static final MutableLiveData<List<Article>> data = new MutableLiveData<>();
 
     private ApiService apiService;
     private Call<NewsModel> call;
 
-    public BaseRepository(){
+    public NewsRepository(){
         apiService = Client.getApiService();
         loadData();
     }
@@ -33,7 +33,7 @@ public class BaseRepository {
     }
 
     private void loadData() {
-        call = apiService.getResponse(BaseFragment.URL);
+        call = apiService.getResponse(NewsFragment.URL);
         call.enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
@@ -44,14 +44,14 @@ public class BaseRepository {
 
             @Override
             public void onFailure(Call<NewsModel> call, Throwable t) {
-                Log.e("BaseRepository", "onFailure", t);
+                Log.e("NewsRepository", "onFailure", t);
                 data.postValue(null);
             }
         });
     }
 
     public void refresh(){
-        call = apiService.getResponse(BaseFragment.URL);
+        call = apiService.getResponse(NewsFragment.URL);
         call.clone().enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
@@ -62,7 +62,7 @@ public class BaseRepository {
 
             @Override
             public void onFailure(Call<NewsModel> call, Throwable t) {
-                Log.e("BaseRepository", "onFailure", t);
+                Log.e("NewsRepository", "onFailure", t);
                 data.postValue(null);
             }
         });

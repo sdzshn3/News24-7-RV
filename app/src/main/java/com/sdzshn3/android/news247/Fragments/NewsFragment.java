@@ -21,7 +21,7 @@ import com.sdzshn3.android.news247.Retrofit.Article;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
 import com.sdzshn3.android.news247.SupportClasses.Utils;
 import com.sdzshn3.android.news247.SupportClasses.WeatherIcon;
-import com.sdzshn3.android.news247.ViewModel.BaseViewModel;
+import com.sdzshn3.android.news247.ViewModel.NewsViewModel;
 import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 
 import androidx.annotation.NonNull;
@@ -35,7 +35,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class BaseFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
+public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
         ItemClickSupport.OnItemClickListener, SearchView.OnQueryTextListener,MenuItem.OnActionExpandListener {
 
     @BindView(R.id.swipe_refresh)
@@ -54,20 +54,20 @@ public class BaseFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public static String URL;
     protected Context mContext;
     protected WeatherViewModel weatherViewModel;
-    private BaseViewModel baseViewModel;
+    private NewsViewModel newsViewModel;
     private String mSearchQuery;
     private ArticleAdapter mAdapter;
     private String category;
 
-    public BaseFragment() {
+    public NewsFragment() {
     }
 
-    public static BaseFragment newInstance (String category) {
+    public static NewsFragment newInstance (String category) {
         Bundle bundle = new Bundle();
         bundle.putString("category", category);
-        BaseFragment baseFragment = new BaseFragment();
-        baseFragment.setArguments(bundle);
-        return baseFragment;
+        NewsFragment newsFragment = new NewsFragment();
+        newsFragment.setArguments(bundle);
+        return newsFragment;
     }
 
     @Nullable
@@ -93,8 +93,8 @@ public class BaseFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         Utils.setUpRecyclerView(mContext, newsRecyclerView);
         newsRecyclerView.setAdapter(mAdapter);
 
-        baseViewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
-        baseViewModel.getData().observe(this, articles -> {
+        newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
+        newsViewModel.getData().observe(this, articles -> {
             if (articles != null && !articles.isEmpty()) {
                 mAdapter.submitList(articles);
                 mEmptyStateTextView.setVisibility(View.GONE);
@@ -149,7 +149,7 @@ public class BaseFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(true);
         if (Utils.isConnected(mContext)) {
-            baseViewModel.refresh();
+            newsViewModel.refresh();
             weatherViewModel.refresh();
         } else {
             Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
@@ -171,7 +171,7 @@ public class BaseFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public boolean onQueryTextSubmit(String query) {
         mSearchQuery = query;
         Utils.setUpUrl(mContext, mSearchQuery, progressBar, category);
-        baseViewModel.refresh();
+        newsViewModel.refresh();
         return true;
     }
 
@@ -189,7 +189,7 @@ public class BaseFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public boolean onMenuItemActionCollapse(MenuItem item) {
         mSearchQuery = null;
         Utils.setUpUrl(mContext, null, progressBar, category);
-        baseViewModel.refresh();
+        newsViewModel.refresh();
         return true;
     }
 }

@@ -19,7 +19,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
-import com.sdzshn3.android.news247.Fragments.BaseFragment;
+import com.sdzshn3.android.news247.Fragments.NewsFragment;
 import com.sdzshn3.android.news247.Fragments.TeluguNewsFragment;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.SupportClasses.DataHolder;
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 hideEnglishItems();
                 setFragment(new TeluguNewsFragment());
             } else {
-                setFragment(new BaseFragment());
+                setFragment(new NewsFragment());
             }
         }
     }
@@ -173,28 +173,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (id) {
             case R.id.news_feed_nav_item:
                 if(newsLanguage.equals(DataHolder.english)) {
-                    setFragment(new BaseFragment());
+                    setFragment(new NewsFragment());
                 } else if (newsLanguage.equals(DataHolder.telugu)){
                     setFragment(new TeluguNewsFragment());
                 }
                 break;
             case R.id.science_nav_item:
-                setFragment(BaseFragment.newInstance(DataHolder.science));
+                setFragment(NewsFragment.newInstance(DataHolder.science));
                 break;
             case R.id.technology_nav_item:
-                setFragment(BaseFragment.newInstance(DataHolder.technology));
+                setFragment(NewsFragment.newInstance(DataHolder.technology));
                 break;
             case R.id.business_nav_item:
-                setFragment(BaseFragment.newInstance(DataHolder.business));
+                setFragment(NewsFragment.newInstance(DataHolder.business));
                 break;
             case R.id.health_nav_item:
-                setFragment(BaseFragment.newInstance(DataHolder.health));
+                setFragment(NewsFragment.newInstance(DataHolder.health));
                 break;
             case R.id.entertainment_nav_item:
-                setFragment(BaseFragment.newInstance(DataHolder.entertainment));
+                setFragment(NewsFragment.newInstance(DataHolder.entertainment));
                 break;
             case R.id.sports_nav_item:
-                setFragment(BaseFragment.newInstance(DataHolder.sports));
+                setFragment(NewsFragment.newInstance(DataHolder.sports));
                 break;
             case R.id.settings_nav_item:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
