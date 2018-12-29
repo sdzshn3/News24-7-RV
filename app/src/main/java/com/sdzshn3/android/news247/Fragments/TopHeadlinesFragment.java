@@ -37,13 +37,10 @@ import butterknife.ButterKnife;
 
 public class TopHeadlinesFragment extends BaseFragment {
 
-    public static String URL;
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.recycler_view_list)
     RecyclerView newsRecyclerView;
-    private Context mContext;
-    private String mSearchQuery;
     @BindView(R.id.loading_circle)
     ProgressBar progressBar;
     @BindView(R.id.no_data_found)
@@ -52,6 +49,10 @@ public class TopHeadlinesFragment extends BaseFragment {
     TextView weatherTemp;
     @BindView(R.id.weather_icon)
     ImageView weatherIcon;
+
+    public static String URL;
+    private Context mContext;
+    private String mSearchQuery;
     private TopHeadlinesViewModel newsViewModel;
     private WeatherViewModel weatherViewModel;
     private ArticleAdapter mAdapter;
@@ -110,7 +111,7 @@ public class TopHeadlinesFragment extends BaseFragment {
         weatherViewModel = ViewModelProviders.of(TopHeadlinesFragment.this).get(WeatherViewModel.class);
         weatherViewModel.getData().observe(TopHeadlinesFragment.this, weatherModel -> {
             if (weatherModel != null) {
-                String temp =String.valueOf(weatherModel.getMain().getTemp()).split("\\.", 2)[0];
+                String temp = String.valueOf(weatherModel.getMain().getTemp()).split("\\.", 2)[0];
                 weatherTemp.setText(getString(R.string.weather_temperature_concatenate, temp, weatherModel.getName()));
 
                 String iconId = weatherModel.getWeather().get(0).getIcon();

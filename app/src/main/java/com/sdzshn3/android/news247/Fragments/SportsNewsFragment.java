@@ -36,13 +36,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SportsNewsFragment extends BaseFragment {
-    public static String URL;
+
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.recycler_view_list)
     RecyclerView newsRecyclerView;
-    private Context mContext;
-    private String mSearchQuery;
     @BindView(R.id.loading_circle)
     ProgressBar progressBar;
     @BindView(R.id.no_data_found)
@@ -51,6 +49,10 @@ public class SportsNewsFragment extends BaseFragment {
     TextView weatherTemp;
     @BindView(R.id.weather_icon)
     ImageView weatherIcon;
+
+    public static String URL;
+    private Context mContext;
+    private String mSearchQuery;
     private WeatherViewModel weatherViewModel;
     private SportsViewModel sportsViewModel;
     private ArticleAdapter mAdapter;

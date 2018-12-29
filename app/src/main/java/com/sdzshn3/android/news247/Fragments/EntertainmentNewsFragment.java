@@ -36,12 +36,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class EntertainmentNewsFragment extends BaseFragment {
-    public static String URL;
+
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.recycler_view_list)
     RecyclerView newsRecyclerView;
-    private Context mContext;
     private String mSearchQuery;
     @BindView(R.id.loading_circle)
     ProgressBar progressBar;
@@ -51,6 +50,9 @@ public class EntertainmentNewsFragment extends BaseFragment {
     TextView weatherTemp;
     @BindView(R.id.weather_icon)
     ImageView weatherIcon;
+
+    public static String URL;
+    private Context mContext;
     private WeatherViewModel weatherViewModel;
     private EntertainmentViewModel entertainmentViewModel;
     private ArticleAdapter mAdapter;

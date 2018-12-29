@@ -37,13 +37,10 @@ import butterknife.ButterKnife;
 
 public class TechnologyNewsFragment extends BaseFragment {
 
-    public static String URL;
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.recycler_view_list)
     RecyclerView newsRecyclerView;
-    private Context mContext;
-    private String mSearchQuery;
     @BindView(R.id.loading_circle)
     ProgressBar progressBar;
     @BindView(R.id.no_data_found)
@@ -52,8 +49,11 @@ public class TechnologyNewsFragment extends BaseFragment {
     TextView weatherTemp;
     @BindView(R.id.weather_icon)
     ImageView weatherIcon;
-    private TechnologyViewModel technologyViewModel;
 
+    public static String URL;
+    private Context mContext;
+    private String mSearchQuery;
+    private TechnologyViewModel technologyViewModel;
     private WeatherViewModel weatherViewModel;
     private ArticleAdapter mAdapter;
 

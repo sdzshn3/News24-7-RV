@@ -1,11 +1,8 @@
 package com.sdzshn3.android.news247.Fragments;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,8 +14,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.sdzshn3.android.news247.Activities.LanguageSelectionActivity;
-import com.sdzshn3.android.news247.Activities.SettingsActivity;
 import com.sdzshn3.android.news247.Adapters.TeluguNewsAdapter;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.Repositories.TeluguRepository;
@@ -32,21 +27,30 @@ import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-public class TeluguNewsFragment extends Fragment {
+public class TeluguNewsFragment extends BaseFragment {
 
-    private Context mContext;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private RecyclerView newsRecyclerView;
-    private ProgressBar progressBar;
-    private TextView mEmptyStateTextView, weatherTemp;
-    private ImageView weatherIcon;
-    private TeluguNewsAdapter mAdapter;
+    @BindView(R.id.swipe_refresh)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.recycler_view_list)
+    RecyclerView newsRecyclerView;
+    @BindView(R.id.loading_circle)
+    ProgressBar progressBar;
+    @BindView(R.id.no_data_found)
+    TextView mEmptyStateTextView;
+    @BindView(R.id.weather_temp)
+    TextView weatherTemp;
+    @BindView(R.id.weather_icon)
+    ImageView weatherIcon;
+
     public static String numberOfArticles;
+    private Context mContext;
+    private TeluguNewsAdapter mAdapter;
     private WeatherViewModel weatherViewModel;
     private TeluguViewModel teluguViewModel;
 
@@ -62,12 +66,7 @@ public class TeluguNewsFragment extends Fragment {
 
         mAdapter = new TeluguNewsAdapter();
 
-        newsRecyclerView = rootView.findViewById(R.id.recycler_view_list);
-        progressBar = rootView.findViewById(R.id.loading_circle);
-        mEmptyStateTextView = rootView.findViewById(R.id.no_data_found);
-        weatherTemp = rootView.findViewById(R.id.weather_temp);
-        weatherIcon = rootView.findViewById(R.id.weather_icon);
-        mSwipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh);
+        ButterKnife.bind(this, rootView);
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
@@ -112,7 +111,7 @@ public class TeluguNewsFragment extends Fragment {
                 weatherIcon.setImageResource(WeatherIcon.getWeatherIcon(iconId));
             } else {
                 if (Utils.isConnected(mContext)) {
-                    weatherTemp.setText("unable to load");
+                    weatherTemp.setText("Unable to load");
                     weatherIcon.setImageResource(R.drawable.unknown);
                 }
             }
@@ -126,7 +125,6 @@ public class TeluguNewsFragment extends Fragment {
             builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
             customTabsIntent.launchUrl(mContext, newsUri);
         });
-
         return rootView;
     }
 
