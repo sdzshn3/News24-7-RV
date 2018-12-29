@@ -1,23 +1,11 @@
 package com.sdzshn3.android.news247.Fragments;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.browser.customtabs.CustomTabsIntent;
-
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,18 +16,26 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.sdzshn3.android.news247.Activities.LanguageSelectionActivity;
 import com.sdzshn3.android.news247.Activities.SettingsActivity;
 import com.sdzshn3.android.news247.Adapters.TeluguNewsAdapter;
-import com.sdzshn3.android.news247.Repositories.TeluguRepository;
-import com.sdzshn3.android.news247.TeluguNewsModel;
 import com.sdzshn3.android.news247.R;
+import com.sdzshn3.android.news247.Repositories.TeluguRepository;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
+import com.sdzshn3.android.news247.SupportClasses.Utils;
 import com.sdzshn3.android.news247.SupportClasses.WeatherIcon;
+import com.sdzshn3.android.news247.TeluguNewsModel;
 import com.sdzshn3.android.news247.ViewModel.TeluguViewModel;
 import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 
-import java.util.Objects;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class TeluguNewsFragment extends Fragment {
 
@@ -75,8 +71,8 @@ public class TeluguNewsFragment extends Fragment {
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
-            if (isConnected()) {
-
+            if (Utils.isConnected(mContext)) {
+                TeluguRepository.loadData();
                 weatherViewModel.refresh();
             } else {
                 Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
@@ -87,10 +83,8 @@ public class TeluguNewsFragment extends Fragment {
 
         setNoOfArticles();
 
-        newsRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        newsRecyclerView.setHasFixedSize(true);
+        Utils.setUpRecyclerView(mContext, newsRecyclerView);
         newsRecyclerView.setAdapter(mAdapter);
-        newsRecyclerView.setNestedScrollingEnabled(false);
 
         TeluguViewModel.Factory factory = new TeluguViewModel.Factory(getActivity().getApplication());
 
@@ -100,7 +94,7 @@ public class TeluguNewsFragment extends Fragment {
                 mAdapter.submitList(newsList);
                 mEmptyStateTextView.setVisibility(View.GONE);
             } else {
-                if (isConnected()) {
+                if (Utils.isConnected(mContext)) {
                     mEmptyStateTextView.setVisibility(View.VISIBLE);
                 } else {
                     Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
@@ -122,7 +116,7 @@ public class TeluguNewsFragment extends Fragment {
                 String iconId = weatherModel.getWeather().get(0).getIcon();
                 weatherIcon.setImageResource(WeatherIcon.getWeatherIcon(iconId));
             } else {
-                if (isConnected()) {
+                if (Utils.isConnected(mContext)) {
                     weatherTemp.setText("unable to load");
                     weatherIcon.setImageResource(R.drawable.unknown);
                 }
@@ -139,19 +133,6 @@ public class TeluguNewsFragment extends Fragment {
         });
 
         return rootView;
-    }
-
-    private boolean isConnected() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            activeNetwork = Objects.requireNonNull(connectivityManager).getActiveNetworkInfo();
-        } else {
-            if (connectivityManager != null) {
-                activeNetwork = connectivityManager.getActiveNetworkInfo();
-            }
-        }
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     private void setNoOfArticles() {
@@ -184,10 +165,9 @@ public class TeluguNewsFragment extends Fragment {
             Intent settingsIntent = new Intent(mContext, SettingsActivity.class);
             startActivity(settingsIntent);
             return true;
-        } else if(id == R.id.action_change_language){
+        } else if (id == R.id.action_change_language) {
             startActivity(new Intent(mContext, LanguageSelectionActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

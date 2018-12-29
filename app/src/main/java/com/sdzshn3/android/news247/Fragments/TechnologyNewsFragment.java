@@ -1,29 +1,10 @@
 package com.sdzshn3.android.news247.Fragments;
 
 import android.app.SearchManager;
-
-import androidx.lifecycle.ViewModelProviders;
-
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.browser.customtabs.CustomTabsIntent;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,20 +15,27 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.sdzshn3.android.news247.Activities.LanguageSelectionActivity;
 import com.sdzshn3.android.news247.Activities.MainActivity;
 import com.sdzshn3.android.news247.Activities.SettingsActivity;
 import com.sdzshn3.android.news247.Adapters.ArticleAdapter;
-import com.sdzshn3.android.news247.BuildConfig;
+import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.Retrofit.Article;
 import com.sdzshn3.android.news247.SupportClasses.DataHolder;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
-import com.sdzshn3.android.news247.R;
+import com.sdzshn3.android.news247.SupportClasses.Utils;
 import com.sdzshn3.android.news247.SupportClasses.WeatherIcon;
 import com.sdzshn3.android.news247.ViewModel.TechnologyViewModel;
 import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 
-import java.util.Objects;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class TechnologyNewsFragment extends Fragment {
 
@@ -86,7 +74,7 @@ public class TechnologyNewsFragment extends Fragment {
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
-            if (isConnected()) {
+            if (Utils.isConnected(mContext)) {
                 technologyViewModel.refresh();
                 weatherViewModel.refresh();
             } else {
@@ -95,12 +83,10 @@ public class TechnologyNewsFragment extends Fragment {
             }
         });
 
-        setUpUrl();
+        URL = Utils.setUpUrl(mContext, mSearchQuery, progressBar, DataHolder.technology);
 
-        newsRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        newsRecyclerView.setHasFixedSize(true);
+        Utils.setUpRecyclerView(mContext, newsRecyclerView);
         newsRecyclerView.setAdapter(mAdapter);
-        newsRecyclerView.setNestedScrollingEnabled(false);
 
         technologyViewModel = ViewModelProviders.of(TechnologyNewsFragment.this).get(TechnologyViewModel.class);
         technologyViewModel.getData().observe(TechnologyNewsFragment.this, articles -> {
@@ -108,7 +94,7 @@ public class TechnologyNewsFragment extends Fragment {
                 mAdapter.submitList(articles);
                 mEmptyStateTextView.setVisibility(View.GONE);
             } else {
-                if (isConnected()) {
+                if (Utils.isConnected(mContext)) {
                     if (mSearchQuery != null) {
                         mAdapter.submitList(articles);
                     }
@@ -125,13 +111,12 @@ public class TechnologyNewsFragment extends Fragment {
         weatherViewModel.getData().observe(TechnologyNewsFragment.this, weatherModel -> {
             if (weatherModel != null) {
                 String temp = String.valueOf(weatherModel.getMain().getTemp()).split("\\.", 2)[0];
-
                 weatherTemp.setText(getString(R.string.weather_temperature_concatenate, temp, weatherModel.getName()));
 
                 String iconId = weatherModel.getWeather().get(0).getIcon();
                 weatherIcon.setImageResource(WeatherIcon.getWeatherIcon(iconId));
             } else {
-                if (isConnected()) {
+                if (Utils.isConnected(mContext)) {
                     weatherTemp.setText("Unable to load");
                     weatherIcon.setImageResource(R.drawable.unknown);
                 }
@@ -147,55 +132,6 @@ public class TechnologyNewsFragment extends Fragment {
             customTabsIntent.launchUrl(mContext, newsUri);
         });
         return rootView;
-    }
-
-    private boolean isConnected() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            activeNetwork = Objects.requireNonNull(connectivityManager).getActiveNetworkInfo();
-        } else {
-            if (connectivityManager != null) {
-                activeNetwork = connectivityManager.getActiveNetworkInfo();
-            }
-        }
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-    }
-
-    private void setUpUrl() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-
-        String numberOfArticles = sharedPrefs.getString(
-                getString(R.string.number_of_articles_key),
-                getString(R.string.default_no_of_news_articles)
-        );
-
-        if (numberOfArticles.trim().isEmpty()) {
-            SharedPreferences.Editor editor = sharedPrefs.edit();
-            editor.putString(getString(R.string.number_of_articles_key), "10");
-            editor.apply();
-            numberOfArticles = sharedPrefs.getString(getString(R.string.number_of_articles_key),
-                    getString(R.string.default_no_of_news_articles));
-        }
-
-        Uri baseUri;
-        if (mSearchQuery == null) {
-            baseUri = Uri.parse(DataHolder.TOP_HEADLINES_REQUEST_URL);
-            progressBar.setVisibility(View.VISIBLE);
-        } else {
-            baseUri = Uri.parse(DataHolder.SEARCH_REQUEST_URL + mSearchQuery);
-            progressBar.setVisibility(View.VISIBLE);
-        }
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-        uriBuilder.appendQueryParameter(DataHolder.category, DataHolder.technology);
-        uriBuilder.appendQueryParameter(DataHolder.apiKey, BuildConfig.NEWS_API_KEY);
-        if (!numberOfArticles.isEmpty()) {
-            if (Integer.parseInt(numberOfArticles) > 100) {
-                numberOfArticles = "100";
-            }
-        }
-        uriBuilder.appendQueryParameter(DataHolder.pageSize, numberOfArticles);
-        URL = uriBuilder.toString();
     }
 
     @Override
@@ -216,7 +152,7 @@ public class TechnologyNewsFragment extends Fragment {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     mSearchQuery = query;
-                    setUpUrl();
+                    Utils.setUpUrl(mContext, mSearchQuery, progressBar, DataHolder.technology);
                     technologyViewModel.refresh();
                     return true;
                 }
@@ -235,7 +171,7 @@ public class TechnologyNewsFragment extends Fragment {
                 @Override
                 public boolean onMenuItemActionCollapse(MenuItem item) {
                     mSearchQuery = null;
-                    setUpUrl();
+                    Utils.setUpUrl(mContext, null, progressBar, DataHolder.technology);
                     technologyViewModel.refresh();
                     return true;
                 }
