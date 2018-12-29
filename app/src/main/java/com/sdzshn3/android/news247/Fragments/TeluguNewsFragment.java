@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.sdzshn3.android.news247.Adapters.TeluguNewsAdapter;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
@@ -71,8 +70,10 @@ public class TeluguNewsFragment extends NewsFragment {
         Utils.setUpRecyclerView(mContext, newsRecyclerView);
         newsRecyclerView.setAdapter(mAdapter);
 
-        teluguViewModel = ViewModelProviders.of(TeluguNewsFragment.this).get(TeluguViewModel.class);
-        teluguViewModel.getData().observe(TeluguNewsFragment.this, newsList -> {
+        TeluguViewModel.Factory factory = new TeluguViewModel.Factory(getActivity().getApplication());
+
+        teluguViewModel = ViewModelProviders.of(TeluguNewsFragment.this, factory).get(TeluguViewModel.class);
+        /*teluguViewModel.getData().observe(TeluguNewsFragment.this, newsList -> {
             if (newsList != null && !newsList.isEmpty()) {
                 mAdapter.submitList(newsList);
                 mEmptyStateTextView.setVisibility(View.GONE);
@@ -85,6 +86,9 @@ public class TeluguNewsFragment extends NewsFragment {
             }
             progressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setRefreshing(false);
+        });*/
+        teluguViewModel.getmObservableTeluguNewsData().observe(TeluguNewsFragment.this, newsList -> {
+            mAdapter.submitList(newsList);
         });
 
         weatherViewModel = ViewModelProviders.of(TeluguNewsFragment.this).get(WeatherViewModel.class);
