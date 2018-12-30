@@ -70,10 +70,11 @@ public class TeluguNewsFragment extends NewsFragment {
         Utils.setUpRecyclerView(mContext, newsRecyclerView);
         newsRecyclerView.setAdapter(mAdapter);
 
+        numberOfArticles = "30";
         TeluguViewModel.Factory factory = new TeluguViewModel.Factory(getActivity().getApplication());
 
         teluguViewModel = ViewModelProviders.of(TeluguNewsFragment.this, factory).get(TeluguViewModel.class);
-        /*teluguViewModel.getData().observe(TeluguNewsFragment.this, newsList -> {
+        teluguViewModel.getmObservableTeluguNewsData().observe(TeluguNewsFragment.this, newsList -> {
             if (newsList != null && !newsList.isEmpty()) {
                 mAdapter.submitList(newsList);
                 mEmptyStateTextView.setVisibility(View.GONE);
@@ -86,9 +87,6 @@ public class TeluguNewsFragment extends NewsFragment {
             }
             progressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setRefreshing(false);
-        });*/
-        teluguViewModel.getmObservableTeluguNewsData().observe(TeluguNewsFragment.this, newsList -> {
-            mAdapter.submitList(newsList);
         });
 
         weatherViewModel = ViewModelProviders.of(TeluguNewsFragment.this).get(WeatherViewModel.class);
