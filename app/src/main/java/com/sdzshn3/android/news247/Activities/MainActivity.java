@@ -9,36 +9,17 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
-
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.material.navigation.NavigationView;
-
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
-import com.sdzshn3.android.news247.Fragments.BusinessNewsFragment;
-import com.sdzshn3.android.news247.Fragments.EntertainmentNewsFragment;
-import com.sdzshn3.android.news247.Fragments.HealthNewsFragment;
-import com.sdzshn3.android.news247.Fragments.SportsNewsFragment;
-import com.sdzshn3.android.news247.Fragments.TopHeadlinesFragment;
-import com.sdzshn3.android.news247.Fragments.ScienceNewsFragment;
-import com.sdzshn3.android.news247.Fragments.TechnologyNewsFragment;
+import com.sdzshn3.android.news247.Fragments.NewsFragment;
 import com.sdzshn3.android.news247.Fragments.TeluguNewsFragment;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.SupportClasses.DataHolder;
@@ -48,6 +29,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -103,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 hideEnglishItems();
                 setFragment(new TeluguNewsFragment());
             } else {
-                setFragment(new TopHeadlinesFragment());
+                setFragment(new NewsFragment());
             }
         }
     }
@@ -184,28 +173,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (id) {
             case R.id.news_feed_nav_item:
                 if(newsLanguage.equals(DataHolder.english)) {
-                    setFragment(new TopHeadlinesFragment());
+                    setFragment(new NewsFragment());
                 } else if (newsLanguage.equals(DataHolder.telugu)){
                     setFragment(new TeluguNewsFragment());
                 }
                 break;
             case R.id.science_nav_item:
-                setFragment(new ScienceNewsFragment());
+                setFragment(NewsFragment.newInstance(DataHolder.science));
                 break;
             case R.id.technology_nav_item:
-                setFragment(new TechnologyNewsFragment());
+                setFragment(NewsFragment.newInstance(DataHolder.technology));
                 break;
             case R.id.business_nav_item:
-                setFragment(new BusinessNewsFragment());
+                setFragment(NewsFragment.newInstance(DataHolder.business));
                 break;
             case R.id.health_nav_item:
-                setFragment(new HealthNewsFragment());
+                setFragment(NewsFragment.newInstance(DataHolder.health));
                 break;
             case R.id.entertainment_nav_item:
-                setFragment(new EntertainmentNewsFragment());
+                setFragment(NewsFragment.newInstance(DataHolder.entertainment));
                 break;
             case R.id.sports_nav_item:
-                setFragment(new SportsNewsFragment());
+                setFragment(NewsFragment.newInstance(DataHolder.sports));
                 break;
             case R.id.settings_nav_item:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
