@@ -4,17 +4,17 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.sdzshn3.android.news247.SupportClasses.PrefManager;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.SupportClasses.DataHolder;
+import com.sdzshn3.android.news247.SupportClasses.PrefManager;
 
+import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
