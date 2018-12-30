@@ -1,10 +1,11 @@
 package com.sdzshn3.android.news247.Activities;
 
 import android.content.Intent;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.sdzshn3.android.news247.R;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 
 public class SplashScreen extends AppCompatActivity {
