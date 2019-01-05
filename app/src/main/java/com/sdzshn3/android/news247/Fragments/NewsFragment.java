@@ -198,6 +198,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public boolean onQueryTextSubmit(String query) {
         mSearchQuery = query;
+        /* TODO: update code to return results for search query */
         Objects.requireNonNull(newsViewModel.articlePagedList.getValue()).getDataSource().invalidate();
         return true;
     }
@@ -215,6 +216,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
         mSearchQuery = null;
+        /* TODO: update code to clear search query results */
         Objects.requireNonNull(newsViewModel.articlePagedList.getValue()).getDataSource().invalidate();
         return true;
     }

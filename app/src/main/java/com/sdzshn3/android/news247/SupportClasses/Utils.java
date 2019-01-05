@@ -33,31 +33,6 @@ public class Utils {
         return activeNetwork != null && activeNetwork.isConnected();
     }
 
-    public static String setUpUrl(Context context, String searchQuery, ProgressBar progressBar, String category) {
-        String numberOfArticles = setNoOfArticles(context);
-
-        Uri baseUri;
-        if (searchQuery == null) {
-            baseUri = Uri.parse(DataHolder.TOP_HEADLINES_REQUEST_URL);
-            progressBar.setVisibility(View.VISIBLE);
-        } else {
-            baseUri = Uri.parse(DataHolder.SEARCH_REQUEST_URL + searchQuery);
-            progressBar.setVisibility(View.VISIBLE);
-        }
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-        if (category != null) {
-            uriBuilder.appendQueryParameter(DataHolder.category, category);
-        }
-        uriBuilder.appendQueryParameter(DataHolder.apiKey, BuildConfig.NEWS_API_KEY);
-        if (!numberOfArticles.isEmpty()) {
-            if (Integer.parseInt(numberOfArticles) > 100) {
-                numberOfArticles = "100";
-            }
-        }
-        uriBuilder.appendQueryParameter(DataHolder.pageSize, numberOfArticles);
-        return uriBuilder.toString();
-    }
-
     public static String setNoOfArticles(Context context) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         Resources resources = context.getResources();
