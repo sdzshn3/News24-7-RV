@@ -1,5 +1,6 @@
 package com.sdzshn3.android.news247.Fragments;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.sdzshn3.android.news247.Activities.LanguageSelectionActivity;
+import com.sdzshn3.android.news247.Activities.MainActivity;
 import com.sdzshn3.android.news247.Activities.SettingsActivity;
 import com.sdzshn3.android.news247.Adapters.NewsAdapter;
 import com.sdzshn3.android.news247.R;
@@ -138,10 +140,23 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchManager searchManager = (SearchManager) mContext.getSystemService(Context.SEARCH_SERVICE);
+        androidx.appcompat.widget.SearchView searchView = null;
+        if (searchItem != null) {
+            searchView = (androidx.appcompat.widget.SearchView) searchItem.getActionView();
+        }
+        if (searchView != null) {
+            MainActivity mainActivity = new MainActivity();
+            if (searchManager != null) {
+                searchView.setSearchableInfo(searchManager.getSearchableInfo(mainActivity.getComponentName()));
+            }
+            searchView.setOnQueryTextListener(this);
+            searchItem.setOnActionExpandListener(this);
+        }
         super.onCreateOptionsMenu(menu, inflater);
-        MenuItem menuItem = menu.findItem(R.id.action_search);
-        menuItem.setVisible(false);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
