@@ -17,14 +17,17 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 import com.sdzshn3.android.news247.Activities.LanguageSelectionActivity;
 import com.sdzshn3.android.news247.Activities.SettingsActivity;
-import com.sdzshn3.android.news247.Adapters.ArticleAdapter;
+import com.sdzshn3.android.news247.Adapters.NewsAdapter;
 import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.Retrofit.Article;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
 import com.sdzshn3.android.news247.SupportClasses.Utils;
 import com.sdzshn3.android.news247.SupportClasses.WeatherIcon;
 import com.sdzshn3.android.news247.ViewModel.NewsViewModel;
+import com.sdzshn3.android.news247.ViewModel.NewsViewModelFactory;
 import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
+
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,12 +56,11 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @BindView(R.id.weather_icon)
     ImageView weatherIcon;
 
-    public static String URL;
     protected Context mContext;
     protected WeatherViewModel weatherViewModel;
     private NewsViewModel newsViewModel;
     private String mSearchQuery;
-    private ArticleAdapter mAdapter;
+    private NewsAdapter newsAdapter;
     private String category;
 
     public NewsFragment() {
@@ -80,7 +82,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         setHasOptionsMenu(true);
         setRetainInstance(true);
 
-        mAdapter = new ArticleAdapter();
+        newsAdapter = new NewsAdapter();
 
         ButterKnife.bind(this, rootView);
 
@@ -90,20 +92,19 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             category = getArguments().getString("category");
         }
 
-        URL = Utils.setUpUrl(mContext, mSearchQuery, progressBar, category);
-
         Utils.setUpRecyclerView(mContext, newsRecyclerView);
-        newsRecyclerView.setAdapter(mAdapter);
+        newsRecyclerView.setAdapter(newsAdapter);
 
-        newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
-        newsViewModel.getData().observe(this, articles -> {
+        newsViewModel = ViewModelProviders.of(this, new NewsViewModelFactory(getActivity().getApplication(), category))
+                .get(NewsViewModel.class);
+        newsViewModel.articlePagedList.observe(this, articles -> {
             if (articles != null && !articles.isEmpty()) {
-                mAdapter.submitList(articles);
+                newsAdapter.submitList(articles);
                 mEmptyStateTextView.setVisibility(View.GONE);
             } else {
                 if (Utils.isConnected(mContext)) {
                     if (mSearchQuery != null) {
-                        mAdapter.submitList(articles);
+                        newsAdapter.submitList(articles);
                     }
                     mEmptyStateTextView.setVisibility(View.VISIBLE);
                 } else {
@@ -159,7 +160,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(true);
         if (Utils.isConnected(mContext)) {
-            newsViewModel.refresh();
+            Objects.requireNonNull(newsViewModel.articlePagedList.getValue()).getDataSource().invalidate();
             weatherViewModel.refresh();
         } else {
             Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
@@ -169,7 +170,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-        Article currentArticle = mAdapter.getItem(position);
+        Article currentArticle = newsAdapter.getCurrentList().get(position);
         Uri newsUri = Uri.parse(currentArticle.getUrl());
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         CustomTabsIntent customTabsIntent = builder.build();
@@ -180,8 +181,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public boolean onQueryTextSubmit(String query) {
         mSearchQuery = query;
-        Utils.setUpUrl(mContext, mSearchQuery, progressBar, category);
-        newsViewModel.refresh();
+        Objects.requireNonNull(newsViewModel.articlePagedList.getValue()).getDataSource().invalidate();
         return true;
     }
 
@@ -198,8 +198,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
         mSearchQuery = null;
-        Utils.setUpUrl(mContext, null, progressBar, category);
-        newsViewModel.refresh();
+        Objects.requireNonNull(newsViewModel.articlePagedList.getValue()).getDataSource().invalidate();
         return true;
     }
 }

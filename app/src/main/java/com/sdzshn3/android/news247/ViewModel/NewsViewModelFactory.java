@@ -19,6 +19,6 @@ public class NewsViewModelFactory implements ViewModelProvider.Factory {
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new ArticleViewModel(category);
+        return (T) new NewsViewModel(category);
     }
 }
