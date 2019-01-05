@@ -76,4 +76,7 @@ dependencies {
 
     // OkHttp logging interceptor
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+
+    // Paging library
+    implementation "androidx.paging:paging-runtime:2.0.0"
 }
