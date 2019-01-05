@@ -141,18 +141,20 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchManager searchManager = (SearchManager) mContext.getSystemService(Context.SEARCH_SERVICE);
-        androidx.appcompat.widget.SearchView searchView = null;
-        if (searchItem != null) {
-            searchView = (androidx.appcompat.widget.SearchView) searchItem.getActionView();
-        }
-        if (searchView != null) {
-            MainActivity mainActivity = new MainActivity();
-            if (searchManager != null) {
-                searchView.setSearchableInfo(searchManager.getSearchableInfo(mainActivity.getComponentName()));
+        if (mContext != null) {
+            SearchManager searchManager = (SearchManager) mContext.getSystemService(Context.SEARCH_SERVICE);
+            androidx.appcompat.widget.SearchView searchView = null;
+            if (searchItem != null) {
+                searchView = (androidx.appcompat.widget.SearchView) searchItem.getActionView();
             }
-            searchView.setOnQueryTextListener(this);
-            searchItem.setOnActionExpandListener(this);
+            if (searchView != null) {
+                MainActivity mainActivity = new MainActivity();
+                if (searchManager != null) {
+                    searchView.setSearchableInfo(searchManager.getSearchableInfo(mainActivity.getComponentName()));
+                }
+                searchView.setOnQueryTextListener(this);
+                searchItem.setOnActionExpandListener(this);
+            }
         }
         super.onCreateOptionsMenu(menu, inflater);
     }

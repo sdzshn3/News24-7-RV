@@ -115,7 +115,6 @@ public class TeluguNewsFragment extends NewsFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
         MenuItem menuItem = menu.findItem(R.id.action_search);
         menuItem.setVisible(false);
