@@ -19,7 +19,7 @@ public class NewsDataSource extends PageKeyedDataSource<Integer, Article> {
     private static final String COUNTRY_CODE = "in";
     private static final String API_KEY = BuildConfig.NEWS_API_KEY;
     private static final int FIRST_PAGE = 1;
-    public static final int PAGE_SIZE = 20;
+    public static final int PAGE_SIZE = 10;
 
     private String category;
     public static final String TAG = NewsDataSource.class.getSimpleName();

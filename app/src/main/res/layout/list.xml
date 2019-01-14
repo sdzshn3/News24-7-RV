@@ -1,5 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,14 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbarStyle="outsideOverlay">
-
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:isScrollContainer="true"
-            android:fillViewport="true"
-            android:scrollbars="none"
-            android:focusable="false">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -31,7 +22,6 @@
                     android:layout_below="@id/weather_icon"
                     android:focusable="true"
                     android:orientation="vertical"
-                    android:layout_marginBottom="75dp"
                     android:nestedScrollingEnabled="false"
                     tools:targetApi="lollipop"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -68,8 +58,6 @@
 
 
             </RelativeLayout>
-
-        </androidx.core.widget.NestedScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
