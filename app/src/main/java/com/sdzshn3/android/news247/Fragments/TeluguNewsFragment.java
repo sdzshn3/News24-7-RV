@@ -71,7 +71,7 @@ public class TeluguNewsFragment extends NewsFragment {
 
         Utils.setNoOfArticles(mContext);
 
-        Utils.setUpRecyclerView(mContext, newsRecyclerView);
+        Utils.setUpRecyclerView(mContext, newsRecyclerView, mSwipeRefreshLayout);
         newsRecyclerView.setAdapter(mAdapter);
 
         numberOfArticles = "30";

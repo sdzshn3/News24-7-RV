@@ -94,7 +94,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             category = getArguments().getString("category");
         }
 
-        Utils.setUpRecyclerView(mContext, newsRecyclerView);
+        Utils.setUpRecyclerView(mContext, newsRecyclerView, mSwipeRefreshLayout);
         newsRecyclerView.setAdapter(newsAdapter);
 
         newsViewModel = ViewModelProviders.of(this, new NewsViewModelFactory(getActivity().getApplication(), category))

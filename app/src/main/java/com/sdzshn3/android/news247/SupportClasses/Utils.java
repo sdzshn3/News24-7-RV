@@ -5,18 +5,16 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.view.View;
-import android.widget.ProgressBar;
 
-import com.sdzshn3.android.news247.BuildConfig;
 import com.sdzshn3.android.news247.R;
 
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class Utils {
 
@@ -52,9 +50,17 @@ public class Utils {
         return numberOfArticles;
     }
 
-    public static void setUpRecyclerView(Context context, RecyclerView recyclerView) {
+    public static void setUpRecyclerView(Context context, RecyclerView recyclerView, SwipeRefreshLayout swipeRefreshLayout) {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                int topRowVerticalPosition =
+                        (recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
+                swipeRefreshLayout.setEnabled(topRowVerticalPosition >= 0);
+            }
+        });
     }
 }
