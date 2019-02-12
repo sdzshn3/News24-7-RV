@@ -73,4 +73,10 @@ dependencies {
     //Room dependencies
     implementation "androidx.room:room-runtime:2.0.0"
     annotationProcessor "androidx.room:room-compiler:2.0.0"
+
+    // OkHttp logging interceptor
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+
+    // Paging library
+    implementation "androidx.paging:paging-runtime:2.0.0"
 }

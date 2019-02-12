@@ -1,6 +1,7 @@
 package com.sdzshn3.android.news247.Fragments;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,11 +19,13 @@ import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.SupportClasses.ItemClickSupport;
 import com.sdzshn3.android.news247.SupportClasses.Utils;
 import com.sdzshn3.android.news247.SupportClasses.WeatherIcon;
+import com.sdzshn3.android.news247.TeluguNewsModel;
 import com.sdzshn3.android.news247.ViewModel.TeluguViewModel;
 import com.sdzshn3.android.news247.ViewModel.WeatherViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -68,7 +71,7 @@ public class TeluguNewsFragment extends NewsFragment {
 
         Utils.setNoOfArticles(mContext);
 
-        Utils.setUpRecyclerView(mContext, newsRecyclerView);
+        Utils.setUpRecyclerView(mContext, newsRecyclerView, mSwipeRefreshLayout);
         newsRecyclerView.setAdapter(mAdapter);
 
         numberOfArticles = "30";
@@ -112,9 +115,18 @@ public class TeluguNewsFragment extends NewsFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
         MenuItem menuItem = menu.findItem(R.id.action_search);
         menuItem.setVisible(false);
+    }
+
+    @Override
+    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+        TeluguNewsModel teluguNewsModel = mAdapter.getItem(position);
+        Uri newsUri = Uri.parse(teluguNewsModel.getUrl());
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
+        customTabsIntent.launchUrl(mContext, newsUri);
     }
 }

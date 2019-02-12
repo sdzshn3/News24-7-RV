@@ -5,15 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
-
-import androidx.annotation.NonNull;
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.recyclerview.widget.ListAdapter;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,16 +16,21 @@ import com.sdzshn3.android.news247.R;
 import com.sdzshn3.android.news247.Retrofit.Article;
 import com.squareup.picasso.Picasso;
 
-
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.cardview.widget.CardView;
+import androidx.paging.PagedListAdapter;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
-public class ArticleAdapter extends ListAdapter<Article, ArticleAdapter.ViewHolder> {
+public class NewsAdapter extends PagedListAdapter<Article, NewsAdapter.NewsViewHolder> {
 
     private Context mContext;
 
-    public ArticleAdapter() {
+    public NewsAdapter() {
         super(DIFF_CALLBACK);
     }
 
@@ -46,23 +42,20 @@ public class ArticleAdapter extends ListAdapter<Article, ArticleAdapter.ViewHold
 
         @Override
         public boolean areContentsTheSame(@NonNull Article news, @NonNull Article t1) {
-            return news.getTitle().equals(t1.getTitle()) &&
-                    news.getSource().getName().equals(t1.getSource().getName()) &&
-                    news.getUrl().equals(t1.getUrl()) &&
-                    news.getPublishedAt().equals(t1.getPublishedAt());
+            return news.equals(t1);
         }
     };
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
         mContext = parent.getContext();
-        return new ViewHolder(view);
+        return new NewsViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final NewsViewHolder holder, int position) {
         final Article currentArticle = getItem(position);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -124,17 +117,7 @@ public class ArticleAdapter extends ListAdapter<Article, ArticleAdapter.ViewHold
         }
     }
 
-    @Override
-    public Article getItem(int position) {
-        return super.getItem(position);
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class NewsViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.thumbnailImageView)
         ImageView thumbnailView;
         @BindView(R.id.sectionTextView)
@@ -152,11 +135,9 @@ public class ArticleAdapter extends ListAdapter<Article, ArticleAdapter.ViewHold
         @BindView(R.id.image_card_view)
         CardView cardView;
 
-        ViewHolder(View listItemView) {
+        NewsViewHolder(View listItemView) {
             super(listItemView);
             ButterKnife.bind(this, listItemView);
         }
     }
-
-
 }
