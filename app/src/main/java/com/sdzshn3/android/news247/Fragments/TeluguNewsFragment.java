@@ -124,20 +124,6 @@ public class TeluguNewsFragment extends NewsFragment {
     @Override
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(true);
-        /*teluguViewModel.getmObservableTeluguNewsData().observe(TeluguNewsFragment.this, newsList -> {
-            if (newsList != null && !newsList.isEmpty()) {
-                mAdapter.submitList(newsList);
-                mEmptyStateTextView.setVisibility(View.GONE);
-            } else {
-                if (Utils.isConnected(mContext)) {
-                    mEmptyStateTextView.setVisibility(View.VISIBLE);
-                } else {
-                    Snackbar.make(newsRecyclerView, "Internet connection not available", Snackbar.LENGTH_LONG).show();
-                }
-            }
-            progressBar.setVisibility(View.GONE);
-            mSwipeRefreshLayout.setRefreshing(false);
-        });*/
         teluguViewModel.refreshData();
     }
 
