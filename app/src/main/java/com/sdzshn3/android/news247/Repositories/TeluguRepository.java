@@ -44,30 +44,13 @@ public class TeluguRepository {
         return mAppDatabase.teluguNewsDao().getAllTeluguNews();
     }
 
-    private void fetchLatestNews() {
+
+    public void fetchLatestNews() {
 
         AsyncTask.execute(() -> {
             List<TeluguNewsModel> newsModelsList = mQueryUtils.extractTeluguNewsFromRss(DataHolder.TELUGU_NEWS_REQUEST_URL, Integer.parseInt(TeluguNewsFragment.numberOfArticles));
             insertNews(newsModelsList);
         });
-
-        /*new AsyncTask<Void, Void, List<TeluguNewsModel>>() {
-            @Override
-            protected List<TeluguNewsModel> doInBackground(Void... voids) {
-                QueryUtils queryUtils = new QueryUtils();
-                try {
-                    return queryUtils.extractTeluguNewsFromRss(DataHolder.TELUGU_NEWS_REQUEST_URL, Integer.parseInt(TeluguNewsFragment.numberOfArticles));
-                } catch (NumberFormatException e) {
-                    Log.e("TeluguRepository", "numberOfArticles not initialised");
-                    return null;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(List<TeluguNewsModel> newsList) {
-                insertNews(newsList);
-            }
-        }.execute();*/
     }
 
     private void insertNews(List<TeluguNewsModel> newsList) {

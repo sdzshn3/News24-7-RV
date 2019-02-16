@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.sdzshn3.android.news247.Adapters.TeluguNewsAdapter;
@@ -123,7 +124,7 @@ public class TeluguNewsFragment extends NewsFragment {
     @Override
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(true);
-        teluguViewModel.getmObservableTeluguNewsData().observe(TeluguNewsFragment.this, newsList -> {
+        /*teluguViewModel.getmObservableTeluguNewsData().observe(TeluguNewsFragment.this, newsList -> {
             if (newsList != null && !newsList.isEmpty()) {
                 mAdapter.submitList(newsList);
                 mEmptyStateTextView.setVisibility(View.GONE);
@@ -136,8 +137,10 @@ public class TeluguNewsFragment extends NewsFragment {
             }
             progressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setRefreshing(false);
-        });
+        });*/
+        teluguViewModel.refreshData();
     }
+
 
     @Override
     public void onItemClicked(RecyclerView recyclerView, int position, View v) {

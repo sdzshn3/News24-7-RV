@@ -11,6 +11,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -28,6 +29,10 @@ public class TeluguViewModel extends AndroidViewModel {
     public MediatorLiveData<List<TeluguNewsModel>> getmObservableTeluguNewsData() {
         mObservableTeluguNews.addSource(repository.getAllTeluguNews(), teluguNewsModels -> mObservableTeluguNews.setValue(teluguNewsModels));
         return mObservableTeluguNews;
+    }
+
+    public void refreshData() {
+        repository.fetchLatestNews();
     }
 
     public static class Factory extends ViewModelProvider.AndroidViewModelFactory{

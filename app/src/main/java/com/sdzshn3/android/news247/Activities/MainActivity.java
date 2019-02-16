@@ -213,6 +213,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        activity = null;
+    }
+
     //Setting fragment
     private void setFragment(Fragment fragment) {
         if (fragment != null) {
